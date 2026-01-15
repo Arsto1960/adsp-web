@@ -1,0 +1,13 @@
+.chart {
+  margin-top: 20px;
+}
+
+mat-card {
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+mat-slider .mat-slider-thumb-label-text {
+  color: #3f51b5;
+  font-weight: bold;
+}

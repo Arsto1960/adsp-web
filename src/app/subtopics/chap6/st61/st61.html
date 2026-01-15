@@ -1,0 +1,743 @@
+<div class="m-2 space-y-4 " >
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg gap-4">
+                <h3 class="text-2xl font-semibold font-sans mb-3" style="color: blue;">
+                    6.1. Sampling the Analog Signal, Normalized Frequency
+                </h3>
+
+
+                <p class="mt-3">
+
+
+                    Before diving into the mathematics of sampling, let's build an intuitive understanding of what the
+                    Fourier transform actually does. Think of it as a "frequency detector" machine.
+                </p>
+                <p class="mt-3">
+                    Fourier transform by
+                </p>
+                <p class="mt-3 bg-blue-200 ">
+
+                    The key insight is to "wrap" the signal around a circle at different speeds.
+
+                    When the winding frequency matches a frequency present in the signal, the wound-up graph becomes
+                    unbalanced; the center of mass shifts away from the origin!
+                </p>
+
+                <p class="mt-3">
+                    Suppose we are given the sine wave bellow, how would could you recognize that it's oscillating at 3
+                    beats per second? What operation could you perform that takes in this graph and spits out the number
+                    3?
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/gif6.jpeg" class="w-210 h-70 ">
+                </div>
+                <p class="mt-4">
+                    1. <strong>Wrap the signal around</strong> a circle (in words: multiply the signal by an exponential
+                    rotation term written , without using math symbols or rendering).
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+
+ $$"></p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig62.gif" class="w-180 h-110 ">
+                </div>
+
+                <p class="mt-4">
+                    2. Vary the winding frequency; how fast we wind around the circle
+                </p>
+                 <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+                 e^{-j2\pi ft}
+ $$"></p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig63.gif" class="w-180 h-110 ">
+                </div>
+                
+
+
+                <div class="flex flex-col justify-around items-center gap-2 mt-4">
+                    <img src="assets/images/chap6/fig64.gif" class="w-180 h-110 ">
+                </div>
+
+                <p class="mt-4">3. Track the center of mass of the wound-up graph, mathematically means:
+                    <code>g_hat(f) = integral of g(t) multiplied by e^(-j 2*pi*f*t) over all time</code>
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\hat{g}(f) = \int_{-\infty}^{\infty} g(t) \cdot e^{-j2\pi ft} \, dt
+ $$"></p>
+
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig65.gif" class="w-180 h-110 ">
+                </div>
+
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig66.gif" class="w-180 h-110 ">
+                </div>
+
+                <h1>Sampling the Analog Signal</h1>
+
+                <p class="mt-4">
+                    To see what happens when we sample a signal, we start with the analog signal s(t). Sampling means
+                    taking values of the signal at intervals T (example: 1/8000 seconds in the ISDN example), or using
+                    the sampling frequency f_s (8 kHz in the ISDN example). Mathematically, sampling can be described as
+                    multiplying the analog signal with a Dirac impulse located at the sampling times nT, where n is the
+                    sample index (n = 0, 1, ... for causal systems).
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig67.gif" class="w-180 h-110 ">
+                </div>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.2.png" class="w-180 h-110 ">
+                </div>
+                <p class="mt-4">
+                    The sequence or train of Dirac impulses, as depicted in Fig. (6.2) can be written as:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\Delta_{T}(t):= \sum_{n=0}^{\infin} \delta(t-nT)
+ $$"></p>
+               
+                <p class="mt-4">
+                    Remember that the integral over a Dirac impulse is 1:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+
+ $$"></p>
+               
+                <p class="mt-4">
+                    The integral over the product of a function with a Dirac impulse is the value of the function at the
+                    position of the impulse:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\int_{t=-\infin}^{\infin} \delta(t) dt = 1
+
+ $$"></p>
+               
+
+
+                <p class="mt-4">
+                    This is the mathematical formulation of sampling at time-point $nT$. We can now use this description
+                    to compute the resulting spectrum with the Fourier transform.
+
+                    First, if the look at the Fourier transform of the analog signal or system, we get
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+
+\int_{t=-\infin}^{\infin} s(t) \delta (t-nT) dt = s(nT) \tag{6.1} 
+
+ $$"></p>
+                <p class="mt-4">
+                    This is the mathematical formulation of sampling at time-point nT. We can now use this description
+                    to compute the resulting spectrum with the Fourier transform.
+                </p>
+
+                <p class="mt-4">
+                    First, if we look at the Fourier transform of the analog signal or system, we get:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+S^{c}(\omega)=\int_{t=-\infin}^{\infin} s(t) \cdot e^{-j\omega t} dt
+ $$"></p>
+              
+
+                <p class="mt-4">
+                    where the superscript <strong>c</strong> denotes the continuous version, with ω = 2πf the angular
+                    frequency. If we now compute the Fourier Transform for the sampled signal s(t) · Δ<sub>T</sub>(t),
+                    with the replacement:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+s(t) \leftarrow s(t) \cdot \Delta_{T} (t)
+ $$"></p>
+               
+
+                <p class="mt-4">
+                    we obtain the following sum (since only at the sampling time instances the integral is non-zero):
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+S^{d}(\omega)=\sum_{n=-\infin}^{\infin} s(nT) \cdot e^{-j\omega nT}
+ $$"></p>
+               
+                <p class="mt-4">
+                    with the superscript <strong>d</strong> now denoting the discrete time version. Now we can see that
+                    the frequency variable only appears as ω nT, and T is the inverse of the sampling frequency.
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\omega T = \omega/f_{s} =: \Omega 
+
+ $$"></p>
+
+                <p class="mt-4">
+                    This is now our normalized frequency. It is without a physical unit, since the unit Hertz in ω and
+                    f<sub>s</sub> cancel. In the normalized frequency, 2π represents the sampling frequency and π is the
+                    so-called Nyquist frequency (the upper limit of our usable frequency range, defined as half the
+                    sampling frequency). Hence it has the unit of an angle in radians, or radians per sample. The latter
+                    assumes that we have a periodic function whose argument is an angle, like e<sup>jΩ·n</sup>, with n
+                    the sample index. Then Ω is the angle progression per sample.
+                </p>
+
+                <p class="mt-4">
+                    Observe that we use the capital Ω to signify that this is the normalized frequency. The capitalized
+                    version is commonly used to distinguish it from the continuous, non-normalized version, if both are
+                    used. Otherwise, also the small ω is used in the literature for the normalized frequency, if that is
+                    all we need, and there is no danger of confusion.
+                </p>
+
+                <p class="mt-4">
+                    To convert a normalized frequency back to the non-normalized one, we simply multiply it with the
+                    sampling frequency: ω = Ω · f<sub>s</sub>.
+                </p>
+
+                <p class="mt-4">
+                    To indicate that we are now in the discrete time domain, we rename our signal to:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x(n)=s(nT)
+ $$"></p>
+              
+                <p class="mt-4">
+                    Its spectrum or frequency response is then:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+X(\Omega) = \sum_{n=-\infin}^{\infin} x(n)e^{-j\Omega n} $$"></p>
+             
+
+                <p class="mt-4">
+                    We call this the “Discrete Time Fourier Transform” (DTFT), because we apply it to discrete time
+                    signals x(n). This can be distinguished from the Discrete Fourier Transform, because the above time
+                    signal has infinite length.
+                </p>
+
+                <p class="mt-4">
+                    Because n is integer here (no longer real valued like t), we get a 2π periodicity for X(Ω). This is
+                    the first important property for discrete time signals.
+                </p>
+
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.3.png" class="w-180 h-110 ">
+                </div>
+                <p class="mt-4">
+                    In Fig. (6.3) we can see that in general we obtain a 2π periodicity in the frequency domain, because
+                    of the 2π periodicity of the exponential function exp(jω).
+                </p>
+
+                <p class="mt-4">
+                    Also observe that for real valued signals, the spectrum of the negative frequencies is the complex
+                    conjugate of the positive frequencies:
+                </p>
+                 <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+                 X(-\Omega) = X^{*}(\Omega) 
+
+" ></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+e^{-j(-\Omega)n} = (e^{-j \Omega n})^* $$"></p>
+
+
+                <p class="mt-4">
+                    where * denotes complex conjugation. This is because exp(-j(-Omega)n) = (exp(-j Omega n))*. Since
+                    the signal is real-valued, the conjugate does not change it.
+                </p>
+
+                <p class="mt-4">
+                    This means that for real signals we only need to look at the frequency range from 0 to pi. The
+                    negative frequencies are conjugate symmetric and due to 2π periodicity, 0 to pi fully describes the
+                    signal. This matches the Nyquist theorem, which says frequencies up to pi (the Nyquist frequency)
+                    are sufficient.
+                </p>
+
+                <h4>Sampling a Discrete-Time Signal</h4>
+
+                <p class="mt-4">
+                    What happens if we downsample an already discrete signal x(n)? Downsampling by N means keeping every
+                    Nth sample and discarding the rest. This increases the normalized frequency by a factor of N.
+                </p>
+
+                <p class="mt-4">
+                    This can also be seen as multiplying the signal by a sequence of unit pulses with zeros in between,
+                    and then dropping the zeros. Multiplying by a unit pulse train allows mathematical analysis of
+                    downsampling. The resulting frequency response is:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+X^{d}(\Omega)\sum_{n=mN} x(n) e^{-j\Omega n}
+=\sum_{m=-\infin}^{\infin} x(mN)e^{-j\Omega mN}
+ $$"></p>
+
+
+                <p class="mt-4">
+                    Downsampling can be expressed as multiplication with a sampling function:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\Delta_{N}(n) = \begin{cases}
+1, & \text{if } n = mN \\
+0, & \text{else}
+\end{cases}
+ $$"></p>
+
+                <p class="mt-4">
+                    The sampled signal with zeros is:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x^{d} (n) = x (n) \Delta_{N}(n) 
+ $$"></p>
+
+
+                <p class="mt-4">
+                    Zeros are removed before transmission or storage to reduce data rate. The decoder upsamples by
+                    re-inserting zeros to reconstruct the original sampling rate. This intermediate signal is important
+                    in both encoder and decoder analysis.
+                </p>
+
+                <p class="mt-4">
+                    The spectrum of x_down(n) is the convolution of the original signal's spectrum with the Fourier
+                    transform of the unit pulse train. The Fourier transform of the unit pulse train is a Dirac impulse
+                    train. Its fundamental angular frequency is 2π/N, since the sampling frequency is reduced by N.
+                </p>
+
+                <p class="mt-4">
+                    We can represent the Fourier transform of the unit impulse train as:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\delta_{2\pi / N}(\Omega) = \sum_{k=0}^{N-1} \frac{2\pi}{N} \delta(\Omega - \frac{2\pi}{N} \cdot k) $$"></p>
+
+
+                <p class="mt-4">
+                    The inverse Discrete-Time Fourier Transform gives:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\Delta_{N}(n) = \frac{1}{2\pi} \int_{0}^{2\pi} \delta_{2\pi / N}(\Omega) e^{jn\Omega}d\Omega
+ $$"></p>
+
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+= \frac{1}{2\pi} \int_{0}^{2\pi} \sum_{k=0}^{N-1} \frac{2\pi}{N} \delta(\Omega - \frac{2\pi}{N} \cdot k)e^{jn\Omega}d\Omega
+ $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+= \frac{1}{N} \sum_{k=0}^{N-1} e^{j\frac{2\pi}{N}\cdot k \cdot n}
+ $$"></p>
+
+
+                <p class="mt-4">
+                    This sum reproduces the original unit pulse train. It is a geometric series and can be verified
+                    using standard geometric sum formulas.
+                </p>
+
+                <p class="mt-4">
+                    Now we have to prove that this is indeed our unit pulse train. To do that, we look at the sum. It is
+                    a geometric sum: S = sum from k=0 to N-1 of c^k. Multiplying by c gives S*c = sum from k=1 to N of
+                    c^k. Subtracting: S*c - S = c^N - 1. Hence:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+S = \frac{c^{N}-1}{c-1}
+ $$"></p>
+
+                <p class="mt-4">
+                    Here we set , and the sum can be computed in closed form:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$  c = e^{j \frac{2\pi}{N} n}
+ $$"></p>
+
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$  c = e^{j \frac{2\pi}{N} n}
+\sum_{k=0}^{N-1} e^{j\frac{2\pi}{N}\cdot k \cdot n} = \frac{e^{j \frac{2\pi}{N} n \cdot N} - 1}{e^{j \frac{2\pi}{N} n} - 1}
+ $$"></p>
+
+
+                <p class="mt-4">
+                    For n = mN, the sum must become N. In this case, the right-hand side is 0/0, but looking at the
+                    left-hand side: exp(j 2π mN k / N) = 1, so the sum becomes N, as desired.
+                </p>
+
+                <p class="mt-4">
+                    For n not equal to mN, the sum should be zero. Here the denominator is not zero and the numerator
+                    becomes zero, so the sum is zero. This proves the formula:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\Delta_{N}(n)= \frac{1}{N} \sum_{k=0}^{N-1} e^{j\frac{2\pi}{N}\cdot k \cdot n}
+ $$"></p>
+
+                <p class="mt-4">
+                    We can now use this expression for the unit pulse train to compute the Fourier transform:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x^{d} (n) = x(n) \cdot \Delta_{N}(n) = x(n) \cdot \frac{1}{N} \sum_{k=0}^{N-1} e^{j\frac{2\pi}{N}\cdot k \cdot n}
+ $$"></p>
+
+                <p class="mt-4">
+                    Its Discrete Time Fourier Transform (DTFT) is then:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x^{d} (\Omega) = \sum_{n=-\infin}^{\infin}x(n)  \cdot \frac{1}{N} \sum_{k=0}^{N-1} e^{j\frac{2\pi}{N}\cdot k \cdot n} \cdot e^{-j \Omega n}
+ $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+= \frac{1}{N} \sum_{k=0}^{N-1} \sum_{n=-\infin}^{\infin} x(n) \cdot e^{-j(-\frac{2\pi}{N}\cdot k + \Omega)\cdot n}
+ $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+= \frac{1}{N} \sum_{k=0}^{N-1} X(-\frac{2\pi}{N}k + \Omega)
+ $$"></p>
+
+
+                <p class="mt-4">
+                    This shows that sampling (still including the zeros) in the frequency domain produces multiple
+                    shifted versions of the signal spectrum, called aliasing components:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x^{d} (\Omega) = \frac{1}{N} \sum_{k=0}^{N-1} X(-\frac{2\pi}{N}k + \Omega) \tag{6.2}
+ $$"></p>
+
+                <p class="mt-4">
+                    As seen in Fig. (6.4), the aliasing components periodify the spectrum according to the new sampling
+                    rate, which is 1/N of the original sampling rate. The new period is 1/N of the old period (2π).
+                </p>
+
+                <p class="mt-4">
+                    Observe: Spectral components do not overlap if their bandwidth is below 2π/N for complex signals, or
+                    below π/N for real low-pass signals. To reconstruct the original signal, we must ensure aliasing
+                    components do not overlap by filtering at the high sampling rate before downsampling. The term
+                    "aliasing" can sometimes refer only to overlapping components, or more broadly to any shifted
+                    frequency component.
+                </p>
+
+                <p class="mt-4">
+                    Next, we will show an example including negative frequencies appearing above normalized frequency 1
+                    (the Nyquist frequency) and demonstrate two sine signals.
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.4.png" class="w-180 h-110 ">
+                </div>
+
+
+                <p class="mt-4">
+                    At different strength at normalized frequencies 0.4 and 0.35. This can also be seen as a narrow band
+                    signal, for example resulting from a passband filter. It is generated with the following code:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+# Signal Processing Parameters
+Fs = 32000
+T = 1/Fs
+t = np.arange(Fs//32)*T
+
+# Signals
+w35 = 0.35*Fs/2
+sine_35 = np.sin(2*np.pi*w35*t)
+w40 = 0.4*Fs/2
+sine_40 = 100*np.sin(2*np.pi*w40*t)
+signal = sine_35 + sine_40
+</pre>
+
+                <p class="mt-4">
+                    Its spectrum can be seen in Fig. (6.5).
+                </p>
+
+                <p class="mt-4">
+                    After sampling by a factor of N=4, still including the zeros, we get the spectrum shown in Fig.
+                    (6.6).
+                </p>
+
+                <p class="mt-4">
+                    Fig. (6.6) shows that the spectrum still contains the original spectrum, plus the spectral copies at
+                    frequency shifts of k * 2 * π / N from the originals.
+                </p>
+
+                <p class="mt-4">
+                    Observe: Since we have a real-valued signal (the sinusoids), the spectrum of negative and positive
+                    frequencies are symmetric around frequency zero. This leads to a mirrored appearance between the
+                    neighboring spectral images or aliasing components.
+                </p>
+
+                <p class="mt-4">
+                    According to Nyquist, we must sample in such a way that the shifted spectra of our signal do not
+                    overlap. Otherwise, if they overlap, we cannot separate those parts of the spectrum and lose
+                    information, which cannot be reconstructed.
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.5.png" class="w-180 h-110 ">
+                </div>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.6.png" class="w-180 h-110 ">
+                </div>
+                <p class="mt-4">
+                    In conclusion: Sampling a signal by a factor of N, while keeping the zeros between the sample
+                    points, leads to N-1 aliasing components or spectral copies.
+                </p>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+
+            <mat-card-content class="text-lg">
+                <h3>6.1.1 Example</h3>
+
+                <p class="mt-4">
+                    Make a sine wave which at 44100 Hz sampling rate has a frequency of 400 Hz and duration of 1 second.
+                    Hence we need 44100 samples, and 400 periods of our sinusoid in this second. The signal in Python
+                    can be written as:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+import numpy as np
+fs = 44100
+f = 400.0
+s = np.sin(2 * np.pi * f * np.arange(0,1,1.0/fs))
+Omega = 2 * np.pi * f / fs
+s1 = np.sin(Omega * np.arange(0, fs, 1))
+
+# Then run it in Python
+from sound import sound
+sound((2**15) * s, fs)
+
+# Now plot the first 1000 samples:
+plot(s[0:1000])
+</pre>
+
+                <p class="mt-4">
+                    The result can be seen in Fig. (6.7). To listen to it, we use our sound library
+                    <a href="http://sound.py/">sound.py</a>, which you can download from our GitHub repository in a
+                    terminal with:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+wget https://raw.githubusercontent.com/TUIlmenauAMS/Python-Audio-Coder/master/
+</pre>
+
+                <p class="mt-4">
+                    Next, plot the first 100 samples:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+plot(s[0:100])
+</pre>
+
+                <p class="mt-4">
+                    The result can be seen in Fig. (6.8). Now we can multiply this sine tone signal with a unit pulse
+                    train with N=8. Generate the unit impulse train with:
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.7.png" class="w-180 h-110 ">
+                </div>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.8.png" class="w-180 h-110 ">
+                </div>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+unit = zeros(44100)
+unit[0::8] = 1
+plt.stem(unit[0:100], use_line_collection=True)
+plt.xlabel('n')
+plt.ylabel('unit(n)')
+</pre>
+
+                <p class="mt-4">
+                    Fig. (6.9) shows the result as a stem plot. Now listen to it, with scaling to the value range for
+                    16-bit/sample:
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.9.png" class="w-180 h-110 ">
+                </div>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.10.png" class="w-180 h-110 ">
+                </div>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+from sound import sound
+sound(unit*2.0**15, 44100)
+</pre>
+
+                <p class="mt-4">
+                    The multiplication with the unit impulse train is:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+sdu = s * unit
+</pre>
+
+                <p class="mt-4">
+                    (This multiplication is also called “frequency mixing”). Now plot the result, the first 100 samples:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+plot(sdu[0:100])
+</pre>
+
+                <p class="mt-4">
+                    Now take a look at the magnitude spectrum (in dB) of the original signal s:
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.11.png" class="w-180 h-110 ">
+                </div>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.12.png" class="w-180 h-110 ">
+                </div>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+from scipy.signal import freqz
+w, H = freqz(s)
+plot(w, 20 * log10(abs(H) + 1e-3))
+xlabel('Normalized Frequency')
+ylabel('dB')
+title('Magnitude Frequency Response')
+</pre>
+
+                <p class="mt-4">Figure 6.11: The magnitude spectrum (in dB) of the original signal s.</p>
+                <p class="mt-4">Figure 6.12: The spectrum of the downsampled sinusoid with the zeros still in it, in
+                    comparison to
+                    the original spectrum.</p>
+
+                <p class="mt-4">
+                    Observe that the frequency axis (horizontal) is a normalized frequency, normalized to the Nyquist
+                    frequency of 22050 Hz. Hence the 400 Hz sinusoid appears as a peak at normalized frequency 0.05699,
+                    which we indeed see.
+                </p>
+
+                <p class="mt-4">
+                    Compare this to the signal with zeros (sdu), by plotting it on top:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+w, H = freqz(sdu)
+plot(w, 20*log10(abs(H)+1e-3))
+legend(('Original Sinusoid','Sampled Sinusoid'))
+</pre>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.13.png" class="w-180 h-110 ">
+                </div>
+                <p class="mt-4">
+                    We can see the original 400 Hz tone and the 7 new aliasing components. Always 2 aliasing components
+                    are close together because the original 400 Hz tone also has a spectral peak at negative frequencies
+                    (-400 Hz, normalized -0.05699).
+                </p>
+
+                <p class="mt-4">
+                    Listen to the signal with zeros:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+sound(2**15 * sdu, 44100)
+</pre>
+
+                <p class="mt-4">
+                    It sounds quite different from the original because of the strong aliasing components!
+                </p>
+
+                <h4>Python real-time audio example</h4>
+                <p class="mt-4">
+                    This example takes microphone input and samples it without removing the zeros, and plays it back in
+                    real-time. It constructs a unit pulse train with a 1 at every N’th sample using the modulus
+                    function:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+s = (np.arange(0, CHUNK) % N) == 0
+</pre>
+
+                <p class="mt-4">
+                    In Python, True is 1 and False is 0. Start it with:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+python pyrecplay_samplingblock.py
+</pre>
+
+                <h4>Removing the zeros</h4>
+                <p class="mt-4">
+                    The final step of downsampling is to omit the zeros between samples to obtain the lower sampling
+                    rate. Let’s call the signal without zeros y(m), where the time index m denotes the lower sampling
+                    rate (as opposed to n, which denotes the higher sampling rate). In our Python example this is:
+                </p>
+                <p class="mt-4">
+                    We can now take a look at the spectrum with:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono">
+w, H = freqz(sd)
+plot(w, 20*log10(abs(H)+1e-3))
+xlabel('Frequency')
+ylabel('dB')
+title('Magnitude Frequency Response')
+</pre>
+
+                <p class="mt-4">
+                    Observe in the resulting Fig. (6.14) that the sine signal now appears at a normalized frequency of
+                    0.455, a factor of 8 higher than before (with zeros included), because we reduced the sampling rate
+                    by 8. This is due to a new Nyquist frequency of 22050/8. The normalized frequency becomes
+                    approximately 0.455. Removing the zeros scales or stretches the frequency axis. For this plot, we
+                    only have about 12 samples left (100/8 ≈ 12).
+                </p>
+
+                <p class="mt-4">
+                    How are the frequency responses or spectra of y(m) and x<sup>d</sup>(n) connected? We can take the
+                    Fourier transform of x<sup>d</sup>(n) (still including zeros):
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+X^{d}(\Omega) = \sum_{n=-\infty}^{\infty} x^{d}(n) \cdot e^{-j\Omega n}
+ $$"></p>
+
+
+                <p class="mt-4">
+                    Most of the sum contains zeros. Now we only sum over non-zero entries (every Nth entry), replacing n
+                    by m*N:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+X^{d}(\Omega) = \sum_{n=mN}^{\infty} x^{d}(n) \cdot e^{-j\Omega n}
+ $$"></p>
+
+                <p class="mt-4">
+                    Making the substitution y(m) = x_d(m*N), we get:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+X^{d}(\Omega) = \sum_{m=-\infty}^{\infty} y(m) \cdot e^{-j\Omega \cdot Nm} = Y(\Omega \cdot N)
+ $$"></p>
+
+                <p class="mt-4">
+                    This shows that the downsampled version (after removing zeros) has the same frequency response, but
+                    the normalized frequency is scaled by the factor N. For example, the normalized frequency pi/N
+                    before downsampling becomes pi after removing the zeros. A small part of the spectrum before
+                    downsampling becomes the full usable spectrum after downsampling.
+                </p>
+
+                <p class="mt-4">
+                    We don’t lose any frequencies this way because the spectrum has multiple copies in increments of
+                    2*pi/N, giving it a periodicity of 2*pi/N. Any interval of length 2*pi/N contains a unique part of
+                    the spectrum. This is illustrated in Figs. (6.10) to (6.13).
+                </p>
+
+                <p class="mt-4">
+                    In Fig. (6.17), observe that we shift and add the signal by multiples of pi (2*pi/2). This produces
+                    mirrored images of high frequencies at low frequencies (for real-valued signals). The mirrored
+                    spectra and original spectrum don’t overlap, allowing easy reconstruction.
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.14.png" class="w-180 h-110 ">
+                </div>
+
+                <p class="mt-4">
+                    Figure 6.17: Signal spectrum after multiplication with the unit pulse train, for N=2, setting every
+                    second value to zero (zeros still included in the sequence).
+                </p>
+
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+
+
+</div>

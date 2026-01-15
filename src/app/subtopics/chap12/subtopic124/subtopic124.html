@@ -1,0 +1,177 @@
+<div class="m-4">
+
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.4 Python Example
+                </h3>
+
+
+                <p class="mt-4">
+
+
+                    Goal: Construct a prediction filter for our female speech signal of order L=10, which
+                    minimizes the mean-squared prediction error. Read in the female speech sound
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+ipython3 --pylab
+
+from sound import *
+
+# Read audio
+x, fs = wavread('fspeech.wav')
+shape(x)
+# Out: (207612,)
+
+# Make x a float matrix, transpose to column, normalize to -1 < x < 1
+x = matrix(x, dtype=float).T / 2**15
+
+# Listen to it (convert matrix back to array)
+sound(array(x.T)[0] * 2**15, fs)
+
+# Construct matrix A from x
+A = matrix(zeros((100000, 10)))
+for m in range(0, 100000):
+    A[m, :] = flipud(x[m + arange(10)]).T
+
+# Construct desired target signal d
+# One sample into the future
+# First 10 samples fill the prediction filter,
+# The 11th sample is the first to be predicted
+d = x[arange(10, 100010)]
+
+# Compute the prediction filter
+h = inv(A.T * A) * A.T * d
+h
+
+# Example output:
+# matrix([[ 0.90078449],
+#        [-0.7764783 ],
+#        [ 1.17924513],
+#        [-0.45849443],
+#        [ 0.62230755],
+#        [-0.32026094],
+#        [ 0.05412175],
+#        [-0.20557095],
+#        [-0.01108994],
+#        [-0.03070101]])
+
+plot(h)
+xlabel('Sample')
+ylabel('Value')
+title('Impulse Response of our Prediction Filter')
+
+</pre>
+
+                <p class="mt-4">
+                    The resulting plot can be seen in Fig. (12.13). Then our prediction filter, with the delay in the
+                    encoder becomes (to compare it with the original signal):
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+hpred = vstack([0, h])
+The predicted values are now obtained by applying these coefficients as an FIR filter:
+import scipy.signal as sp
+xpred = sp.lfilter(array(hpred.T)[0],1,array(x.T)[0])
+Now we can plot the predicted values on top of the actual original signal values, to seeplot(x);
+plot(xpred,’red’)
+legend((’Original’,’Predicted’))
+xlabel(’Sample’)
+ylabel(’Value’)
+title(’Our Speech Wave Form’)
+
+</pre>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.13.png" class="w-180 h-110 ">
+
+
+                </div>
+
+                <p class="mt-4">
+                    The resulting plot can be seen in Fig. (12.14). Our corresponding prediction error
+                    filter (which is in the encoder) is
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+H_{err}(z) = 1 - z^{-1} \cdot H(z)
+ $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+h_{err} = \begin{bmatrix} 1 \\ -0.90078449 \\ 0.7764783 \\ -1.17924513 \\ 0.45849443 \\ -0.62230755 \\ 0.32026094 \\ -0.05412175 \\ 0.20557095 \\ 0.01108994 \\ 0.03070101 \end{bmatrix}
+ $$"></p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+
+#The prediction error e(n) is obtained using our prediction error filter:
+e = sp.lfilter(array(hperr.T)[0],1,array(x.T)[0]);
+#make a matrix type out of it (row matrix):
+e=matrix(e)
+#error power per sample:
+e*e.T/max(shape(e))
+#Out: matrix([[ 0.00043284]])
+
+#Compare that with the mean squared signal power per sample:
+x.T*x/max(shape(x))
+Out[26]: matrix([[ 0.00697569]])
+#Which is more than 10 times as big as the prediction error! Which shows that it works!
+#Listen to the error signal:
+sound(2**15*array(e)[0],fs)
+#Take a look at the signal and it’s prediction error:
+plot(2**15*x)
+plot(2**15*e.T,’r’)
+xlabel(’Sample’)
+ylabel(’Value’)
+title(’Our Speech and Prediction Error Wave Forms’)
+legend((’Original’, ’Prediction Error’))
+                </pre>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.14.png" class="w-180 h-110 ">
+
+
+                </div>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+H_{rec} = \frac{1}{1 - z^{-1} \cdot H(z)} = \frac{1}{H_{perr}(z)}
+ $$"></p>
+
+                <p class="mt-4">
+                    The resulting plot can be seen in Fig. (12.15). The decoder uses the reverse filter hence we use the
+                    following filter command to generate the reconstructed signal,
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+xrec = sp.lfilter([1],array(hperr.T)[0], array(e)[0]);
+#plot original for comparison:
+plot(x)
+#Plot decoded reconstructed on top in red:
+plot(xrec,’r’)
+#We can listen to it with:
+sound(2**15*array(xrec),fs)
+
+                </pre>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.15.png" class="w-180 h-110 ">
+
+
+                </div>
+                <p class="mt-4">
+                    Observe: The decoded, reconstructed signal looks and sound identical to the original,
+                    as expected. This means we can indeed use it in an encoder-decoder setting
+                </p>
+                <p class="mt-4">
+
+                </p>
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+</div>

@@ -1,0 +1,48 @@
+<div class="space-y-6 " >
+
+<h3 class="text-3xl font-medium font-sans " style="color: rgb(10, 10, 10);">
+        Chapter 1 : Interactive Demo
+    </h3>
+
+  <mat-card style="background: linear-gradient(to right, #649173, #DBD5A4); color: white;">
+
+    <h3 class="text-2xl font-bold font-sans">🎲 Interactive Demo</h3>
+
+    <div class="slider-block">
+      <label>Amplitude: {{ amplitude }}</label>
+      <mat-slider min="0" max="2" step="0.1">
+        <input matSliderThumb [(ngModel)]="amplitude" (input)="updateChart()">
+      </mat-slider>
+    </div>
+
+    <div class="slider-block">
+      <label>Frequency: {{ frequency }}</label>
+      <mat-slider min="0.5" max="5" step="0.1">
+        <input matSliderThumb [(ngModel)]="frequency" (input)="updateChart()">
+      </mat-slider>
+    </div>
+
+    <div class="slider-block">
+      <label>Phase: {{ phase }}</label>
+      <mat-slider min="0" max="6.28" step="0.1">
+        <input matSliderThumb [(ngModel)]="phase" (input)="updateChart()">
+      </mat-slider>
+    </div>
+
+    <div class="button-row">
+      <button mat-raised-button color="primary"
+              (click)="startAudio()" [disabled]="isPlaying">
+        ▶ Play
+      </button>
+
+    </div>
+
+  </mat-card>
+
+  <mat-card appearance="outlined">
+    <mat-card-content>
+      <div #chart class="chart"></div>
+    </mat-card-content>
+  </mat-card>
+
+</div>

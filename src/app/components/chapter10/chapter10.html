@@ -1,0 +1,705 @@
+<div class="m-5 overflow-hidden space-y-6">
+
+  <div class=" text-3xl font-sans font-semibold ">
+
+    <h1>Chapter 10 : Minimum Phase Filters</h1>
+
+
+
+
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+
+      <mat-card-content class="text-lg">
+        <h3 class="text-xl font-semibold font-sans mb-3" style="color: blue;">
+          1. Learning Objective
+        </h3>
+
+
+        <ul class="space-y-2">
+          <li>Understand the difference between <strong>linear phase</strong> and <strong>minimum
+        phase</strong> filters.</li>
+        <li>Learn how minimum phase filters minimize <strong>group delay</strong> for a given magnitude
+      response.</li>
+      <li>Explore the relationship between <strong>pole-zero locations</strong> and filter stability.</li>
+      <li>Design minimum phase filters by <strong>reflecting zeros</strong> from outside to inside the
+    unit circle.</li>
+    <li>Implement and analyze minimum phase filters using <strong>Python</strong> (NumPy and SciPy).
+  </li>
+  <li>Apply minimum phase filters for <strong>equalization</strong> and <strong>low-delay</strong>
+applications.</li>
+</ul>
+
+</mat-card-content>
+
+</mat-card>
+</div>
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+
+    <mat-card-content class="text-lg">
+      <h3 class="text-xl font-semibold font-sans mb-3" style="color: blue;">
+        10.1. Introduction
+      </h3>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.11.gif" class="w-130 h-110 ">
+        <h1 class="text-wrap">
+          Top and bottom are filters with same gain response (on the left : the Nyquist plot, on the
+          right : phase responses), but the filter on the top with a=0.8
+        </h1>
+      </div>
+      <p class="mt-4">
+
+
+        Remember linear phase filters. Its phase function is linear:
+
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\phi(\Omega) = -\Omega \cdot d
+ $$"></p>
+
+      <p>
+        with a group delay of constant d. The impulse responses of linear phase filters have the
+        property of being (even) symmetric around some center. Example:
+      </p>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.1.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <p>
+
+        Here we have a 4 sample impulse response, and starting at 0, we have a symmetry
+        around d = 1.5, hence we have a constant delay of this system of d = 1.5 samples.
+        Another example for a linear phase filter is a piece of a sinc function. In iPython
+        --pylab:
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        hsinc=sinc(linspace(-1.8,1.8,11))
+        plot(hsinc)
+
+      </pre>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.2.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <p class="mt-4">
+        The result can be seen in Fig. (10.2). This FIR filter has a constant delay factor of
+        d = 5. Observe that here we start with the index n = 0 to obtain a causal filter impulse
+        response h(n), and such that it is symmetric around the delay factor d. We can factor
+        it out from the DTFT of this symmetric impulse response,
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(e^{j\Omega}) = \sum_{n=0}^{2d} h(n) \cdot e^{-j\Omega n}
+ $$"></p>
+
+
+
+      <p class="mt-4">
+        We factor out the center exponential,
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(e^{j\Omega}) = \sum_{n=0}^{2d} h(n) \cdot e^{-j\Omega n}
+ $$"></p>
+
+
+      <p class="mt-4">
+        since h(d - n) = h(d + n) we get:
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(e^{j\Omega}) = e^{-j\Omega d} \cdot \sum_{n=0}^{2d} h(n) \cdot e^{-j\Omega(n-d)}
+ $$"></p>
+
+
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\begin{align*}
+H(e^{j\Omega}) &= e^{-j\Omega d} \cdot \sum_{n=0}^{d} h(n) \cdot (e^{-j\Omega(d-n)} + e^{j\Omega(d-n)}) \\
+&= e^{-j\Omega d} \cdot \sum_{n=0}^{d} h(n) \cdot 2 \cdot \cos(\Omega(d - n))
+\end{align*}
+ $$"></p>
+
+      <p class="mt-4">
+        Because the sum is now real valued, the phase is determined only by the exponential
+        factor:
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\text{angle}(H(e^{j\Omega})) = -d\Omega
+ $$"></p>
+
+
+      <p class="mt-4">
+        Hence here we showed that any symmetric filter has a linear phase, and that the center
+        sample corresponds to the signal delay.
+        Now we can plot its zeros in the complex plane of the z-transform, using the function
+        “zplane”:
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        def zplane(B,A):
+        # Plot Poles and Zeros
+        from matplotlib import patches
+        plt.figure(figsize=(10,8))
+        ax = plt.subplot(111)
+        r = 2.5; plt.axis(’scaled’); plt.axis([-r, r, -r, r])
+        #ticks = [-1, 1]; plt.xticks(ticks); plt.yticks(ticks)
+
+        # Unit Circle
+        uc = patches.Circle((0,0), radius=1, fill=False, color=’black’, ls=’dashed’)
+        ax.add_patch(uc)
+        ax.spines[’left’].set_position(’center’)
+        ax.spines[’bottom’].set_position(’center’)
+        ax.spines[’right’].set_visible(False)
+        ax.spines[’top’].set_visible(False)
+        plt.xlabel(’Re’, horizontalalignment=’right’, x=1.0)
+        plt.ylabel(’Im’, y=1.0)
+        plt.title(’Complex z-Plane’, loc=’right’)
+        plt.grid()
+        plt.plot(np.real(A),np.imag(A),’rx’)
+        plt.plot(np.real(B),np.imag(B),’bo’)
+        zplane(np.roots(hsinc), 0)
+
+
+      </pre>
+
+      <p class="mt-4">
+        The result can be seen in in Fig. (10.3). Observe the zeros near 1.7 and near 0.6, and on
+        the unit circle. Its zeros are computed with the command “roots”, and their magnitude
+        with “abs”:
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        abs(roots(hsinc))
+        array([1.7299423 , 1. , 1. , 0.57805396, 1. ,
+        1. , 1. , 1. , 1. , 1. ])
+
+
+      </pre>
+      <p class="mt-4">
+        Here we can see that we have 8 zeros are on the unit circle, one at distance 1.73 from
+        the origin, and one is at distance 0.578=1/1.73. Hence for those 2 zeros we have one
+        zero inside the unit circle at distance r, and one outside the unit circle at distance 1/r.
+        Linear phase systems and filters have the property, that their zeros are inside and
+        outside the unit circle in the z-domain. For stability, only poles need to be inside
+      </p>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.3.png" class="w-180 h-110 shadow-xl">
+
+      </div>
+
+      <p class="mt-4">
+        the unit circle, not the zeros. But if we want to invert such a filter (for instance for
+        equalization purposes), the zeros turn into poles, and the zeros outside the unit circle
+        turn into poles outside the unit circle, making the inverse filter unstable!
+        To avoid the instability of the inverse filter, we define minimum phase filters such that
+        their inverse is also stable! This means, all their zeros need to be inside the unit circle
+        in the z-domain. We can write all linear filters as a concatenation of a minimum phase
+        filter with an allpass filter,
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = H_{min}(z) \cdot H_{ap}(z)
+ $$"></p>
+
+      <p class="mt-4">
+        This can be seen from a (hypothetical) minimum phase system Hmin(z), which has all
+        its zeros inside the unit circle. Now we concatenate/multiply it with an allpass filter, such that
+        its poles coincide with some of the zeros of the minimum phase filter inside the
+        unit circle. These poles and zeros then cancel, and what is left is the zeros of the allpass
+        filter outside the unit circle at a reverse conjugate position 1/a′
+        , if “a” was the position
+        of the original zero. In this way, we can „mirror out“ zeros from inside the unit circle to
+        the outside. The magnitude response does not change, because we used an allpass (with
+        magnitude 1) for mirroring out the zeros. As a result we have a system with the same
+        magnitude response, but now with zeros outside the unit circle.
+        Assume we would like to equalize or compensate a given transfer function, for instance
+        from a recording. As we saw above, this transfer function can be written as the product
+      </p>
+
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = H_{min}(z) \cdot H_{ap}(z)
+ $$"></p>
+
+      <p>
+        Only Hmin(z) has a stable inverse. Hence we design our compensation filter as
+
+
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H_c(z) = \frac{1}{H_{min}(z)}
+ $$"></p>
+
+      <p>
+        If we apply this compensation filter after our given transfer function, for instance from
+        a recording, we obtain the overall system function as
+      </p>
+      <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+G(z) = H(z) \cdot H_c(z) = H_{ap}(z)
+ $$"></p>
+
+
+      <p class="mt-4">
+        This means the overall transfer function now is an allpass, with a constant magnitude
+        response and only phase changes. (see also [22]).
+        How can we obtain a minimum phase version from a given filter? We basically “mirror
+        in” the zeros from outside the unit circle. Take our above example of the piece of the
+        sinc function filter. In Python we compute the zeros with
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        rt=roots(hsinc)
+        rt
+        array([ 1.7299423 +0.j , 0.0815646 +0.99666806j,
+        0.0815646 -0.99666806j, 0.57805396+0.j ,
+        -0.43829492+0.89883122j, -0.43829492-0.89883122j,
+        -0.84382333+0.53662108j, -0.84382333-0.53662108j,
+        -0.99792378+0.06440599j, -0.99792378-0.06440599j])
+
+
+      </pre>
+
+
+      <p class="mt-4">
+        We see the zero at 1.73 which we need to mirror in (we neglect the zero at infinity, which
+        comes from starting with a zero sample). To achieve this, we first take the z-domain
+        polynomial of the impulse response, and cancel that zero by dividing by the polynomial
+        with only that zero, (1 − 1.73 · z−1) . Fortunately we have the function “deconvolve”,
+        which is identical to polynomial division, to do this:
+      </p>
+
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        import scipy.signal as sp
+        [b, r] = sp.deconvolve(hsinc, [1,-rt[0]])
+        print(’b:’,b)
+        print(’r:’,r)
+        b: [-0.10394325+0.j -0.39694899+0.j -0.75999556+0.j -0.97410682+0.j
+        -0.88510583+0.j -0.53118202+0.j -0.11887148+0.j 0.13500083+0.j
+        0.16024694+0.j 0.06008481+0.j]
+        r: [ 0.00000000e+00+0.j 0.00000000e+00+0.j -1.38777878e-17+0.j
+        0.00000000e+00+0.j 0.00000000e+00+0.j 0.00000000e+00+0.j
+        0.00000000e+00+0.j 0.00000000e+00+0.j 0.00000000e+00+0.j
+        0.00000000e+00+0.j -3.67053610e-13+0.j]
+
+
+      </pre>
+
+
+      <p class="mt-4">
+        Here, r is the remainder. In our case it is practically zero, which means we can indeed
+        divide our polynomial without any remainder, which we expect since the zero we divide
+        by was in the polynomial, so that we can always factor it out.
+        After that we can multiply the obtained polynomial b with the zero inside the unit
+        circle, at position 1/1.73, by multiplying it with the polynomial with only that zero:
+        (1 − 1/1.73 · z−1):
+      </p>
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        hsincmp = sp.convolve(b,[1,-1/rt[0].conjugate()])
+        hsincmp
+        array([-0.10394325+0.j, -0.33686418+0.j, -0.53053762+0.j, -0.53478838+0.j,
+        -0.32201953+0.j, -0.01954309+0.j, 0.18818039+0.j, 0.20371497+0.j,
+        0.08220918+0.j, -0.03254657+0.j, -0.03473226+0.j])
+
+
+      </pre>
+      <p class="mt-4">
+        This hsincmp is now our minimum phase version of our filter! Now we can take a look
+        at the impulse response:
+      </p>
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        plot(hsincmp)
+        xlabel(’Sample’)
+        ylabel(’Value’)
+        title(’Impulse Response of the Minimum Phase Filter’)
+
+
+      </pre>
+      <p class="mt-4">
+        The resulting plot can be seen in Fig. (10.4). Observe that our filter now became nonsymmetric, with
+        the main peak at the beginning of the impulse response! The resulting
+        frequency response is obtained with
+      </p>
+
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        from freqz import *
+        freqz(hsincmp)
+
+
+      </pre>
+
+      <p class="mt-4">
+        and the resulting frequency response can be seen in Fig. (10.5). Now compare the above
+        frequency response of our minimum phase filter with the linear phase version, with
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        freqz(hsinc)
+
+
+      </pre>
+
+      <p class="mt-4">
+        and see the result in Fig. (10.6). Here we can see that the magnitude of the frequency
+        plot is indeed identical between the linear phase and the minimum phase version (except
+        for an offset of a few dB, which is not important because it is a constant gain factor).
+        But looking at the phase, we see that the minimum phase version has less phase lag.
+        Looking at normalized frequency 1.5, we see that the linear phase filter has a phase lag
+      </p>
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.4.png" class="w-180 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <p class="mt-4">
+        (or group delay) of about -7 Rad’s (using unwraping), whereas the minimum phase filter
+        has a reduced phase lag of about -4.5 Rad’s (from frequency zero to 1.5)!
+        If we take the derivative of the phase function to obtain the group delay, we will get
+        correspondingly lower values, which means the minimum phase filter will have less group
+        delay than the linear phase filter. In fact, it has the lowest possible delay for the given
+        magnitude response of the filter. So if you have a given magnitude filter design, and
+        want to obtain the lowest possible delay, you have to take minimum phase filters.
+        Also observe the phase wrap around points. They are not always at +-pi, but in other
+        cases the magnitude has a zero crossing, meaning a sign change happens, which is a
+        phase jump by π.
+      </p>
+
+      <p class="mt-4">
+        A convenient Scipy function to obtain a minimum phase filter with a similar (not
+        exactly the same) magnitude frequency response of a linear phase filter is
+        scipy.signal.minimum_phase.
+        In (i)python type “help(sp.minimum_phase)” to see a description. As input it expects
+        a filter with the squared desired frequency response, which we can obtain by convolving
+        the linear phase filter coefficients with itself. In our example an approximate linear filter
+        is obtained in (i)python with
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        import scipy.signal as sp
+        hsincsq=sp.convolve(hsinc,hsinc)
+        hmin=sp.minimum_phase(hsincsq)
+        plt.figure()
+        plt.plot(np.real(hmin))
+        plt.xlabel(’Sample’)
+        plt.ylabel(’Value’)
+        plt.title(’Impulse Response of the Minimum Phase Filter’)
+        plt.grid()
+
+
+      </pre>
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.5.png" class="w-180 h-110 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <p>
+        The resulting plot can be seen in Fig. (10.7). See and compare the resulting frequency
+        response with
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        from freqz import *
+        freqz(hmin)
+
+
+      </pre>
+
+
+
+
+      <p>
+        The resulting plot can be seen in Fig. (10.8). Observe that the magnitude again looks
+        the same, but the phase looks different, because it starts at 0 instead of pi as before.
+      </p>
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.6.png" class="w-180 h-110 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+      <p>
+        This is because the filter coefficients here have a switched sign. This is no problem
+        because we can alwas change the sign by multiplying the filter or its output by -1.
+        Compare the coefficients by looking at them, with a suitable compensation factor to
+        make them similar,
+      </p>
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        print(’hmin:’, hmin)
+        print(’hsincmp*1.73:’,hsincmp*1.73)
+        hmin: [ 0.17969169 0.58269286 0.91780468 0.92520002 0.55713361 0.03387862
+        -0.32547189 -0.3523952 -0.14226677 0.05622871 0.06012581]
+        hsincmp*1.73: [-0.17982183+0.j -0.58277503+0.j -0.91783009+0.j -0.9251839 +0.j
+        -0.55709378+0.j -0.03380955+0.j 0.32555207+0.j 0.35242689+0.j
+        0.14222187+0.j -0.05630557+0.j -0.06008681+0.j]
+
+
+      </pre>
+      <p>
+        We see: The coefficients are similar, but have indeed opposite signs.
+      </p>
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap10/fig10.7.png" class="w-180 h-110 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+    </mat-card-content>
+
+  </mat-card>
+</div>
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+
+    <mat-card-content class="text-lg">
+
+
+
+      <h3 class="text-2xl font-semibold text-blue-700">10.2 Key Concepts</h3>
+
+
+      <p class="mt-4"><strong>Definition:</strong> Minimum-phase filters are causal and stable systems where
+      the poles and
+      zeros lie inside or on the unit circle in the z-plane. For a given magnitude response, they have the
+    minimum possible group delay.</p>
+
+    <p class="mt-4"><strong>Properties:</strong></p>
+    <ul>
+      <li>Minimum-phase filters have their energy concentrated at the beginning of the impulse response.
+      </li>
+      <li>These filters are unique for a given magnitude response.</li>
+    </ul>
+
+    <p class="mt-4"><strong>All-Pass Decomposition:</strong> A transfer function can be factored into a
+    minimum-phase
+    system and an all-pass filter. The all-pass component does not affect the magnitude but alters the
+  phase.</p>
+
+  <p><strong>Applications:</strong> Used in speech processing and audio equalization, where low group
+delay is crucial.</p>
+
+<p class="mt-4"><strong>Design:</strong> Conversion of a non-minimum-phase system to minimum-phase is
+achieved by
+reflecting zeros outside the unit circle into the inside.</p>
+
+<p class="mt-4"><strong>Python Implementation:</strong> Examples involve designing, analyzing, and
+implementing
+minimum-phase filters using Python libraries such as NumPy and SciPy.</p>
+
+</mat-card-content>
+
+</mat-card>
+</div>
+
+<div class="flex flex-col justify-around items-center gap-2">
+  <img src="assets/images/chap10/fig10.8.png" class="w-160 h-80 ">
+  <h1 class="text-wrap">
+
+  </h1>
+</div>
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+
+    <mat-card-content class="text-lg">
+
+
+
+      <div class="space-y-8">
+
+        <h3 class="text-2xl font-bold text-gray-800">10.3 Homework Problems</h3>
+
+        <!-- Problem 1 -->
+        <div class="space-y-2">
+          <h4 class="text-xl font-semibold text-gray-700">Problem 1: Identification of Minimum-Phase
+          Filters</h4>
+          <p class="text-gray-700">
+            Given the following z-transform, identify if it corresponds to a minimum-phase system:
+          </p>
+          <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = \frac{(z - 0.5)(z - 0.8)}{(z - 0.4)(z - 0.7)} $$"></p>
+
+          <ul class="list-disc ml-6 text-gray-700">
+            <li>Check the location of zeros and poles and justify your answer.</li>
+          </ul>
+        </div>
+
+        <!-- Problem 2 -->
+        <div class="space-y-2">
+          <h4 class="text-xl font-semibold text-gray-700">Problem 2: Conversion to Minimum-Phase</h4>
+          <p class="text-gray-700">A system has the transfer function:</p>
+          <div class="bg-gray-100 font-mono px-3 py-2 rounded text-sm inline-block">
+            H(z) = ((z + 1.2)(z - 0.6)) / (z + 0.5)
+          </div>
+          <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ H(z) = \frac{(z + 1.2)(z - 0.6)}{(z + 0.5)}
+
+ $$"></p>
+
+          <ol class="list-decimal ml-6 text-gray-700 space-y-1">
+            <li>Plot the poles and zeros in the z-plane.</li>
+            <li>Reflect any zeros outside the unit circle to obtain a minimum-phase system.</li>
+            <li>Provide the updated transfer function.</li>
+          </ol>
+        </div>
+
+        <!-- Problem 3 -->
+        <div class="space-y-2">
+          <h4 class="text-xl font-semibold text-gray-700">Problem 3: Group Delay Analysis</h4>
+          <p class="text-gray-700">For the following minimum-phase filter:</p>
+          <div class="bg-gray-100 font-mono px-3 py-2 rounded text-sm inline-block">
+            H(z) = (1 - 0.5 z⁻¹) / (1 + 0.8 z⁻¹)
+          </div>
+          <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = \frac{1 - 0.5z^{-1}}{1 + 0.8z^{-1}}
+ $$"></p>
+          <ul class="list-disc ml-6 text-gray-700 space-y-1">
+            <li>Calculate the group delay using its phase response.</li>
+            <li>Plot the group delay for the frequency range ω in [0, π].</li>
+          </ul>
+        </div>
+
+        <!-- Problem 4 -->
+        <div class="space-y-2">
+          <h4 class="text-xl font-semibold text-gray-700">Problem 4: Design and Implementation</h4>
+          <p class="text-gray-700">Design a minimum-phase low-pass FIR filter with the following
+          specifications:</p>
+          <ul class="list-disc ml-6 text-gray-700 space-y-1">
+            <li>Sampling frequency: 8000 Hz</li>
+            <li>Cutoff frequency: 1500 Hz</li>
+            <li>Order: 50</li>
+          </ul>
+          <ol class="list-decimal ml-6 text-gray-700 space-y-1">
+            <li>Implement the filter using Python.</li>
+            <li>Verify the minimum-phase property by plotting the zeros.</li>
+          </ol>
+        </div>
+
+        <!-- Problem 5 -->
+        <div class="space-y-2">
+          <h4 class="text-xl font-semibold text-gray-700">Problem 5: Energy Concentration</h4>
+          <ol class="list-decimal ml-6 text-gray-700 space-y-1">
+            <li>Prove analytically that a minimum-phase system has energy concentrated at the start of
+            its impulse response compared to a linear-phase counterpart.</li>
+            <li>Demonstrate this using Python by generating impulse responses for both filter types with
+            the same magnitude response.</li>
+          </ol>
+        </div>
+
+        <!-- Problem 6 -->
+        <div class="space-y-2">
+          <h4 class="text-xl font-semibold text-gray-700">Problem 6: All-Pass Decomposition</h4>
+          <p class="text-gray-700">Decompose the following transfer function into a minimum-phase
+          component and an all-pass filter:</p>
+          <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = \frac{1 - 1.5z^{-1} + 0.75z^{-2}}{1 + 0.5z^{-1}}
+ $$"></p>
+
+          <ul class="list-disc ml-6 text-gray-700 space-y-1">
+            <li>Verify that the product of the minimum-phase and all-pass components yields the original
+            H(z).</li>
+          </ul>
+        </div>
+
+      </div>
+
+
+    </mat-card-content>
+
+  </mat-card>
+</div>
+
+<!-- Test section  -->
+
+
+<div class="flex flex-col items-center p-3 gap-6">
+  <h2 class="text-2xl font-sans font-semibold mb-4">🧠 Test Your Knowledge</h2>
+
+  @for (q of questions; track q) {
+    <div class="w-full md:w-2/3">
+      <mat-card class="mat-elevation-z6 p-6 font-sans">
+        <mat-card-title>{{ q.text }}</mat-card-title>
+        <br>
+          <mat-card-content>
+            <mat-radio-group [(ngModel)]="q.selectedAnswer" [disabled]="q.isSubmitted">
+              @for (option of q.options; track option) {
+                <div class="mb-2">
+                  <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
+                </div>
+              }
+            </mat-radio-group>
+            <div class="mt-4 flex gap-3">
+              <button matFab extended (click)="submitAnswer(q)"
+                [disabled]="!q.selectedAnswer || q.isSubmitted">
+                Submit
+              </button>
+              @if (q.isSubmitted) {
+                <button matFab extended style="background-color:black ; color: aliceblue;"
+                  (click)="tryAgain(q)">
+                  Try Again
+                </button>
+              }
+            </div>
+            <div class="mt-4">
+              @if (q.isSubmitted && q.selectedAnswer === q.correctAnswer) {
+                <p
+                  class="text-green-600 font-semibold font-sans">
+                  ✅ Correct!
+                </p>
+              }
+              @if (q.isSubmitted && q.selectedAnswer !== q.correctAnswer) {
+                <p
+                  class="text-red-600 font-semibold font-sans">
+                  ❌ Incorrect. Correct answer: <strong>{{ q.correctAnswer }}</strong>.
+                </p>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+  </div>
+
+
+</div>

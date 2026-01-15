@@ -1,0 +1,237 @@
+<div class="m-2 space-y-4">
+
+    <div class="text-3xl font-sans font-semibold">
+        <h1>Chapter 5 : Lab</h1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Objective
+                </h3>
+
+                <p class="mt-4">
+                    Apply vector quantization and LBG algorithm concepts through hands-on Python exercises. You will
+                    implement VQ encoders/decoders, train codebooks using the LBG algorithm, and analyze distortion vs.
+                    codebook size trade-offs.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+Exercise 1: Fixed Codebook Vector Quantization                </h3>
+
+                <p class="mt-4">
+                    Goal: Understand the basic encoding and decoding process with a pre-defined codebook.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>
+                </p>
+
+                <ul class="mt-2 list-disc ml-6">
+                    <li>Run the script and understand the plot</li>
+                    <li>Change the CODEBOOK array and re-run</li>
+                    <li>Change N_SAMPLES and the data distribution:</li>
+                </ul>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 title="Examples of Uniform PDFs" [code]="chapter7example1">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. How does distortion change as you increase the number of codewords?
+                </p>
+
+                <p class="mt-3">
+                    2. What happens when codeword placement is poor (e.g., all in one corner)?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+Exercise 2: Implementing the LBG Algorithm                </h3>
+
+                <p class="mt-4">
+                   Goal: Implement the iterative LBG algorithm to train a codebook from scratch.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> 
+                </p>
+
+                 <ul class="mt-2 list-disc ml-6">
+                    <li>Implement the two key steps: nearest-neighbor assignment and centroid update.</li>
+                    <li>Monitor convergence by tracking distortion over iterations.</li>
+                    <li>Visualize how codewords move during training.</li>
+                </ul>
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 title="Examples of Uniform PDFs" [code]="chapter7example2">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. How many iterations does it take to converge?
+                </p>
+
+                <p class="mt-3">
+                    2. What happens if you initialize with very poor codeword positions?
+                </p>
+
+                <p class="mt-3">
+                    3. Try different values of K (2, 4, 8). How does convergence speed change?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 3: Codebook Size vs. Distortion Trade-off
+                </h3>
+
+                <p class="mt-4">
+                    Goal: Analyze the rate-distortion trade-off by varying codebook size.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>
+                </p>
+                  <ul class="mt-2 list-disc ml-6">
+                    <li>Train codebooks of different sizes (K = 2, 4, 8, 16, 32).</li>
+                    <li>Plot distortion vs. codebook size.</li>
+                    <li>Plot bits-per-vector vs. distortion.</li>
+                </ul>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 title="Examples of Uniform PDFs" [code]="chapter7example3">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. At what point does adding more codewords give diminishing returns?
+                </p>
+
+                <p class="mt-3">
+                    2. If you had a bit-rate budget of 4 bits per vector, which K would you choose?
+                </p>
+
+                <p class="mt-3">
+                    3.How does the distortion reduction scale with doubling K?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                   Exercise 4: Speech Signal Vector Quantization
+                </h3>
+
+                <p class="mt-4">
+                   Goal: Apply VQ to a real 1D signal by forming vectors from consecutive samples.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>
+                </p>
+
+                 <ul class="mt-2 list-disc ml-6">
+                    <li>Create vectors of dimension N=4 from a speech-like signal.</li>
+                    <li>Train a codebook and encode/decode the signal.</li>
+                    <li>Compare original vs. reconstructed signal and compute SNR.</li>
+                </ul>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 title="Examples of Uniform PDFs" [code]="chapter7example4">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. How does SNR change with different K values (try 8, 16, 64)?
+                </p>
+
+                <p class="mt-3">
+                    2. What happens if you change VECTOR_DIM to 2 or 8?
+                </p>
+
+                <p class="mt-3">
+                    3. Can you hear the difference if you save and play the audio?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+</div>

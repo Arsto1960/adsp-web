@@ -1,0 +1,36 @@
+<div class="space-y-6" >
+    
+    <h3 class="text-3xl font-medium font-sans " style="color: rgb(10, 10, 10);">
+        Chapter 3 : Interactive Demo
+    </h3>
+
+
+  <mat-card style="background: linear-gradient(to right, #4B1248, #F0C27B); color: white;" >
+    <h3 class="text-2xl font-bold font-sans mb-4">🔊 Signal-to-Noise Ratio (SNR)</h3>
+
+    <p class="mb-4 text-gray-100">
+      Positive SNR → Signal dominates <br />
+      Negative SNR → Noise dominates
+    </p>
+
+    <div class="slider-block mb-4">
+      <label class="font-medium">SNR (dB): {{ snrDb }}</label>
+      <mat-slider min="-20" max="40" step="1">
+        <input matSliderThumb [(ngModel)]="snrDb" (input)="updateNoiseLevel()" />
+      </mat-slider>
+    </div>
+
+    <div class="flex gap-4">
+      <button mat-raised-button color="primary" (click)="startAudio()" [disabled]="isPlaying">▶ Play</button>
+     
+    </div>
+
+  </mat-card>
+
+  <mat-card appearance="outlined"  >
+   
+      <div #chart class="chart"></div>
+  
+  </mat-card>
+
+</div>

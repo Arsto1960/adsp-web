@@ -1,0 +1,19 @@
+.container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+mat-card {
+  padding: 16px;
+}
+
+.stable {
+  color: green;
+  font-weight: bold;
+}
+
+.unstable {
+  color: red;
+  font-weight: bold;
+}

@@ -1,0 +1,173 @@
+<div class="m-4">
+
+
+
+    
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans mb-3" style="color: rgb(13, 13, 13);">
+                    12.3 Prediction
+                </h3>
+                <p class="text-lg mt-3">
+                    Prediction can be seen as a special case of a Wiener filter, where the noise of our signal
+                    corresponds to a shift of our signal into the past.
+
+                    Our goal is to make a “good” estimation of the present sample of our signal, based on past signal
+                    samples.
+
+                    “Good” here means, again, in a mean squared error sense.
+
+
+                </p>
+
+                <p class="text-lg mt-3">
+                    Basically, we can now take our Wiener Filter formulation and specialize it to this case.
+
+
+                </p>
+
+
+                <p class="text-lg mt-3">Looking at our matrix formulation, we get:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\begin{bmatrix} x(1) & x(0) \\ x(2) & x(1) \\ x(3) & x(2) \\ \vdots & \vdots \end{bmatrix} \cdot \begin{bmatrix} h(0) \\ h(1) \end{bmatrix} = \begin{bmatrix} x(2) \\ x(3) \\ x(4) \\ \vdots \end{bmatrix}
+ $$"></p>
+
+                <p class="text-lg mt-3">or</p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{A} \cdot {h}^T \to {x}
+
+ $$"></p>
+
+
+                <p class="text-lg mt-3">
+                    This means the input to our filter is always starting at one sample in the past, going further down
+                    into the past.
+                    Its goal is to estimate or “predict” the next coming sample.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Basically, this means that instead of additive white noise, our distortion is now a <b>delay
+                        operator</b> (which is still a linear operator).
+                </p>
+
+                <p class="text-lg mt-3">
+                    Now we can again use our approach with pseudo-inverses to obtain the mean-squared-error solution:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{h} = ({A}^T \cdot {A})^{-1}{A}^T \cdot {x}
+ $$"></p>
+
+
+                <p class="text-lg mt-3">
+                    with the matrix A defined as above.
+                </p>
+
+                <p class="text-lg mt-3">
+                    This now also leads to a statistical description, with Aᵀ * A converging to:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{A}^T \cdot {A} \to {R}_{xx} = \begin{bmatrix} r_{xx}(0) & r_{xx}(1) & r_{xx}(2) & \ldots \\ r_{xx}(1) & r_{xx}(0) & r_{xx}(1) & \ldots \\ \vdots & \vdots & \vdots & \ddots \end{bmatrix}
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    This is plausible because now y(n) is just the delayed signal, and the auto-correlation function of
+                    the delayed signal is the same as that of the original signal.
+                </p>
+
+
+                <p class="text-lg mt-3">Next, we need the cross-correlation A<sup>T</sup> * x.</p>
+
+                <p class="text-lg mt-3">Since we now just have this one sample in the future as our target vector, this
+                    converges to the
+                    auto-correlation vector starting at lag 1:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{A}^T \cdot {x} \to {r}_{xx} = \begin{bmatrix} r_{xx}(1) \\ r_{xx}(2) \\ \vdots \end{bmatrix}
+ $$"></p>
+
+
+                <p class="text-lg mt-3">So together, we get the solution for our prediction filter as:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{h} = ({R}_{xx})^{-1} {r}_{xx}
+ $$"></p>
+
+
+                <br>
+
+                <p class="text-lg mt-3">A system that produces the prediction error (for example, as part of an encoder)
+                    can be seen below:
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.11.png" class="w-180 h-110 ">
+
+
+                </div>
+
+
+
+
+                <p class="text-lg mt-3">
+                    Here, x(n) is the signal to be predicted. H(z) is our prediction filter, whose coefficients
+                    are obtained using the Wiener approach from the previous lecture slides:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{h} = ({R}_{xx})^{-1} {r}_{xx}
+ $$"></p>
+                <p class="text-lg mt-3">
+                    H(z) is simply the z-transform of that filter. It operates only on past samples
+                    (which is why the delay element z<sup>-1</sup> appears before it).
+                </p>
+
+                <p class="text-lg mt-3">
+                    x̂(n) is the predicted signal, and the prediction error is:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+e(n) = x(n) - \hat{x}(n)
+ $$"></p>
+
+
+                <p class="text-lg mt-3">
+                    Thus, the system that produces the prediction error has the z-domain transfer function:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+H_{err}(z) = 1 - z^{-1} \cdot H(z)
+ $$"></p>
+
+                <p class="text-lg mt-3">This can function as an encoder. Observe that we can reconstruct the original
+                    signal x(n) in a
+                    decoder from the prediction error e(n), using the system shown in Figure 12.12.</p>
+
+                <p class="text-lg mt-3">Recall that the encoder computed:</p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.12.png" class="w-180 h-110 ">
+
+
+                </div>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+e(n) = x(n) - \hat{x}(n)
+ $$"></p>
+
+
+                <p class="text-lg mt-3">
+                    The feedback loop in the decoder is causal because it only uses past, already reconstructed samples.
+                </p>
+
+                <p class="text-lg mt-3">Observe that the decoder's transfer function is:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+H_{rec}(z) = \frac{1}{1 - z^{-1} \cdot H(z)} = \frac{1}{H_{perr}(z)}
+ $$"></p>
+
+
+                <p class="text-lg mt-3">
+                    This is exactly the inverse of the encoder, as expected.
+                </p>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+</div>

@@ -1,0 +1,61 @@
+<div class="m-4">
+
+    
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.5 Neural Network Implementation
+                </h3>
+
+
+                <p class="mt-4">
+
+
+                    Again, we can also use the numerical optimization of **PyTorch** instead of our closed-form solution
+                    from **Wiener–Hopf**, and a `conv1d` layer.
+
+                </p>
+                We also use the **mean squared error** as the minimization criterion or “loss function”.
+                <p class="mt-4">
+                    In this case, this does not differ from the target of the closed-form formulation, and hence we
+                    obtain almost the same solution.
+
+                </p>
+                <p class="mt-4">
+                    Here, the desired target signal **Y** is the audio input signal **X**, but 1 sample in the future.
+
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+X = audio[:-L]    # remove last samples (conv makes it longer again)
+Y = audio[1:]     # remove first sample, for the signal to predict
+                   # 1 sample in the future
+
+
+</pre>
+                <p class="mt-4">
+
+                    ​
+                    We can let it run and see it with:
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+python3 pytorch_linpred_inputs.py
+
+</pre>
+
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+
+
+
+</div>

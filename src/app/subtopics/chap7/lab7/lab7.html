@@ -1,0 +1,239 @@
+<div class="m-2 space-y-4">
+
+  <div class="text-3xl font-sans font-semibold">
+    <h1>Chapter 7 : Lab</h1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Objective
+        </h3>
+
+        <p class="mt-4">
+          Apply z-transform analysis and filter design concepts through hands-on Python exercises.
+          You will implement filters, analyze their properties, and visualize their behavior in time
+          and frequency domains.
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Exercise 1: Understanding the Shift Property
+        </h3>
+
+        <p class="mt-4">
+          Goal: Verify that a delay in the time domain corresponds to multiplication by z to the power
+          minus one in the z-domain.
+        </p>
+
+        <p class="mt-4">
+          <strong>Task:</strong> Implement both quantizer types and compare their behavior for signals
+          centered around zero.
+        </p>
+
+        <ul class="mt-2 list-disc ml-6">
+          <li>Create a simple signal: x = [1, 2, 3, 4]</li>
+          <li>Create a delayed version: x_delayed = [0, 1, 2, 3, 4]</li>
+          <li>Manually compute their z-transforms as polynomials</li>
+          <li>Verify the shift property</li>
+        </ul>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <app-pycodechap1
+      title="Examples of Uniform PDFs"
+      [code]="chapter7example1">
+    </app-pycodechap1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Questions:
+        </h3>
+
+        <p class="mt-4">
+          1. Does X_delayed(z) = X(z) multiplied by z to the power minus one hold?
+        </p>
+
+        <p class="mt-3">
+          2. What happens if you delay the signal by 2 samples?
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Exercise 2: FIR Filter Design - Moving Average
+        </h3>
+
+        <p class="mt-4">
+          Goal: Implement and analyze a simple moving average FIR filter.
+        </p>
+
+        <p class="mt-4">
+          <strong>Task:</strong> Create a 5-point moving average filter and analyze its frequency
+          response.
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <app-pycodechap1
+      title="Examples of Uniform PDFs"
+      [code]="chapter7example2">
+    </app-pycodechap1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Questions:
+        </h3>
+
+        <p class="mt-4">
+          1. What type of filter is this (low-pass, high-pass, or band-pass)?
+        </p>
+
+        <p class="mt-3">
+          2. Why does the moving average attenuate high frequencies?
+        </p>
+
+        <p class="mt-3">
+          3. What is the trade-off when increasing M?
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Exercise 3: IIR Filter - First Order Low-Pass
+        </h3>
+
+        <p class="mt-4">
+          Goal: Implement the simple IIR filter from section 7.2.4 and study stability.
+        </p>
+
+        <p class="mt-4">
+          <strong>Task:</strong> Implement y(n) = x(n) + p multiplied by y(n minus 1) for different
+          values of p and observe stability.
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <app-pycodechap1
+      title="Examples of Uniform PDFs"
+      [code]="chapter7example3">
+    </app-pycodechap1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Questions:
+        </h3>
+
+        <p class="mt-4">
+          1. What happens when the absolute value of p is less than 1? What happens when it is greater
+          than 1?
+        </p>
+
+        <p class="mt-3">
+          2. Can you relate the pole position to the impulse response behavior?
+        </p>
+
+        <p class="mt-3">
+          3. Why is the case p = 0.99 close to instability?
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Exercise 4: Pole-Zero Analysis
+        </h3>
+
+        <p class="mt-4">
+          Goal: Design filters by placing poles and zeros, then visualize with pole-zero plots.
+        </p>
+
+        <p class="mt-4">
+          <strong>Task:</strong> Create a notch filter to remove a specific frequency
+          (for example, 50 Hz power line noise).
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <app-pycodechap1
+      title="Examples of Uniform PDFs"
+      [code]="chapter7example4">
+    </app-pycodechap1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+
+        <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+          Questions:
+        </h3>
+
+        <p class="mt-4">
+          1. What happens if poles are exactly on the unit circle?
+        </p>
+
+        <p class="mt-3">
+          2. How does the parameter r affect the notch width?
+        </p>
+
+        <p class="mt-3">
+          3. Design a notch filter for 60 Hz power line noise
+          (assume sampling frequency equals 1000 Hz).
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+</div>

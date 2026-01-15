@@ -1,0 +1,55 @@
+<div class="space-y-6 m-4">
+
+    <h3 class="text-3xl font-medium">Chapter 5 : Interactive Demo</h3>
+
+    <!-- Data Setup -->
+    <mat-card class="space-y-4 bg-gradient-to-r from-blue-300 to-blue-600 p-4">
+        <h3 class="text-2xl">Data Setup</h3>
+
+        <mat-slider min="200" max="2000" step="100" style="width: 40%;">
+            <label class="font-medium">Samples : {{ samples }}</label>
+            <input matSliderThumb [(ngModel)]="samples" (input)="generateData()"/>
+        </mat-slider>
+
+        <mat-slider min="1" max="10" step="1" style="width: 40%;">
+            <label class="font-medium">Clusters : {{ clusters }}</label>
+            <input matSliderThumb [(ngModel)]="clusters" (input)="generateData()" />
+        </mat-slider>
+
+        <mat-slider min="0.1" max="3" step="0.01" style="width: 40%;">
+            <label class="font-medium">Dispersion : {{ dispersion }}</label>
+            <input matSliderThumb [(ngModel)]="dispersion" (input)="generateData()" />
+        </mat-slider>
+    </mat-card>
+
+    <!-- Algorithm -->
+    <mat-card class="space-y-4 bg-gradient-to-r from-green-400 to-blue-600 p-4">
+        <h3 class="text-2xl">Algorithm</h3>
+
+        <mat-form-field style="width: 25%;">
+            <mat-label>Target N</mat-label>
+            <mat-select [(value)]="targetSize">
+                <mat-option *ngFor="let n of [2,4,8,16,32,64,128]" [value]="n">
+                    {{ n }}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field style="width: 25%;">
+            <mat-label>Splitting Noise ε</mat-label>
+            <input matInput type="number" step="0.01" [(ngModel)]="epsilon" >
+        </mat-form-field>
+
+        <button mat-raised-button (click)="doubleN()"  class="w-50" style="background-color: black; color: white;" >✂️ Double N</button>
+        <button mat-raised-button (click)="reset()" style="background-color: black; color: white;"  class="w-50">Reset</button>
+    </mat-card>
+
+    <!-- Scatter -->
+    <mat-card class="p-4 w-250 h-130">
+        <canvas baseChart [type]="'bubble'" [data]="scatterChartData" [options]="chartOptions">
+        </canvas>
+    </mat-card>
+
+
+
+</div>

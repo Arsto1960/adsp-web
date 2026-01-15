@@ -1,0 +1,181 @@
+<div class="m-4 space-y-4">
+
+    
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.6 Online Adaptation, LPC
+                </h3>
+
+
+                <p class="mt-4">
+                    The previous example calculated the prediction coefficients for the entire speech file
+                    (or the first 100,000 samples).
+                </p>
+
+                <p class="mt-4">
+                    But when we look at the signal waveform, we see that its characteristics — and hence its
+                    statistics — are changing; it is not stationary.
+                </p>
+
+                <p class="mt-4">
+                    Hence, we can expect a prediction improvement if we divide the speech signal into small
+                    pieces for the computation of the prediction coefficients — pieces which are small enough
+                    to show roughly constant statistics.
+                </p>
+
+                <p class="mt-4">
+                    In speech coding, those pieces are usually of length 20 ms, and this approach is called
+                    Linear Predictive Coding (LPC).
+                </p>
+
+                <p class="mt-4">
+                    Here, the prediction coefficients are calculated usually every 20 ms, and then transmitted
+                    alongside the prediction error, from the encoder to the decoder.
+                </p>
+
+                <p class="mt-4">
+                    This also has the advantage that it needs no training set, and computes the coefficients
+                    from the actual samples in the current block.
+                </p>
+
+                <p class="mt-4">
+                    Observe that this also needs a very fast optimization — hence, the PyTorch approach
+                    with the Adam optimizer would not be suitable.
+                </p>
+
+                <p class="mt-4">
+                    We use our faster closed-form solution instead.
+                </p>
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.6.1 Python Example
+                </h3>
+
+
+                <p class="mt-4">
+
+
+                    Our speech signal is sampled at 32 kHz, hence a block of 20 ms has 640 samples. We
+                    write a python file with name “[lpcexample.py](http://lpcexample.py/)”, with the following content,
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+import numpy as np
+from sound import *
+import matplotlib.pyplot as plt
+import scipy.signal as sp
+
+x, fs = wavread('fspeech.wav');
+
+# convert to float array type, normalize to -1 < x < 1:
+x = np.array(x, dtype=float) / 2**15
+
+print np.size(x)
+
+sound(2**15 * x, fs)
+
+L = 10  # predictor length
+len0 = np.max(np.size(x))
+
+e = np.zeros(np.size(x))  # prediction error variable initialization
+blocks = np.int(np.floor(len0 / 640))  # total number of blocks
+state = np.zeros(L)  # Memory state of prediction filter
+
+# Building our Matrix A from blocks of length 640 samples and process:
+for m in range(0, blocks):
+    A = np.zeros((640 - L, L))  # trick: up to 630 to avoid zeros
+    for n in range(0, 640 - L):
+        A[n, :] = np.flipud(x[m * 640 + n + np.arange(L)])
+
+    # Construct our desired target signal d, one sample into the future:
+    d = x[m * 640 + np.arange(L, 640)]
+
+    # Compute the prediction filter:
+    h = np.dot(np.dot(np.linalg.inv(np.dot(A.transpose(), A)), A.transpose()), d)
+
+    hperr = np.hstack([1, -h])
+
+    e[m * 640 + np.arange(0, 640)], state = sp.lfilter(
+        hperr, [1], x[m * 640 + np.arange(0, 640)], zi=state
+    )
+
+# The mean-squared error now is:
+print "The average squared error is:", np.dot(e.transpose(), e) / np.max(np.size(e))
+# The average squared error is: 0.000113347859337
+
+# Compare with signal power:
+print "Compare that with the mean squared signal power:",
+np.dot(x.transpose(), x) / np.max(np.size(x))
+# 0.00697569381701
+
+print "The Signal to Error ratio is:", np.dot(x.transpose(), x) / np.dot(e.transpose(), e)
+# 61.5423516403
+
+# So our LPC pred err energy is more than a factor of 61 smaller than the signal energy!
+# Listen to the prediction error:
+sound(2**15 * e, fs)
+
+# Take a look at the signal and its prediction error:
+plt.figure()
+plt.plot(x)
+plt.plot(e, 'r')
+plt.xlabel('Sample')
+plt.ylabel('Normalized Value')
+plt.legend(('Original', 'Prediction Error'))
+plt.title('LPC Coding')
+plt.show()
+
+# Decoder:
+xrek = np.zeros(x.shape)  # initialize reconstructed signal memory
+state = np.zeros(L)       # initialize memory state of prediction filter
+
+for m in range(0, blocks):
+    hperr = np.hstack([1, -h[m, :]])
+    # predictive reconstruction filter:
+    xrek[m * 640 + np.arange(0, 640)], state = sp.lfilter(
+        [1], hperr, e[m * 640 + np.arange(0, 640)], zi=state
+    )
+
+# Listen to the reconstructed signal:
+sound(2**15 * xrek, fs)
+
+</pre>
+                <p class="mt-4">
+                    Now execute the program with python lpcexample.py
+                    The resulting plot can be seen in Fig. (12.16). Here it can be seen that the prediction
+                    error is even smaller than before.
+                    The decoder works the way as shown in the previous example, and the reconstructed
+                    speech can be heard in the end.
+
+                </p>
+                <p class="mt-4">
+                    LPC type coders are for instance speech coders, where usually 12 coefficients are used
+                    for the prediction, and transmitted as side information every 20 ms. The prediction
+                    error is parameterized and transmitted as parameters with a very low bit rate. This
+                    kind of system is used for instance in most digital cell phones systems.
+                </p>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+
+
+</div>

@@ -1,0 +1,128 @@
+<div class="m-2 space-y-4">
+
+    <h3 class="text-3xl font-medium font-sans">
+        Chapter 8 : Interactive Demo
+    </h3>
+
+    <mat-tab-group animationDuration="0ms">
+        <mat-tab label="1. Filter Design">
+            <div class="space-y-4 p-4">
+
+
+
+                <div>
+
+                    <mat-card class="p-4 w-200  bg-gradient-to-r from-blue-300 to-blue-600">
+
+                        <h3 class="text-xl font-medium font-sans mb-2 text-gray-100">
+                            Data Setup
+                        </h3>
+
+                        <div>
+                            <mat-label>Filter Order (N): {{ N }}</mat-label>
+                            <mat-slider min="8" max="128" step="2" 
+                                style="width: 50%;">
+                                <input matSliderThumb [(ngModel)]="N" (input)="updateFIR()" />
+                            </mat-slider>
+                        </div>
+
+                        <!-- Passband End -->
+                        <div>
+                            <mat-label>Passband End: {{ passEdge | number:'1.2-2' }}</mat-label>
+                            <mat-slider min="0.01" max="0.45" step="0.01" 
+                                 style="width: 50%;">
+                                <input matSliderThumb [(ngModel)]="passEdge" (input)="updateFIR()" />
+                            </mat-slider>
+                        </div>
+
+                        <!-- Stopband Start -->
+                        <div>
+                            <mat-label>Stopband Start: {{ stopEdge | number:'1.2-2' }}</mat-label>
+                            <mat-slider min="0.01" max="0.49" step="0.01"
+                                 style="width: 50%;">
+                                <input matSliderThumb [(ngModel)]="stopEdge" (input)="updateFIR()" />
+                            </mat-slider>
+                        </div>
+
+                        <!-- Passband Weight -->
+                        <div>
+                            <mat-label>Passband Weight: {{ wPass }}</mat-label>
+                            <mat-slider min="1" max="100" step="1" 
+                                style="width: 50%;">
+                                <input matSliderThumb [(ngModel)]="wPass" (input)="updateFIR()" />
+                            </mat-slider>
+                        </div>
+
+                        <!-- Stopband Weight -->
+                        <div>
+                            <mat-label>Stopband Weight: {{ wStop }}</mat-label>
+                            <mat-slider min="1" max="1000" step="1"
+                                style="width: 50%;">
+                                <input matSliderThumb [(ngModel)]="wStop" (input)="updateFIR()" />
+                            </mat-slider>
+                        </div>
+                    </mat-card>
+
+
+                </div>
+
+
+                <div class="space-y-6">
+
+
+                    <mat-card appearance="outlined" class="p-4 w-280 h-150">
+
+                        <h3 class="text-3xl font-medium font-sans mb-2">
+                            Frequency Response
+                        </h3>
+                        <canvas baseChart [data]="freqChartData" [type]="freqChartType">
+                        </canvas>
+
+
+                    </mat-card>
+
+                    <mat-card class="p-4 w-280 h-160" appearance="outlined">
+
+
+                        <h3 class="text-3xl font-medium font-sans mb-2 ">
+                            Impulse Response
+                        </h3>
+                        <canvas baseChart [data]="impulseChartData" [type]="impulseChartType">
+                        </canvas>
+
+                    </mat-card>
+                </div>
+
+
+            </div>
+
+
+        </mat-tab>
+        <mat-tab label="2. Noble Identities">
+
+            <div class="p-4">
+                <app-id82></app-id82>
+
+            </div>
+
+
+        </mat-tab>
+        <mat-tab label="3. Polyphase Efficiency">
+
+            <div class="p-4">
+                <app-id83></app-id83>
+
+            </div>
+
+
+        </mat-tab>
+    </mat-tab-group>
+
+
+
+
+
+
+
+
+</div>

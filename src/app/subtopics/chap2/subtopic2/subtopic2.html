@@ -1,0 +1,68 @@
+<div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+
+
+                <h2 class="text-2xl font-semibold mt-6">2.4 Non-full Range Signals</h2>
+
+                <p class="text-lg mt-3">
+                    What happens if the signal is not full range? What is the SNR if we have a signal with
+                    reduced range? Assume our signal has an amplitude of A / c with a factor c > 1.
+                </p>
+
+                <p class="text-lg mt-3">
+                    We can plug this into our equation:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+
+SNR = \frac{(A/c)^2}{\Delta^2} = \frac{(A/c)^2}{(A/2^N)^2} = 2^{2N} / c^2 \tag{2.7} $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+
+SNR_{dB} = 10 \cdot \log_{10}(2^{2N}/c^2) = 10 \cdot 2N \cdot \log_{10}(2) - 20 \cdot \log_{10}(c) \approx 6.02N \text{ dB} - 20 \cdot \log_{10}(c) \tag{2.8} $$">
+                </p>
+
+
+
+                <p class="text-lg mt-3">
+                    The term 20 · log10(c) is the number of decibels by which we are below full range.
+                    This means the SNR is reduced by exactly that amount.
+                </p>
+
+
+                <h3 class="text-xl font-semibold mt-6">2.4.1 Example</h3>
+
+                <p class="text-lg mt-3">
+                    For a 16-bit quantizer, the SNR for a full-range uniform signal is:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$  SNR = 6.02 \cdot 16 \text{ dB} = 96.32 \text{ dB} \tag{2.9} 
+
+ $$">
+                </p>
+
+
+
+                <p class="text-lg mt-3">
+                    Now assume the same signal is 20 dB below full range (i.e., only one-tenth of the
+                    full range). The resulting SNR is:
+                </p>
+
+                <p class="text-lg font-mono mt-2 text-center">
+                    96.32 dB − 20 dB = 76.32 dB
+                </p>
+
+                <p class="text-lg mt-3">
+                    This is much lower. It shows why it is important not to leave too much headroom:
+                    a sound engineer should keep the signal as high as possible without reaching full
+                    range to avoid clipping.
+                </p>
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+

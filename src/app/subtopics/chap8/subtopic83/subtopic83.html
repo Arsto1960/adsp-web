@@ -1,0 +1,323 @@
+<div class="m-2 space-y-4">
+
+
+
+     <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans ">
+                    8.3 Polyphase Representation
+                </h3>
+
+
+
+
+
+                <p class="mt-4">
+                    The Noble identities allow the construction of efficient sampling-rate–conversion systems.
+                    Using them, we can design filters that operate at lower sampling rates, reducing computational
+                    cost. Normally, filtering was performed at the high sampling rate, but polyphase decomposition
+                    makes low-rate filtering possible.
+                </p>
+
+                <p class="mt-4">
+                    Any filter H(z) can be rewritten as a sum of delayed and upsampled versions of its
+                    phase-shifted and downsampled impulse response. This creates useful filters from the otherwise
+                    unusable upsampled versions produced by replacing z with z to the power N.
+                </p>
+
+                <p class="mt-4">
+                    The general polyphase decomposition of a filter is:
+                </p>
+<p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ H(z) = H_0(z^N) + H_1(z^N)\cdot z^{-1} + \ldots + H_{N-1}(z^N)\cdot z^{-(N-1)}
+
+ $$">
+                </p>
+              
+
+                <p class="mt-4">
+                    H0(z raised to N) contains the coefficients of the original filter at positions mN (phase 0).<br>
+                    H1(z raised to N) contains the coefficients at positions mN + 1 (phase 1).<br>
+                    In general, Hi(z) contains the coefficients at positions mN + i (phase i).
+                </p>
+
+                <p class="mt-4">
+                    Hi(z) is the z-transform of h(mN + i), where h(n) is the impulse response of the original filter.
+                    Because i represents a phase index, the functions Hi(z) are called <strong>polyphase
+                        components</strong>.
+                </p>
+
+                <p class="mt-4">
+                    Figures (8.8) and (8.9) show how a simple signal can be decomposed into N upsampled polyphase
+                    components for N = 3. Each component contains zeros inserted between samples.
+                </p>
+
+                <p class="mt-4">
+                    The same applies to the signal x(n): the polyphase component Xi(z) is the z-transform of x(mN + i).
+                </p>
+
+                <h4>Example</h4>
+
+                <p class="mt-4">
+                    Suppose the filter impulse response is:
+                </p>
+<p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ h = [1, 2, 3, 4, \ldots]
+
+ $$">
+                </p>
+             
+
+                <p class="mt-4">
+                    Its z-transform is:
+                </p>
+<p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ H(z) = 1 + 2z^{-1} + 3z^{-2} + 4z^{-3} + \ldots
+
+ $$">
+                </p>
+              
+
+                <p class="mt-4">
+                    With N = 2, the polyphase components become:
+                </p>
+<p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ H_0(z^2) = 1 + 3z^{-2} + 5z^{-4} + \ldots \\
+H_1(z^2) = 2 + 4z^{-2} + 6z^{-4} + \ldots
+
+ $$">
+                </p>
+              
+
+                <p class="mt-4">
+                    Thus the complete filter can be reconstructed as:
+                </p>
+<p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ H(z) = H_0(z^2) + z^{-1}H_1(z^2)
+
+ $$">
+                </p>
+             
+                <p class="mt-4">
+                    A block diagram (Fig. 8.10) illustrates this structure: a delay chain on the left implements
+                    delays z^(-i), and each branch contains a polyphase component Hi(z raised to N).
+                </p>
+
+                <p class="mt-4">
+                    In a sampling-rate–conversion system, the input signal x(n) is low-pass filtered to prevent
+                    aliasing,
+                    then downsampled. Decomposing the filter into N polyphase components allows the filtering
+                    to occur at the lower output sampling rate.
+                </p>
+
+                <p class="mt-4">
+                    Using the Noble identities, we move the downsamplers before the filters and before the summation
+                    (and not before the delay chain). This transforms Hi(z raised to N) into Hi(z), greatly simplifying
+                    the system (as shown in Fig. 8.11).
+                </p>
+
+                <p class="mt-4">
+                    The delay chain followed by downsampling corresponds to grouping x(n) into blocks of size N,
+                    like serial-to-parallel conversion. Filtering now happens on these blocks at the low sampling rate.
+                    This provides parallel processing with reduced computational load.
+                </p>
+
+                <p class="mt-4">
+                    Since we have N polyphase components in parallel, they can be arranged into vectors:
+                </p>
+
+                <p class="mt-4">
+                    Sum over i from 0 to N-1 of Xi(z) times Hi(z) equals Y(z)
+                </p>
+
+                <p class="mt-4">
+                    This can be expressed as a vector multiplication:
+                </p>
+                
+<p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ \sum_{i=0}^{N-1} X_i(z) \cdot H_i(z) = Y(z) \\
+[X_0(z), \ldots, X_{N-1}(z)] \cdot [H_0(z), \ldots, H_{N-1}(z)]^T = Y(z)
+ $$">
+                </p>
+              
+               
+
+                <p class="mt-4">
+                    If multiple filters exist, polyphase vectors can be grouped into <strong>polyphase
+                        matrices</strong>.
+                </p>
+
+                <p class="mt-4">
+                    This representation is mathematically powerful because sampling is embedded directly
+                    into this simple vector multiplication.
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap8/fig8.8.png" class="w-180 h-110 ">
+                </div>
+
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap8/fig8.9.png" class="w-180 h-110 ">
+                </div>
+
+
+
+
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap8/fig8.11.png" class="w-180 h-110 ">
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    8.3.2 Noble Identities for Upsampling
+                </h3>
+
+                <p class="mt-4">
+                    Correspondingly, up-samplers can also be implemented with filters operating at the lower sampling
+                    rate. Since Hi(z^N) and z^-i are linear time-invariant systems, we can exchange their ordering:
+                </p>
+
+                <p class="text-center mt-3 text-lg font-mono">
+                    Hi(z^N) * z^-i = z^-i * Hi(z^N)
+                </p>
+
+                <p class="mt-4">
+                    Hence, we can redraw the polyphase decomposition for an up-sampler followed by a low-pass filter (at
+                    the high sampling rate), with the delay elements shifted to the output.
+                </p>
+
+                <p class="mt-4">
+                    Thus, for upsampling followed by low-pass filtering, we obtain the structure illustrated in Fig.
+                    8.12.
+                </p>
+
+                <p class="mt-4">
+                    Using the Noble Identities, we can now shift the up-sampler to the right, behind the polyphase
+                    filters (changing their arguments from z^N to z) and before the delay chain, with polyphase
+                    components Yi(z), as shown in Fig. 8.13.
+                </p>
+
+                <p class="mt-4">
+                    Again, this leads to parallel processing, with N filters working in parallel at the lower sampling
+                    rate. The structure on the right, with the up-sampler and the delay chain, can be seen as a
+                    de-blocking operation. Each time the up-sampler lets a complete block through, it is given to the
+                    delay chain. In the next time-steps the up-sampler stops letting data through and produces N-1
+                    zeros, and the block is shifted through the delay chain as a sequence of samples. This can also be
+                    seen as a parallel-to-serial conversion.
+                </p>
+
+                <p class="mt-4">
+                    With the polyphase elements Yi(z), the processing at the lower sampling rate can also be written in
+                    terms of polyphase vectors:
+                </p>
+
+                <p class="text-center mt-3 text-lg font-mono">
+                    Y(z) * [ H0(z), ..., H(N-1)(z) ] = [ Y0(z), ..., Y(N-1)(z) ]
+                </p>
+
+                <p class="mt-4">
+                    Observe: If we have more than one filter, we can collect their polyphase vectors into polyphase
+                    matrices.
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap8/fig8.12.png" class="w-180 h-110 ">
+                </div>
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    8.3.3 Example Upsampling
+                </h3>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+ipython --pylab
+import scipy.signal
+from sound import *
+#up-sample the signal y by a factor of N=2 and
+#low-pass filter it with the filter
+h = np.array([0.5, 1, 1.1, 0.6])
+#as in the previous example. Again we obtain the filters
+#polyphase components as
+h0 = h[0::2]
+h1 = h[1::2]...
+
+</pre>
+
+                <p class="mt-4">
+                    Now we can use these polyphase components to filter at the lower sampling rate to obtain
+                    the polyphase components of the filtered and upsampled signal y0 and y1. Again, watch
+                    the structure above, where we got $[Y0(z), Y1(z)] = Y (z) · [H0(z), H1(z)]$, where Y is the
+                    signal at the lower sampling rate, and observe that the multiplicazion in the z-domain
+                    turns into a filtering operation in the time domain. y came out of our above example
+                    for sampling rate reduction. This is where we can now continue for up-sampling:
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+
+y0 = scipy.signal.lfilter(h0,1,y)
+y1 = scipy.signal.lfilter(h1,1,y)
+
+</pre>
+
+
+                <p class="mt-4">
+                    The complete up-sampling the signal is then obtained from its 2 polyphase components. Next we need
+                    to upsample and do the phase delay (see the block diagram Picture
+                    2), for our de-blocking:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+L = max([len(y0), len(y1)])
+yu = zeros(2*L)
+#upsampling with phase 0:
+yu[0::2] = y0
+#upsampling with phase 1:
+yu[1::2] = y1...
+
+</pre>
+
+
+                <p class="mt-4">
+                    Where now the signal yu is the same as if we had first up-sampled and then filtered the
+                    signal! Now listen to the up-sampled signal:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+sound(yu*0.3,fs);
+
+</pre>
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+
+
+</div>

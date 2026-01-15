@@ -1,0 +1,70 @@
+  <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: rgb(22, 22, 22);">
+                    2.3 Calculating the SNR
+                </h3>
+
+
+                <p class="mt-4">
+                    So what does this then mean for the SNR? The SNR is just the ratio:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ SNR = \frac{A^2/12}{\Delta^2/12} = \frac{A^2}{\Delta^2} \tag{2.3}
+
+ $$">
+                </p>
+
+                <p>
+                    If we assume our signal is full range, meaning the maximum values of our A/D converter are
+                    &minus;A&#8260;2 and +A&#8260;2 (the signal goes to the maximum), we can compute the step size
+                    &Delta; if we know the number of bits of the converter and if we assume uniform quantization
+                    step sizes.
+                </p>
+
+                <p>
+                    Assume we have <strong>N</strong> bits in our converter. This means we have
+                    <strong>2<sup>N</sup></strong> quantization intervals.
+                </p>
+
+                <p>
+                    We obtain the step size <strong>&Delta;</strong> by dividing the full range by this number:
+                </p>
+
+
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \Delta = \frac{A}{2^N} \tag{2.4}
+
+ $$">
+                </p>
+
+                <p>
+                    Plug this in the SNR equation and we obtain:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ SNR = \frac{A^2}{\Delta^2} = \frac{A^2}{(\frac{A}{2^N})^2} = 2^{2N} \tag{2.5}
+ $$">
+                </p>
+                <p>
+                    This is now quite a simple result! But usually, the SNR is given in dB (decibels), so let’s convert
+                    it into dB:
+                </p>
+
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ SNR_{dB} = 10 \cdot \log_{10}(2^{2N}) = 10 \cdot 2N \cdot \log_{10}(2) \approx 6.02N \text{ dB} \tag{2.6}
+ $$">
+                </p>
+
+                <p>
+                    This is now our famous rule of thumb that each bit more gives you about 6 dB more SNR. But observe
+                    that
+                    the above formula only holds for uniformly distributed full-range signals!
+                    (The signal is between &minus;A&#8260;2 and +A&#8260;2 using all possible values of our converter.)
+                </p>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+

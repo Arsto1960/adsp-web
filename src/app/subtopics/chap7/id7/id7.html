@@ -1,0 +1,52 @@
+
+ <h3 class="text-3xl font-medium font-sans ml-2 " style="color: rgb(10, 10, 10);">
+        Chapter 7 : Interactive Demo
+    </h3>
+    <div class="h-2"></div>
+<div class="container m-4">
+
+   
+
+  <mat-card class="bg-gradient-to-r from-blue-300 to-blue-600 " >
+    <h3  class="text-2xl font-medium font-sans mb-5 ">Controls</h3>
+
+    <label>Pole Radius (r) {{ r_p }}</label>
+    <mat-slider min="0" max="1.5" step="0.05">
+      <input matSliderThumb [(ngModel)]="r_p" (input)="updatePlots()" />
+    </mat-slider>
+
+    <label>Pole Angle (θ) {{ theta_p }}</label>
+    <mat-slider min="0" max="180" step="5">
+      <input matSliderThumb [(ngModel)]="theta_p" (input)="updatePlots()" />
+    </mat-slider>
+
+    <label>Zero Radius (r) {{ r_z }}</label>
+    <mat-slider min="0" max="1.5" step="0.05">
+      <input matSliderThumb [(ngModel)]="r_z" (input)="updatePlots()" />
+    </mat-slider>
+
+    <label>Zero Angle (θ) {{ theta_z }}</label>
+    <mat-slider min="0" max="180" step="5">
+      <input matSliderThumb [(ngModel)]="theta_z" (input)="updatePlots()" />
+    </mat-slider>
+
+    <p *ngIf="isStable()" class="stable">✅ System Stable</p>
+    <p *ngIf="!isStable()" class="unstable">⚠️ System Unstable</p>
+  </mat-card>
+
+  <mat-card class="size-130" >
+    <h3 class="text-xl font-medium font-sans " >Complex Z-Plane</h3>
+    <canvas #zPlane width="300" height="300" class="rounded-2xl p-4 "></canvas>
+  </mat-card>
+
+  <mat-card>
+    <h3>Frequency Response</h3>
+    <canvas id="freqCanvas"></canvas>
+  </mat-card>
+
+  <mat-card>
+    <h3>Impulse Response</h3>
+    <canvas id="impCanvas"></canvas>
+  </mat-card>
+
+</div>

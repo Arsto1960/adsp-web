@@ -1,0 +1,679 @@
+<div class="m-5 overflow-hidden space-y-4 ">
+  <div class=" text-3xl font-sans font-semibold">
+    <h1>Chapter 11 : Hilbert Transform</h1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title style="color: blue;">Learning Objectives</mat-card-title>
+      </mat-card-header>
+      <br>
+        <mat-card-content class="text-lg">
+
+          <ul class="list-disc pl-6 space-y-3 text-lg">
+            <li>
+              <strong>Explain</strong> the concept and mathematical foundation of the
+              Hilbert Transform in digital signal processing, including its frequency-domain
+              definition (phase shift of -90° / +90°) and relation to the Fourier transform.
+            </li>
+
+            <li>
+              <strong>Construct</strong> the analytic signal from a real signal using the
+              Hilbert transform, and understand how the analytic signal yields instantaneous
+              amplitude (envelope) and instantaneous phase / instantaneous frequency.
+            </li>
+
+            <li>
+              <strong>Implement and analyze</strong> Hilbert-transform filters in Python for
+              real-world tasks (envelope extraction, modulation/demodulation, phase analysis),
+              and interpret results (filter design trade-offs, delay, edge effects).
+            </li>
+          </ul>
+        </mat-card-content>
+
+      </mat-card>
+
+
+    </div>
+
+
+
+
+    <div>
+      <mat-card class="example-card text-2xl" appearance="outlined">
+        <mat-card-header>
+          <mat-card-title style="color: blue;">Introduction</mat-card-title>
+        </mat-card-header>
+        <br>
+          <mat-card-content class="text-lg">
+            <p class="text-lg mt-2">
+              Imagine we would like to know the precise, instantaneous amplitude of a sinusoid.
+              Just looking at the function, this might not be so easy – we would have to determine
+              the maximum or minimum, and depending on the sinusoidal frequency this might take some time,
+              during which the amplitude might also have changed.
+            </p>
+
+            <p class="text-lg mt-3">
+              But if we have a complex exponential with samples:
+            </p>
+
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ x(n)=A⋅ejΩn=A⋅cos(Ωn)+jA⋅sin(Ωn)
+
+ $$"></p>
+
+
+            <p class="text-lg mt-2">
+              (We know x(n) but not A) we can easily determine the amplitude A only knowing one
+              complex valued sample x(n) by taking the magnitude of this complex exponential:
+            </p>
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\begin{align*}
+A &=\sqrt{\Re(x(n))^2+\Im(x(n))^2}\\
+&=\sqrt{(A\cdot\cos(\Omega n))^2+(A\cdot\sin(\Omega n))^2}
+\end{align*}
+ $$"></p>
+
+
+            <p class="text-lg mt-3">
+              Observe that this computation of A is independent of the time index n, so it can be
+              done at every time instance.
+            </p>
+
+            <p class="text-lg mt-3">
+              So if we not only have the sine or cosine function in itself, but both, we can easily
+              compute the instantaneous amplitude in this way. This means, instead of just having the
+              sinusoidal function, we also have the 90° phase-shifted version of it, to compute
+              the amplitude. The problem is, if we only have one part (e.g., the real part),
+              how do we get this 90° phase-shifted version?
+            </p>
+
+            <p class="text-lg mt-3">
+              For example, look at the sine function. It already consists of two complex exponentials:
+            </p>
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\mathrm{sin}(\Omega n) = \frac{1}{2j}(e^{j\Omega n} − e^{−j\Omega n})
+ $$"></p>
+
+
+            <p class="text-lg mt-2">
+              We just have one exponential too many. If we look at it in the Fourier Domain, we see that
+              one exponential is at positive frequencies, and the other is at negative frequencies.
+              If we could remove one of the two exponentials, for instance at the negative frequencies,
+              we would have reached our goal of obtaining a complex exponential for amplitude computations.
+            </p>
+
+            <p class="text-lg mt-3">
+              So what we need is a filter, which attenuates the negative frequencies and leaves the
+              positive frequencies unchanged! So how do we obtain such a filter? First we formulate
+              our requirement in the frequency domain (the DTFT domain):
+            </p>
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(\Omega) = \begin{cases}
+1 & \text{for } \Omega > 0 \\
+0 & \text{for } \Omega < 0
+\end{cases}
+ $$"></p>
+
+
+            <p class="text-lg mt-3">
+              We could multiply our signal spectrum with this frequency domain formulation
+              (which is often not practical), or in the time domain convolve with the impulse
+              response of the resulting filter obtained with inverse DTFT:
+            </p>
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+h(n) = \frac{1}{2\pi} \int_0^\pi 1 \cdot e^{j\Omega n} \, d\Omega
+ $$"></p>
+
+
+            <p class="text-lg mt-3">
+              For n ≠ 0 this becomes:
+            </p>
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\begin{align*}
+&=\frac{1}{2\pi}
+\left(
+\frac{1}{jn} \cdot e^{j\pi n}
+-
+\frac{1}{jn}
+\right) \\
+&=
+\frac{1}{2\pi}
+\left(
+\frac{-j}{n} \cdot (-1)^n + \frac{j}{n}
+\right) \\
+&=
+\begin{cases}
+\dfrac{j}{\pi n}, & n \text{ odd} \\
+0, & n \text{ even}
+\end{cases}
+\end{align*}
+ $$"></p>
+
+
+            <p class="text-lg mt-3">
+              For n = 0 this inverse DTFT integral becomes:
+            </p>
+
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ h(0) = \frac{1}{2\pi} \cdot \pi = \frac{1}{2}
+
+ $$"></p>
+
+
+            <p class="text-lg mt-3">
+              Hence the resulting impulse response of this one-sided filter becomes:
+            </p>
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+h(n) = \frac{1}{2} \cdot \delta(n) +
+\begin{cases}
+\dfrac{j}{\pi n}, & n \text{ odd} \\
+0, & n \text{ even}
+\end{cases}
+
+ $$"></p>
+
+
+            <p class="text-lg mt-3">
+              This is now the resulting impulse response (in the time domain) of our filter,
+              which passes all the positive frequencies and attenuates the negative frequencies.
+            </p>
+
+            <p class="text-lg mt-3">
+              Here we can see that the first part with the delta function represents the real part,
+              which is the signal itself (signal convolved with the delta impulse), except for a factor of 2.
+              The second part represents the imaginary part of our one-sided signal (positive frequencies).
+            </p>
+
+            <p class="text-lg mt-3">
+              Multiplying both parts with this factor of 2 for simplicity, we obtain the structure of:
+            </p>
+
+            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+h_H(n) =\begin{cases}\dfrac{2}{\pi n}, & n \text{ odd} \\0, & n \text{ even}\end{cases}
+ $$"></p>
+
+
+
+            <p class="text-lg mt-3">
+              (See also: [22]) Only this part, which creates the imaginary signal part, is the Hilbert
+              Transformer. We can use it to construct a filter that suppresses the negative frequencies.
+              This means, we take our original signal (the sinusoid) and define it as our real part.
+              Then we take the Hilbert filtered signal, filtered with the above hH(n), and define it
+              as our imaginary part. Then both together have a one-sided, positive only spectrum!
+              That also means, our Hilbert transform filter is our 90 degrees phase shifter that we
+              where looking for! You can also imagine, if the real part is a cos signal, then the Hilbert
+              Transformer generates the j · sin part.
+            </p>
+
+
+
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.1.png" class="w-180 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+
+
+
+
+
+
+
+      <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+          <mat-card-content class="text-lg">
+            <h3 class="text-2xl  mt-1 text-blue-700">11.1 Python Example</h3>
+
+            <p class="text-lg mt-3">
+              Plot the Hilbert transformer for n = −10 … 10:
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+              ipython --pylab
+              h = zeros(20)
+              n = arange(-9, 10, 2)
+              h[n + 10] = 2 / (pi * n)
+              stem(arange(-10, 10), h)
+              xlabel('Sample')
+              ylabel('Value')
+              title('Part of Imp. Resp. of Hilbert Transform')
+            </pre>
+
+            <p class="text-lg mt-3">
+              The resulting plot can be seen in Fig. (11.2).
+              Here we see that we have negative indices. If we want to obtain a causal system,
+              we need to shift them to or above zero using a suitable delay; hence the Hilbert
+              transform involves some delay. To make the imaginary and real parts align,
+              we must delay the real part accordingly.
+            </p>
+
+            <p class="text-lg mt-3">
+              This type of complex signal, with a one-sided spectrum, is called an
+              <strong>analytic signal</strong>.
+            </p>
+
+            <p class="text-lg mt-3">
+              Let’s take a look at the frequency response of our filter. Since we have included a
+              delay, our phase should be the 90° (π/2 radians) phase shift plus the linear phase
+              from the delay. Hence, our phase curve should hit the phase axis at frequency 0
+              at π/2 radians, for which we zoom into this region:
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+              from freqz import *
+              freqz(h, axisFreqz=[0, pi, -50, 10], axisPhase=[0, pi, -pi, pi])
+            </pre>
+
+            <p class="text-lg mt-3">
+              The resulting plot can be seen in Fig. (11.3).
+              Here we can see that the phase curve indeed hits the π/2 radians (90°) mark
+              on the vertical phase axis. The magnitude plot reaches about 0 dB attenuation
+              at approximately 0.08π and shows higher attenuation below about 0.05π and
+              above 0.95π. Hence, it works effectively as a Hilbert transformer only within
+              this frequency range.
+            </p>
+
+
+
+            <p class="text-lg mt-3">
+              If we want to plot the frequency response of our entire filter (not just the Hilbert transformer
+              part),
+              which passes only the positive frequencies, we first need to construct our resulting complex filter,
+              and then plot the frequency response over the full frequency circle.
+
+              First, we create a delayed unit impulse as the real part:
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+              # construct a delayed impulse to implement the
+              # delay for the real part:
+              delt = np.zeros(20)
+              delt[9] = 1
+              #delt =
+              #0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+              #Then we need to add our imaginary part as our
+              #Hilbert transform to obtain our complex filter:
+              h = np.zeros(20);
+              n = np.arange(-9, 10+1, 2);
+              h[n+9] = 2./(np.pi*n);
+              hone = delt+h*1jhone
+              print(hone)
+              array([0.-0.07073553j, 0.+0.j, 0.-0.09094568j, 0.+0.j,
+              0.-0.12732395j, 0.+0.j, 0.-0.21220659j, 0.+0.j,
+
+              0.-0.63661977j, 1.+0.j, 0.+0.63661977j, 0.+0.j,
+              0.+0.21220659j, 0.+0.j, 0.+0.12732395j, 0.+0.j,
+              0.+0.09094568j, 0.+0.j, 0.+0.07073553j, 0.+0.j])
+
+            </pre>
+            <p class="text-lg mt-3">
+              This is our <strong>complex-valued filter impulse response</strong> — the real part (delayed
+              impulse)
+              represents the original signal path, and the imaginary part implements the
+              Hilbert transform that removes negative frequencies. Together, they form a
+              filter that passes only the positive frequency components.
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+              freqz(hone,1, whole=True, axisFreqz=[0, 6.28,-40,10]);
+
+            </pre>
+
+            <p class="text-lg mt-3">
+              The resulting plot can be seen in Fig. (11.4). Here we can see that we have indeed a
+              passband at the positive frequencies between 0 and pi. Observe that the passband is at
+              about 6 dB (above 0dB), because we multiplied our filter by a factor of 2 to make it
+              simpler.
+              The negative frequencies appear between pi and 2pi on the frequency axis, and we
+              can see that we get about 30 dB attenuation there, which is not very much, but which
+              we could increase it by making the filter longer. This also gives us a good indication of
+              how well our filter is working!
+              Observe that the phase is now starting at 0, because the filter has the Hilbert transform
+              only as part of it, to obtain this frequency response.
+              The Python function “remez” also has an option for a Hilbert transform filter. We get
+              a similar design with
+
+
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+              from freqz import *
+              import scipy.signal as sp
+              b=sp.remez(21, [0.03, 0.47],[1], type=’hilbert’);
+              freqz(b,axisFreqz=[0,pi,-50,10],axisPhase=[0,pi, -
+              pi,pi])
+
+            </pre>
+
+            <p class="text-lg mt-3">
+
+              Observe that in the remez argument “0.5” corresponds to the Nyquist frequency, hence
+              the entire positive frequency band would go from 0 to π. The specified passband does
+              not go all the way to 0 and 0.5, it leaves transition bands at the sides. The further away
+              the passband is from these edges, the less ripples we will have in the passband, and
+              the more attenuation we will have for the negative frequencies! The resulting frequency
+              response can be seen in Fig. (11.5).
+              Observe that this design now has a +90 Degrees (+3.14/2) phase shift at frequency
+              close to zero. This is a phase difference of 180 Degrees from our previous design with
+              the rectangular window, and results from a sign change of the coefficients.
+              Let’s look at the resulting one sided complex valued filter at the whole frequency circle
+              again, in iPython:
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+              #Delay for the real part:
+
+              delt = np.zeros(21)
+              delt[10] = 1
+              #The complex filter:
+              honeremez = delt + 1j*b
+              honeremez
+              array([ 0. -8.35889141e-05j, 0. +7.28072838e-02j, 0. +7.11334936e-05j,
+              0. +6.79343477e-02j, 0. -7.21513298e-06j, 0. +1.10111613e-01j,
+              0. +2.67809302e-05j, 0. +2.01516354e-01j, 0. -8.96356182e-06j,
+              0. +6.32971502e-01j, 1. +0.00000000e+00j, 0. -6.32971502e-01j,
+              0. +8.96356182e-06j, 0. -2.01516354e-01j, 0. -2.67809302e-05j,
+              0. -1.10111613e-01j, 0. +7.21513298e-06j, 0. -6.79343477e-02j,
+              0. -7.11334936e-05j, 0. -7.28072838e-02j, 0. +8.35889141e-05j])
+              #Observe the sign change compared to hone above.
+              #Now look at the frequency response for pos. and neg. frequencies:
+              freqz(honeremez,1, whole=True, axisFreqz=[0, 6.28,-40,10]);
+
+
+            </pre>
+
+            <p class="text-lg mt-3">
+              The resulting plot can be seen in Fig. (12.13). Here we can see that we have again
+              only about 30 dB attenuation in the stopband, which is now for the positive frequencies,
+              because of the sign change of our remez filter. We obtain more practical filters, with
+              more attenuation in the stopband, if we change the corner frequencies to more above 0
+              and below 0.5 in remez (increasing the transition bandwidth).
+              Also observe the equi-ripple behaviour in the stopband, which is what we expect from
+              remez.
+            </p>
+          </mat-card-content>
+
+        </mat-card>
+
+
+      </div>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.2.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.3.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.4.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.5.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.6.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+          <mat-card-content class="text-lg">
+            <h3 class="text-2xl  font-sans mb-3" style="color: blue;">11.2 Example for the Measurement
+            of the (Instantaneous) Amplitude</h3>
+
+            <p>
+              We can now test our application example of measuring the Amplitude of a sinusoid with
+              our Hilbert transform design. We saw that the lower end for the passband of our design
+              is at normalized frequency of about 0.05. Hence we test a sinusoid of that frequency,
+            </p>
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+              x = 2*sin(pi*0.05*arange(0, 40))
+              plot(x)
+
+            </pre>
+            <p class="mt-2">
+              The resulting plot can be seen in Fig. (12.14). Now we can filter it with our filter which passes
+              only positive frequencies “hone”, an creates a complex valued signal xhone:
+            </p>
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+              xhone = sp.convolve(x, hone);
+              plot(real(xhone))
+              plot(imag(xhone),’r’)
+
+            </pre>
+
+            <p class="mt-2">
+              The resulting plot can be seen in Fig. (12.15). Here we can see that we get indeed a
+              90 degree phase shifted version, the red curve, about between sample 15 and 45.
+              Now we can compute the magnitude of this complex signal “xhone” to obtain the
+              amplitude of our sinusoidal signal,
+              plot(abs(xhone))
+              The resulting plot can be seen in Fig. (12.16). We see that between about sample 15
+              and 45 we obtain the amplitude of our sinusoidal signal with about 10% accuracy, which
+              roughly corresponds to the 20dB attenuation (corresponding to an attenuation factor of
+              0.1) that our filter “hone” provides. This also hints at the fact that we can improve the
+              magnitude estimation by having a filter with a higher attenuation at negative frequencies.
+              Also observe that this only works for sinusoids inside our passband!
+            </p>
+          </mat-card-content>
+
+        </mat-card>
+
+
+      </div>
+
+
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.7.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.8.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+      </div>
+
+
+
+
+
+      <div>
+
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+          <mat-card-content class="text-lg">
+            <h3 class="text-2xl font-sans mb-3" style="color: blue;">11.3 Summary
+            </h3>
+
+
+            <p>
+              The Hilbert transform is a crucial tool in signal processing that creates an analytic signal
+              by combining a signal’s real part with a 90-degree phase-shifted imaginary counterpart.
+              It has several applications, including amplitude modulation and instantaneous frequency
+              analysis.
+            </p>
+          </mat-card-content>
+
+        </mat-card>
+
+
+      </div>
+
+
+
+      <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+          <mat-card-content class="text-lg">
+            <h3 class="text-2xl font-semibold font-sans mb-3" style="color: rgb(13, 13, 13);">
+              Key Points
+            </h3>
+
+            <ol class="list-decimal ml-6 mt-4 text-lg leading-relaxed space-y-3">
+              <li>
+                <strong>Definition and Purpose:</strong>
+                The Hilbert Transform removes negative frequency components, producing a one-sided,
+                positive frequency spectrum. This operation facilitates the creation of an <em>analytic
+              signal</em>,
+              which pairs the original signal (real part) with its Hilbert-transformed version (imaginary
+              part).
+            </li>
+
+
+
+            <li>
+              <strong>Impulse Response:</strong>
+              The impulse response of the Hilbert Transform filter, denoted as h<sub>H</sub>(n),
+              is designed to apply a 90° phase shift. The response values depend on whether the index
+              <em>n</em> is odd or even.
+            </li>
+
+            <li>
+              <strong>Frequency Characteristics:</strong>
+              The frequency response of the Hilbert Transform introduces a +90° phase shift for positive
+              frequencies
+              and a −90° phase shift for negative frequencies.
+            </li>
+
+            <li>
+              <strong>Implementation:</strong>
+              Python examples in this chapter demonstrate the design and application of Hilbert Transform
+              filters.
+              The <code>scipy.signal.remez()</code> function can be used to efficiently design such filters
+              for real-world use.
+            </li>
+
+            <li>
+              <strong>Applications:</strong>
+              The Hilbert Transform is used to compute instantaneous amplitude and phase,
+              enabling easy analysis of a signal’s envelope and frequency content at any given time.
+            </li>
+          </ol>
+
+
+          <p>
+
+          </p>
+        </mat-card-content>
+
+      </mat-card>
+    </div>
+
+
+
+
+    <div class="flex flex-col justify-around items-center gap-2">
+      <img src="assets/images/chap11/fig12.9.png" class="w-130 h-60 ">
+      <h1 class="text-wrap">
+
+      </h1>
+    </div>
+
+
+
+    <!-- Test section  -->
+
+
+    <div class="flex flex-col items-center p-3 gap-6">
+      <h2 class="text-2xl font-sans font-semibold mb-4">🧠 Test Your Knowledge</h2>
+
+      @for (q of questions; track q) {
+        <div class="w-full md:w-2/3">
+          <mat-card class="mat-elevation-z6 p-6 font-sans">
+            <mat-card-title>{{ q.text }}</mat-card-title>
+            <br>
+              <mat-card-content>
+                <mat-radio-group [(ngModel)]="q.selectedAnswer" [disabled]="q.isSubmitted">
+                  @for (option of q.options; track option) {
+                    <div class="mb-2">
+                      <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
+                    </div>
+                  }
+                </mat-radio-group>
+                <div class="mt-4 flex gap-3">
+                  <button matFab extended (click)="submitAnswer(q)"
+                    [disabled]="!q.selectedAnswer || q.isSubmitted">
+                    Submit
+                  </button>
+                  @if (q.isSubmitted) {
+                    <button matFab extended style="background-color:black ; color: aliceblue;"
+                      (click)="tryAgain(q)">
+                      Try Again
+                    </button>
+                  }
+                </div>
+                <div class="mt-4">
+                  @if (q.isSubmitted && q.selectedAnswer === q.correctAnswer) {
+                    <p
+                      class="text-green-600 font-semibold font-sans">
+                      ✅ Correct!
+                    </p>
+                  }
+                  @if (q.isSubmitted && q.selectedAnswer !== q.correctAnswer) {
+                    <p
+                      class="text-red-600 font-semibold font-sans">
+                      ❌ Incorrect. Correct answer: <strong>{{ q.correctAnswer }}</strong>.
+                    </p>
+                  }
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        }
+      </div>
+
+
+
+    </div>

@@ -1,0 +1,176 @@
+<div class="m-2  space-y-4 " >
+    
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans mb-3" style="color: blue;">
+                    6.3 Reconstruction </h3>
+
+
+
+                <p class="mt-4">
+                    Observe that if the aliasing components do not overlap, we can perfectly reconstruct the signal
+                    using a suitable filter. To prevent overlap, we filter the signal at the higher sampling rate before
+                    aliasing occurs (as in the high-pass example). If overlap already exists at the lower sampling rate,
+                    the different components cannot be separated and the signal is effectively "destroyed".
+                </p>
+
+                <p class="mt-4">
+                    We can perfectly reconstruct the high-pass signal in our example using ideal filters, with
+                    upsampling and ideal high-pass filtering.
+                </p>
+
+                <p class="mt-4">
+                    This gives the analysis and synthesis diagram shown in Figure 6.19.
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.15.png" class="w-180 h-110 ">
+                </div>
+                <p class="mt-4">Figure 6.18: Signal spectrum after downsampling (removing the zeros) by N (2 in this
+                    example).
+                    Observe the stretching of the spectrum by a factor of 2.</p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.16.png" class="w-180 h-110 ">
+                </div>
+                <p class="mt-4">Figure 6.19: Downsampling (analysis) and upsampling (synthesis).</p>
+
+                <p class="mt-4">
+                    Observe that we violate the conventional Nyquist criterion, because our high-pass filter passes high
+                    frequencies. However, sampling mirrors these frequencies to the lower range, allowing the
+                    traditional Nyquist theorem to be applied. This approach is known as bandpass Nyquist and is
+                    important in filter banks and wavelets. It states that we can perfectly reconstruct a bandpass
+                    signal if we sample at twice the rate of the bandwidth of the signal, assuming ideal filters to
+                    avoid spectral overlap of aliasing components.
+                </p>
+
+                <p class="mt-4">
+                    In general, this holds for complex filters. For real-valued filters, this assumption works only if
+                    the bandpass filters start at frequencies of (pi / N) * k, where k is an integer. Otherwise, overlap
+                    with aliased components may occur, as illustrated in Figure 6.20.
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.17.png" class="w-180 h-110 ">
+                </div>
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+
+
+
+
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans mb-3" style="color: blue;">
+                    6.3.1 Example
+                </h3>
+
+
+
+                <p class="mt-4">
+                    We have a real-valued bandpass filter which starts its passband at a small frequency epsilon and
+                    ends at epsilon + (pi / N). Since the filter is real-valued, the passband also appears at the
+                    corresponding negative frequencies, from -epsilon to -(epsilon + pi / N). After multiplying with the
+                    unit pulse train, we get one (out of N) aliasing component by shifting the negative passband by 2pi
+                    / N to the positive frequencies. This results in the range from (pi / N - epsilon) to (2pi / N -
+                    epsilon). Hence, there is an overlap in this range, and we could not perfectly reconstruct our
+                    signal.
+                </p>
+
+                <p class="mt-4">
+                    Therefore, sampling at twice the bandwidth for real-valued signals and filters only works if the
+                    band limits are aligned with multiples of (pi / N) * k. To avoid overlapping aliasing components, we
+                    can either increase the sampling rate (for example, to twice the usual rate, or 4 times the
+                    bandwidth) to provide a "safety margin", or shift the bandpass signals in frequency so that they
+                    align with the grid.
+                </p>
+
+                <p class="mt-4">
+                    This restriction is not necessary for complex signals or filter banks. Complex filter banks are
+                    used, for instance, in acoustic echo cancellation, where the sampling rate can be increased by a
+                    fraction (less than a factor of 2) to reduce aliasing artifacts while keeping lower complexity.
+                </p>
+
+                <p class="mt-4"><strong>Summary:</strong> If our band boundaries are aligned with multiples of pi / N,
+                    we can
+                    downsample by N. Otherwise, for real-valued signals, it is safer to downsample by N/2. For complex,
+                    one-sided signals (e.g., only positive frequencies), we can always downsample by N, regardless of
+                    the bandpass placement.
+                </p>
+
+                <p class="mt-4">
+                    Compare this with the standard Nyquist case: here we have a lowpass signal which we downsample and
+                    reconstruct, as shown in Figure 6.21.
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap6/fig6.18.png" class="w-180 h-110 ">
+                </div>
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans mb-3" style="color: blue;">
+                    6.3.2 Python Example
+                </h3>
+
+
+
+                <p class="mt-4">
+                    This program can be controlled by keyboard and features sampling by a factor of N = 8 (keeping the
+                    zeros). It also includes a low-pass filter before and after sampling to suppress the aliasing
+                    components. Both sampling and filtering can be turned on and off. The program displays the magnitude
+                    of the resulting DFT spectrum after reconstruction (after the last low-pass filter) in a waterfall
+                    spectrogram:
+                </p>
+
+                <ul>
+                    <li>The magnitude of the DFT is displayed as color (yellow is high, blue is low).</li>
+                    <li>The horizontal axis is frequency (0 to Nyquist frequency).</li>
+                    <li>The vertical axis is time (up is past).</li>
+                </ul>
+
+                <p class="mt-4">Start it with:</p>
+                <pre><code>python pyrecspecwaterfallsampling.py</code></pre>
+
+                <p class="mt-4"><strong>Observe:</strong> When sampling is turned on, aliasing artifacts are clearly
+                    audible, and
+                    they also appear as spectral copies in the waterfall spectrogram.</p>
+
+                <p class="mt-4">When the low-pass filter is turned on, most aliasing artifacts are no longer audible,
+                    and most of
+                    them disappear from the waterfall spectrogram. However, the sound also becomes more muffled.</p>
+
+
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+
+
+
+</div>

@@ -1,0 +1,269 @@
+<div class="m-4">
+
+
+    
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.7 Least Mean Squares (LMS) Algorithm
+                </h3>
+
+
+                <p class="mt-4">
+                    Unlike the LPC algorithm above, which computes prediction coefficients for a block of
+                    samples and transmits these coefficients alongside the prediction error to the receiver,
+                    the LMS algorithm updates the prediction coefficients after each sample, but based only
+                    on past samples. Hence here we need the assumption that the signal statistics does not
+                    change much from the past to the present. Since it is based on the past samples, which
+                    are also available as decoded samples at the decoder, we do not need to transmit the
+                    coefficients to the decoder. Instead, the decoder carries out the same computations in
+                    synchrony with the encoder.
+                    Instead of a matrix formulation, we use an iterative algorithm to come up with a
+                    solution for the prediction coefficients h the vector which contains the time-reversed
+                    impulse response of our predictor.
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.16.png" class="w-180 h-110 ">
+
+
+                </div>
+
+
+                <p class="mt-4">
+                    To show the dependency on the time n, we now call the vector of prediction coefficients h(n), with:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{h}(n) = [h_0(n), h_1(n), \ldots, h_{L-1}(n)]
+ $$"></p>
+
+
+                <p class="mt-4">
+                    Again, we want to minimize the mean squared prediction error, with the prediction error defined as:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+e(n) = x(n) - \hat{x}(n)
+ $$"></p>
+
+
+                <p class="mt-4">
+                    The mean squared prediction error is:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+E\left[(x(n) - \hat{x}(n))^2\right] = E\left[\left(x(n) - \sum_{k=0}^{L-1} h_k(n) x(n - 1 - k)\right)^2\right]
+ $$"></p>
+
+
+                <p class="mt-4">
+                    Instead of using the closed-form solution that leads to the Wiener-Hopf solution, we now take an
+                    iterative approach using Steepest Descent (also called Gradient Descent). We iterate toward the
+                    minimum using:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{h}(n + 1) = {h}(n) - \alpha \cdot \nabla f({h}(n))
+ $$"></p>
+
+
+                <p class="mt-4">
+                    The objective (error) function is simply the squared prediction error:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+f({h}(n)) = \left(x(n) - \sum_{k=0}^{L-1} h_k(n) x(n - 1 - k)\right)^2
+ $$"></p>
+
+
+                <p class="mt-4">
+                    Observe that we omit the expectation operator E for simplicity. After several update steps,
+                    averaging occurs inherently due to the stochastic nature of the iterations. This is also known as
+                    “Stochastic Gradient Descent”.
+                </p>
+
+                <p class="mt-4">
+                    The gradient is the row vector:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\nabla f(n) = \left[\frac{\partial f({h}(n))}{\partial h_0(n)}, \ldots, \frac{\partial f({h}(n))}{\partial h_{L-1}(n)}\right]
+ $$"></p>
+
+
+                <p class="mt-4">
+                    and the individual derivatives are obtained as:
+                </p>
+                <p class="mt-4">
+                    We now compute the individual derivatives of the error function.
+                    For each coefficient h_k(n), the derivative is:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\frac{\partial f({h}(n))}{\partial h_k(n)} = 2 \cdot e(n) \cdot (-x(n - 1 - k))
+ $$"></p>
+
+
+                <p class="text-center mt-3 text-lg font-mono">
+                    for k = 0, 1, ..., L − 1.
+                </p>
+
+                <p class="mt-4">
+                    Putting this into the steepest descent update gives the LMS update rule:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+h_k(n + 1) = h_k(n) + \alpha \cdot e(n) \cdot x(n - 1 - k)
+ $$"></p>
+
+                <p class="mt-4">
+                    for k = 0, ..., L − 1.
+                    The factor 2 is absorbed into the step-size α.
+                    The parameter α controls the tradeoff between convergence speed and accuracy.
+                    A discussion of choosing α can be found in the lecture slide set 15 of the course “Multirate Signal
+                    Processing”.
+                </p>
+
+                <p class="mt-4">
+                    In vector form, the LMS update rule becomes:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{h}(n + 1) = {h}(n) + \alpha \cdot e(n) \cdot {x}(n)
+ $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{x}(n) = [x(n - 1), x(n - 2), \ldots, x(n - L)]
+ $$"></p>
+
+
+
+                <p class="mt-4">
+                    Note that this method requires no matrices or matrix inverses.
+                    It uses only this simple update rule, yet it still converges to the correct prediction coefficients.
+                </p>
+
+                <p class="mt-4">
+                    For the prediction coefficients h, the vector x(n) acts as a “sliding window” of the past L samples
+                    of the signal.
+                </p>
+
+                <p class="mt-4">
+                    Different approaches exist for choosing α.
+                    One popular method is the Normalized LMS (NLMS), which uses the inverse of the signal power as α.
+                    If the signal power is 1, then α can be set to 1.
+                    In general, α is chosen by hand through experimentation.
+                </p>
+
+
+                <p class="text-center mt-3 text-lg font-mono">
+                    formula
+                </p>
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.7.1 LMS Python Example
+                </h3>
+
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+import numpy as np
+from sound import *
+import matplotlib.pyplot as plt
+
+x, fs = wavread('fspeech.wav')
+
+# normalized float, -1 < x < 1
+x = np.array(x, dtype=float) / 2**15
+
+print np.size(x)
+
+e = np.zeros(np.size(x))
+h = np.zeros(10)
+
+for n in range(10, len(x)):
+    # prediction error and filter, using the vector of the time reversed IR:
+    e[n] = x[n] - np.dot(np.flipud(x[n-10+np.arange(0,10)]), h)
+
+    # LMS update rule, according to the definition above:
+    h = h + 1.0 * e[n] * np.flipud(x[n-10+np.arange(0,10)])
+
+print "Mean squared prediction error:", np.dot(e, e) / np.max(np.size(e))
+# 0.000215852452838
+
+print "Compare that with the mean squared signal power:", np.dot(x.transpose(), x) / np.max(np.size(x))
+# 0.00697569381701
+
+print "The Signal to Error ratio is:", np.dot(x.transpose(), x) / np.dot(e.transpose(), e)
+# 32.316954129056604, half as much as for LPC.
+
+# listen to the prediction error:
+sound(2**15 * e, fs)
+
+plt.figure()
+plt.plot(x)
+plt.plot(e, 'r')
+plt.xlabel('Sample')
+plt.ylabel('Normalized Sample')
+plt.title('Least Mean Squares (LMS) Online Adaptation')
+plt.legend(('Original', 'Prediction Error'))
+plt.show()
+
+</pre>
+                <p class="mt-4">
+                    Execute the program with python lmsexample.py
+                    Observe: its prediction error is bigger than in the LPC case, but we also don’t need
+                    to transmit the prediction coefficients as side information.
+                    The comparison plot of the original to the prediction error,
+                    The resulting plot can be seen in Fig. (12.17). For the decoder we get the reconstruction
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+# Decoder
+h = np.zeros(10);
+xrek = np.zeros(np.size(x));
+for n in range(10, len(x)):
+xrek[n] = e[n] + np.dot(np.flipud(xrek[n-10+np.arange(10)]), h)
+#LMS update:
+h = h + 1.0 * e[n]*np.flipud(xrek[n-10+np.arange(10)]);
+plt.plot(xrek)
+plt.show()
+#Listen to the reconstructed signal:
+sound(2**15*xrek,fs)
+
+</pre>
+
+                <p class="mt-4">
+                    Sensitivity of the decoder for transmission errors: In the code for the decoder in
+                    the LMS update for the predictor h, correctly we need xrek instead of x (since x is
+                    not available in the decoder). The slightest computation errors, for instance rounding
+                    errors, are sufficient to make the decoder diverge and stop working after a few syllables
+                    of the speech. Try it out. We see that the computed prediction coefficients differ in
+                    the last digits between encoder and decoder, which is enough for increasing divergence
+                    between encoder and decoder, until the decoded signal “explodes” (becomes huge from
+                    instability).
+                    This shows that LMS is very sensitive to transmission errors.
+                    To avoid at least the computation errors, we need to include quantization in the
+                    process.
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.17.png" class="w-180 h-110 ">
+
+
+                </div>
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+</div>

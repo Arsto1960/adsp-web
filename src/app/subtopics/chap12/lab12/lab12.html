@@ -1,0 +1,271 @@
+<div class="m-2 space-y-4">
+
+    <div class="text-3xl font-sans font-semibold">
+        <h1>Chapter 12 : Lab</h1>
+    </div>
+
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 1: Wiener Filter Design for Audio Denoising </h3>
+
+                <p class="mt-4">
+                    Goal: Design and implement a Wiener filter to denoise an audio signal corrupted by additive white
+                    Gaussian noise.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>
+                </p>
+
+                <ul class="list-disc m-4">
+                    <li>Load an audio signal and add white Gaussian noise with SNR = 10 dB</li>
+                    <li>
+                        Design a Wiener filter with L=12 coefficients using the pseudo-inverse method
+                    </li>
+                    <li>
+                        Apply the filter to denoise the signal
+                    </li>
+                    <li>
+                        Compare the original, noisy, and denoised signals (plot and listen)
+                    </li>
+                    <li>
+                        Compute and compare the mean squared error for noisy and denoised signals
+                    </li>
+                    <li>
+                        Plot the impulse response and frequency response of the Wiener filter
+                    </li>
+
+                </ul>
+
+
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter12example1">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. How does the filter length L affect the denoising performance?
+                </p>
+
+                <p class="mt-3">
+                    2. What is the shape of the frequency response? Why does it make sense for speech?
+                </p>
+                <p class="mt-3">
+                    3. How does the Wiener filter MSE compare to the noisy signal MSE?
+                </p>
+
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 2: Matched Filter for Signal Detection </h3>
+
+                <p class="mt-4">
+                    Goal: Implement a matched filter to detect a known signal embedded in noise.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>
+                </p>
+
+                <ul class="list-disc m-4">
+                    <li>
+                        Create a known signal (e.g., a chirp or a pulse train)
+                    </li>
+                    <li>
+                        Embed the signal at a random position in white noise </li>
+                    <li>
+                        Design the matched filter (time-reversed signal) </li>
+                    <li>
+                        Apply the matched filter to detect the signal </li>
+                    <li>
+                        Find the peak location and estimate the signal position </li>
+                    <li>
+                        Plot the noisy signal and the matched filter output </li>
+                    <li>
+                        Vary the noise level and observe the detection performance
+                    </li>
+
+                </ul>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter12example2">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1.How does the matched filter output SNR compare to the input SNR?
+                </p>
+
+                <p class="mt-3">
+                    2. What happens to detection accuracy as noise increases?
+                </p>
+
+                <p class="mt-3">
+                    3.Why is the peak delayed relative to the actual signal position?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 3: Linear Prediction for Sinusoidal Signals </h3>
+
+                <p class="mt-4">
+                    Goal: Design a linear predictor for a sinusoidal signal and verify the theoretical predictor
+                    coefficients.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>
+                </p>
+
+                <ol class="list-disc m-4">
+                    <li>Generate a sinusoidal signal with a known frequency Ω.</li>
+                    <li>Compute the theoretical predictor coefficients for order p = 2:
+                        <ul>
+                            <li>a1 = 2 * cos(Ω)</li>
+                            <li>a2 = -1</li>
+                        </ul>
+                    </li>
+                    <li>Compute the predictor coefficients from the data using the least squares method.</li>
+                    <li>Compare the theoretical and estimated coefficients.</li>
+                    <li>Use the predictor to predict future samples.</li>
+                    <li>Compute the prediction error and plot it.</li>
+                    <li>Experiment with different frequencies and predictor orders.</li>
+                </ol>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter12example3">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1.How close are the estimated coefficients to the theoretical values?
+                </p>
+
+                <p class="mt-3">
+                    2. What happens if you use a higher predictor order (e.g., p=4)?
+                </p>
+
+                <p class="mt-3">
+                    3. How does the phase of the signal affect the predictor coefficients?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 4: Linear Predictive Coding (LPC) for Speech
+                </h3>
+
+                <p class="mt-4">
+                    Goal: Implement an LPC encoder and decoder for speech compression.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>
+                </p>
+
+                <ol class="list-disc m-4">
+                    <li>Load a speech signal.</li>
+                    <li>Divide the signal into frames (e.g., 30 ms frames).</li>
+                    <li>For each frame, compute LPC coefficients (order p = 12).</li>
+                    <li>Compute the residual (prediction error) for each frame.</li>
+                    <li>Reconstruct the speech from LPC coefficients and residual.</li>
+                    <li>Compare original and reconstructed speech (plot and listen).</li>
+                    <li>Quantize the residual and observe the effect on quality.</li>
+                </ol>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter12example4">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. How does the reconstructed speech sound compared to the original?
+                </p>
+
+                <p class="mt-3">
+                    2. What is the compression ratio (considering you need to transmit LPC coefficients and residual)?
+                </p>
+
+                <p class="mt-3">
+                    3. How does the predictor order p affect the quality?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+</div>

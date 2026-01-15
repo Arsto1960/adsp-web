@@ -1,0 +1,212 @@
+<div class="m-2 space-y-4 ">
+
+    
+   
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-header>
+                <mat-card-title style="color: blue;">Introduction</mat-card-title>
+            </mat-card-header>
+            <br>
+            <mat-card-content class="text-lg">
+                <p class="text-lg mt-2">
+                    Imagine we would like to know the precise, instantaneous amplitude of a sinusoid.
+                    Just looking at the function, this might not be so easy – we would have to determine
+                    the maximum or minimum, and depending on the sinusoidal frequency this might take some time,
+                    during which the amplitude might also have changed.
+                </p>
+
+                <p class="text-lg mt-3">
+                    But if we have a complex exponential with samples:
+                </p>
+
+                
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ x(n)=A⋅ejΩn=A⋅cos(Ωn)+jA⋅sin(Ωn)
+
+ $$"></p>
+
+
+                <p class="text-lg mt-2">
+                    (We know x(n) but not A) we can easily determine the amplitude A only knowing one
+                    complex valued sample x(n) by taking the magnitude of this complex exponential:
+                </p>
+
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\begin{align*}
+A &=\sqrt{\Re(x(n))^2+\Im(x(n))^2}\\
+&=\sqrt{(A\cdot\cos(\Omega n))^2+(A\cdot\sin(\Omega n))^2}
+\end{align*}
+ $$"></p>
+                
+
+                <p class="text-lg mt-3">
+                    Observe that this computation of A is independent of the time index n, so it can be
+                    done at every time instance.
+                </p>
+
+                <p class="text-lg mt-3">
+                    So if we not only have the sine or cosine function in itself, but both, we can easily
+                    compute the instantaneous amplitude in this way. This means, instead of just having the
+                    sinusoidal function, we also have the 90° phase-shifted version of it, to compute
+                    the amplitude. The problem is, if we only have one part (e.g., the real part),
+                    how do we get this 90° phase-shifted version?
+                </p>
+
+                <p class="text-lg mt-3">
+                    For example, look at the sine function. It already consists of two complex exponentials:
+                </p>
+
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\mathrm{sin}(\Omega n) = \frac{1}{2j}(e^{j\Omega n} − e^{−j\Omega n})
+ $$"></p>
+               
+
+                <p class="text-lg mt-2">
+                    We just have one exponential too many. If we look at it in the Fourier Domain, we see that
+                    one exponential is at positive frequencies, and the other is at negative frequencies.
+                    If we could remove one of the two exponentials, for instance at the negative frequencies,
+                    we would have reached our goal of obtaining a complex exponential for amplitude computations.
+                </p>
+
+                <p class="text-lg mt-3">
+                    So what we need is a filter, which attenuates the negative frequencies and leaves the
+                    positive frequencies unchanged! So how do we obtain such a filter? First we formulate
+                    our requirement in the frequency domain (the DTFT domain):
+                </p>
+
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(\Omega) = \begin{cases}
+1 & \text{for } \Omega > 0 \\
+0 & \text{for } \Omega < 0
+\end{cases}
+ $$"></p>
+               
+
+                <p class="text-lg mt-3">
+                    We could multiply our signal spectrum with this frequency domain formulation
+                    (which is often not practical), or in the time domain convolve with the impulse
+                    response of the resulting filter obtained with inverse DTFT:
+                </p>
+
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+h(n) = \frac{1}{2\pi} \int_0^\pi 1 \cdot e^{j\Omega n} \, d\Omega
+ $$"></p>
+              
+
+                <p class="text-lg mt-3">
+                    For n ≠ 0 this becomes:
+                </p>
+
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+\begin{align*}
+&=\frac{1}{2\pi}
+\left(
+\frac{1}{jn} \cdot e^{j\pi n}
+-
+\frac{1}{jn}
+\right) \\
+&=
+\frac{1}{2\pi}
+\left(
+\frac{-j}{n} \cdot (-1)^n + \frac{j}{n}
+\right) \\
+&=
+\begin{cases}
+\dfrac{j}{\pi n}, & n \text{ odd} \\
+0, & n \text{ even}
+\end{cases}
+\end{align*}
+ $$"></p>
+              
+
+                <p class="text-lg mt-3">
+                    For n = 0 this inverse DTFT integral becomes:
+                </p>
+
+                
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ h(0) = \frac{1}{2\pi} \cdot \pi = \frac{1}{2}
+
+ $$"></p>
+               
+
+                <p class="text-lg mt-3">
+                    Hence the resulting impulse response of this one-sided filter becomes:
+                </p>
+                
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+h(n) = \frac{1}{2} \cdot \delta(n) +
+\begin{cases}
+\dfrac{j}{\pi n}, & n \text{ odd} \\
+0, & n \text{ even}
+\end{cases}
+
+ $$"></p>
+            
+
+                <p class="text-lg mt-3">
+                    This is now the resulting impulse response (in the time domain) of our filter,
+                    which passes all the positive frequencies and attenuates the negative frequencies.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Here we can see that the first part with the delta function represents the real part,
+                    which is the signal itself (signal convolved with the delta impulse), except for a factor of 2.
+                    The second part represents the imaginary part of our one-sided signal (positive frequencies).
+                </p>
+
+                <p class="text-lg mt-3">
+                    Multiplying both parts with this factor of 2 for simplicity, we obtain the structure of:
+                </p>
+                
+    <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+h_H(n) =\begin{cases}\dfrac{2}{\pi n}, & n \text{ odd} \\0, & n \text{ even}\end{cases}
+ $$"></p>
+               
+
+
+                <p class="text-lg mt-3">
+                    (See also: [22]) Only this part, which creates the imaginary signal part, is the Hilbert
+                    Transformer. We can use it to construct a filter that suppresses the negative frequencies.
+                    This means, we take our original signal (the sinusoid) and define it as our real part.
+                    Then we take the Hilbert filtered signal, filtered with the above hH(n), and define it
+                    as our imaginary part. Then both together have a one-sided, positive only spectrum!
+                    That also means, our Hilbert transform filter is our 90 degrees phase shifter that we
+                    where looking for! You can also imagine, if the real part is a cos signal, then the Hilbert
+                    Transformer generates the j · sin part.
+                </p>
+
+
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+   
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.1.png" class="w-180 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+
+   
+
+  
+
+   
+
+
+
+
+
+</div>

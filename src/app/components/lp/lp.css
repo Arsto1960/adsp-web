@@ -1,0 +1,33 @@
+.carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.group {
+    animation: spin 10s infinite linear;
+    gap: 2 rem;
+    padding-right: 1rem;
+}
+
+.card {
+    flex: 0 0 15rem;
+
+    color: aliceblue;
+   
+  box-shadow: 0 4px 10px rgba(18, 18, 18, 0.266);
+
+}
+mat-card{
+    
+ 
+}
+
+@keyframes spin {
+    from {
+        translate: 0;
+    }
+
+    to {
+        translate: -100%;
+    }
+
+}
