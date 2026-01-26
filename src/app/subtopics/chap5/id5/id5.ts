@@ -1,167 +1,143 @@
-import { Component, OnInit } from '@angular/core';
-import { makeBlobs } from '../../../utils/makeBlobs';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatCardModule } from '@angular/material/card';
-import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { CommonModule } from '@angular/common';
-import { MatSelectModule } from '@angular/material/select';
-import { NgChartsModule } from 'ng2-charts';
-import { ChartConfiguration } from 'chart.js';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'app-id5',
   standalone: true,
   imports: [
-    FormsModule,
     CommonModule,
+    FormsModule,
     MatSliderModule,
     MatCardModule,
-    MatInputModule,
-    MatButtonModule,
-    MatSelectModule,
-    NgChartsModule
+    MatButtonModule
   ],
   templateUrl: './id5.html',
-  styleUrls: ['./id5.css'],
+  styleUrls: ['./id5.css']
 })
 export class Id5 implements OnInit {
+  // LBG Parameters
+  numPoints = 50;
+  numCentroids = 4;
+  
+  // Data & State
+  points: {x: number, y: number}[] = [];
+  centroids: {x: number, y: number}[] = [];
+  clusters: {x: number, y: number}[][] = [];
+  
+  @ViewChild('chart', { static: true }) chartContainer!: ElementRef;
+  private svg: any;
+  private width = 600;
+  private height = 400;
+  private xScale: any;
+  private yScale: any;
 
-  /* ===== Data Setup ===== */
-  samples = 1000;
-  clusters = 4;
-  dispersion = 0.8;
-
-  /* ===== Algorithm ===== */
-  targetSize = 8;
-  epsilon = 0.02;
-
-  /* ===== State ===== */
-  data: number[][] = [];
-  codebook: number[][] = [];
-  history: number[] = [];
-  stage = 'Init';
-
-  /* ===== Charts ===== */
-  scatterChartData!: ChartConfiguration<'bubble'>['data'];
-  distortionChartData!: ChartConfiguration<'line'>['data'];
-
-  chartOptions: ChartConfiguration['options'] = {
-    responsive: true,
-    animation: false,
-    scales: {
-      x: { title: { display: true, text: 'X' } },
-      y: { title: { display: true, text: 'Y / Distortion' } }
-    }
-  };
-
-  ngOnInit(): void {
+  ngOnInit() {
+    this.initChart();
     this.generateData();
   }
 
-  generateData(): void {
-    const { X } = makeBlobs(this.samples, this.clusters, this.dispersion);
-    this.data = X;
-    this.codebook = [this.meanPoint(X)];
-    this.history = [];
-    this.stage = 'Init';
-    this.updateScatterChart();
-    this.updateDistortionChart();
+  initChart() {
+    this.svg = d3.select(this.chartContainer.nativeElement)
+      .append('svg')
+      .attr('width', this.width)
+      .attr('height', this.height)
+      .style('background', '#f9f9f9')
+      .style('border-radius', '4px');
+
+    this.xScale = d3.scaleLinear().domain([0, 100]).range([20, this.width - 20]);
+    this.yScale = d3.scaleLinear().domain([0, 100]).range([this.height - 20, 20]);
   }
 
-  meanPoint(points: number[][]): number[] {
-    const dim = points[0].length;
-    const mean = Array(dim).fill(0);
-    for (let p of points)
-      for (let i = 0; i < dim; i++)
-        mean[i] += p[i];
-    return mean.map(v => v / points.length);
+  generateData() {
+    // Generate random 2D points
+    this.points = Array.from({ length: this.numPoints }, () => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100
+    }));
+    
+    // Reset centroids logic (Simple random initialization for demo)
+    this.centroids = Array.from({ length: this.numCentroids }, () => ({
+      x: Math.random() * 100,
+      y: Math.random() * 100
+    }));
+
+    this.updateChart();
   }
 
-  getDistortion(X: number[][], cb: number[][]): number {
-    let total = 0;
-    for (let x of X) {
-      const dists = cb.map(c =>
-        x.reduce((s, v, i) => s + (v - c[i]) ** 2, 0)
-      );
-      total += Math.min(...dists);
-    }
-    return total / X.length;
-  }
-
-  stepKMeans(X: number[][], cb: number[][]): number[][] {
-    const labels = X.map(x => {
-      const dists = cb.map(c =>
-        x.reduce((s, v, i) => s + (v - c[i]) ** 2, 0)
-      );
-      return dists.indexOf(Math.min(...dists));
+  runLbgStep() {
+    // 1. Assign points to nearest centroid
+    this.clusters = Array.from({ length: this.numCentroids }, () => []);
+    
+    this.points.forEach(p => {
+      let minDist = Infinity;
+      let clusterIndex = 0;
+      
+      this.centroids.forEach((c, i) => {
+        const dist = Math.sqrt((p.x - c.x) ** 2 + (p.y - c.y) ** 2);
+        if (dist < minDist) {
+          minDist = dist;
+          clusterIndex = i;
+        }
+      });
+      this.clusters[clusterIndex].push(p);
     });
 
-    return cb.map((_, i) => {
-      const pts = X.filter((_, idx) => labels[idx] === i);
-      return pts.length ? this.meanPoint(pts) : X[Math.floor(Math.random() * X.length)];
+    // 2. Update centroids
+    this.centroids = this.clusters.map((cluster, i) => {
+      if (cluster.length === 0) return this.centroids[i]; // Keep old if empty
+      const sumX = d3.sum(cluster, d => d.x);
+      const sumY = d3.sum(cluster, d => d.y);
+      return { x: sumX / cluster.length, y: sumY / cluster.length };
     });
+
+    this.updateChart();
   }
 
-  split(cb: number[][]): number[][] {
-    return cb.flatMap(v => [
-      v.map(x => x * (1 + this.epsilon)),
-      v.map(x => x * (1 - this.epsilon))
-    ]);
-  }
+  updateChart() {
+    this.svg.selectAll('*').remove(); // Clear canvas
 
-  doubleN(): void {
-    if (this.codebook.length >= this.targetSize) return;
+    
+    // Draw Links (optional visual: line from point to centroid)
+    this.clusters.forEach((cluster, i) => {
+      const centroid = this.centroids[i];
+      this.svg.selectAll(`.link-${i}`)
+        .data(cluster)
+        .enter()
+        .append('line')
+        .attr('x1', (d: any) => this.xScale(d.x))
+        .attr('y1', (d: any) => this.yScale(d.y))
+        .attr('x2', this.xScale(centroid.x))
+        .attr('y2', this.yScale(centroid.y))
+        .attr('stroke', d3.schemeCategory10[i % 10])
+        .attr('stroke-width', 1)
+        .attr('opacity', 0.3);
+    });
 
-    this.codebook = this.split(this.codebook);
-    this.stage = 'Split';
+    // Draw Points
+    this.svg.selectAll('circle.point')
+      .data(this.points)
+      .enter()
+      .append('circle')
+      .attr('cx', (d: any) => this.xScale(d.x))
+      .attr('cy', (d: any) => this.yScale(d.y))
+      .attr('r', 4)
+      .attr('fill', '#555');
 
-    for (let i = 0; i < 10; i++) {
-      const newCb = this.stepKMeans(this.data, this.codebook);
-      this.codebook = newCb;
-      this.history.push(this.getDistortion(this.data, this.codebook));
-    }
-
-    this.stage = 'Optimized';
-    this.updateScatterChart();
-    this.updateDistortionChart();
-  }
-
-  reset(): void {
-    this.generateData();
-  }
-
-  /* ================= CHARTS ================= */
-
-  updateScatterChart(): void {
-    this.scatterChartData = {
-      datasets: [
-        {
-          label: 'Data',
-          data: this.data.map(p => ({ x: p[0], y: p[1], r: 4 })),
-          backgroundColor: 'rgba(0,123,255,0.6)'
-        },
-        {
-          label: 'Centroids',
-          data: this.codebook.map(p => ({ x: p[0], y: p[1], r: 8 })),
-          backgroundColor: 'rgba(220,53,69,0.8)'
-        }
-      ]
-    };
-  }
-
-  updateDistortionChart(): void {
-    this.distortionChartData = {
-      labels: this.history.map((_, i) => i),
-      datasets: [
-        {
-          label: 'MSE',
-          data: this.history,
-          borderColor: 'black',
-          fill: false
-        }
-      ]
-    };
+    // Draw Centroids
+    this.svg.selectAll('circle.centroid')
+      .data(this.centroids)
+      .enter()
+      .append('circle')
+      .attr('cx', (d: any) => this.xScale(d.x))
+      .attr('cy', (d: any) => this.yScale(d.y))
+      .attr('r', 8)
+      .attr('fill', (d: any, i: number) => d3.schemeCategory10[i % 10])
+      .attr('stroke', '#000')
+      .attr('stroke-width', 2);
   }
 }
