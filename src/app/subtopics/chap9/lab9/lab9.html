@@ -1,0 +1,219 @@
+<div class="m-2 space-y-4">
+
+    <div class="text-3xl font-sans font-semibold">
+        <h1>Chapter 9 : Lab</h1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Objective
+                </h3>
+
+                <p class="mt-4">
+                    Apply allpass filter theory and frequency warping techniques through hands-on Python exercises. You
+                    will design fractional delay filters, analyze group delay behavior, implement frequency warping, and
+                    apply Bark-scale approximations for audio processing.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+Exercise 1: FIR Fractional Delay Filter                </h3>
+
+                <p class="mt-4">
+                    Goal: Implement a windowed sinc fractional delay filter and study the effect of filter length.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Design an FIR fractional delay filter for a delay of 3.7 samples using a sine window.
+                </p>
+
+
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter9example1">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. What happens at high frequencies? Is this a perfect allpass filter?
+                </p>
+
+                <p class="mt-3">
+                    2. Try increasing L to 30. How does this affect the frequency response?
+                </p>
+                <p class="mt-3">
+                    3. Can you visually verify the delay of 7.7 samples in the output?
+                </p>
+
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+Exercise 2: IIR Allpass Fractional Delay Filter                </h3>
+
+                <p class="mt-4">
+                    Goal: Implement the IIR fractional delay allpass filter and compare with FIR.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Create the allp_delayfilt function and test it for various delay values.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter9example2">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. Is the magnitude truly constant at 1 (0 dB)? Compare with FIR from Exercise 1.
+                </p>
+
+                <p class="mt-3">
+                    2. How does the impulse response differ from FIR?
+                </p>
+
+                <p class="mt-3">
+                    3. Can you observe the fractional delay in the test signal output?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+Exercise 3: Group Delay Analysis                </h3>
+
+                <p class="mt-4">
+                    Goal: Compute and visualize the group delay of IIR allpass filters.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Analyze how group delay varies with frequency for different allpass coefficients.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter9example3">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1.At what frequency range is the group delay constant?
+                </p>
+
+                <p class="mt-3">
+                    2. How does group delay change at high frequencies?
+                </p>
+
+                <p class="mt-3">
+                    3. Why does group delay increase toward Nyquist frequency?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+Exercise 4: Frequency Warping - Bark Scale Visualization                </h3>
+
+                <p class="mt-4">
+                    Goal: Implement the warping phase function and visualize Bark-scale approximation.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Plot the Bark scale and compare it with allpass warping curves.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter9example4">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. How does the Bark scale emphasize low frequencies?
+                </p>
+
+                <p class="mt-3">
+                    2. Which allpass coefficient best approximates the Bark scale shape?
+                </p>
+
+                <p class="mt-3">
+                    3. Verify the inverse property numerically. What is the maximum error?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+</div>

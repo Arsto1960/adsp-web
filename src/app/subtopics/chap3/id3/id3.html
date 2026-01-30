@@ -1,0 +1,161 @@
+<!-- <div class="space-y-6">
+
+  <h3 class="text-3xl font-medium font-sans" style="color: rgb(10, 10, 10);">
+      Demo 3 : Audio Signal Lab
+  </h3>
+
+  <mat-card>
+      <div class="container">
+          <div class="sidebar">
+            <div class="title">🔊 SIGNAL LAB</div>
+        
+            <div class="controls">
+              <div class="section">
+                <div class="label">1. AUDIO SOURCE</div>
+                <div class="file-box">
+                  <input
+                    type="file"
+                    id="file"
+                    (change)="handleFileUpload($event)"
+                    accept="audio/*"
+                  />
+                  <label for="file" class="upload-btn">📂 Upload WAV/MP3</label>
+                  <div class="or">- OR -</div>
+                  <button class="syn-btn" (click)="generateSyntheticSignal()">
+                    ⚡ Use Synthetic Signal
+                  </button>
+                </div>
+              </div>
+        
+              <div class="section">
+                <div class="label">2. NOISE LEVEL (SNR)</div>
+                <div class="slider-box">
+                  <label>SNR: {{ snrParam }} dB</label>
+                  <input
+                    type="range"
+                    min="-10"
+                    max="40"
+                    step="1"
+                    [(ngModel)]="snrParam"
+                    (input)="updateProcessing()"
+                  />
+                  <div class="range-labels">
+                    <span>High Noise (-10)</span>
+                    <span>Clean (40)</span>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="info-card">
+                <div class="eq-title">THEORY</div>
+                <div class="latex">
+                  SNR = &sigma;<sub>x</sub>² / &sigma;<sub>n</sub>²
+                </div>
+                <div class="latex-sub">
+                  SNR[dB] = 10 log<sub>10</sub>(&sigma;<sub>x</sub>² /
+                  &sigma;<sub>n</sub>²)
+                </div>
+                <p>
+                  Positive SNR means signal is stronger. Negative SNR means noise
+                  dominates.
+                </p>
+              </div>
+            </div>
+          </div>
+        
+          <div class="main">
+            <div class="header">
+              <h2>SIGNAL-TO-NOISE RATIO EXPLORER</h2>
+            </div>
+        
+            <div class="visualizer">
+              <canvas #plotCanvas></canvas>
+            </div>
+        
+            <div class="player-bar">
+               <button class="play-btn" [class.active]="isPlaying" (click)="playSignal()">
+                  {{ isPlaying ? '🔊 Playing...' : '▶ Play Processed Audio' }}
+               </button>
+              <div class="status">
+                Status: {{ snrParam < 0 ? 'Noisy Audio' : 'Clean Audio' }}
+              </div>
+            </div>
+
+          </div>
+        </div>
+  </mat-card>
+
+</div> -->
+
+<div class="space-y-6">
+
+  <h3 class="text-3xl font-medium font-sans" style="color: rgb(10, 10, 10);">
+      Demo 3 : Audio Signal Lab
+  </h3>
+
+  <mat-card>
+      <div class="container">
+          
+          <div class="sidebar">
+            <div class="title">🎚️ Signal Lab</div>
+        
+            <div class="controls">
+              <div class="section">
+                <div class="label">1. Input Source</div>
+                <div class="file-box">
+                  <button class="syn-btn" (click)="generateSyntheticSignal()">
+                    ⚡ Load Synthetic Signal
+                  </button>
+                  <div class="or">OR</div>
+                  <input type="file" id="file" (change)="handleFileUpload($event)" accept="audio/*" />
+                  <label for="file" class="upload-btn">📂 Upload WAV / MP3</label>
+                </div>
+              </div>
+        
+              <div class="section">
+                <div class="label">2. Noise Floor (SNR)</div>
+                <div class="slider-box">
+                  <label>SNR <span>{{ snrParam }} dB</span></label>
+                  <input type="range" min="-10" max="40" step="1" 
+                         [(ngModel)]="snrParam" (input)="updateProcessing()" />
+                  <div class="range-labels">
+                    <span>Noisy (-10dB)</span>
+                    <span>Clean (+40dB)</span>
+                  </div>
+                </div>
+              </div>
+        
+              <div class="info-card">
+                <div class="eq-title">THEORY</div>
+                <div class="latex">SNR = P<sub>signal</sub> / P<sub>noise</sub></div>
+                <p>
+                  Controls the ratio of Signal Power to Noise Power. Lower values mean the noise is louder relative to the signal.
+                </p>
+              </div>
+            </div>
+          </div>
+        
+          <div class="main">
+            <div class="header">
+              <h2>SIGNAL PROCESSOR</h2>
+            </div>
+        
+            <div class="rack-unit">
+              <div class="visualizer">
+                <canvas #plotCanvas></canvas>
+              </div>
+        
+              <div class="player-bar">
+                 <button class="play-btn" [class.active]="isPlaying" (click)="playSignal()">
+                   {{ isPlaying ? '⏹ STOP PLAYBACK' : '▶ PLAY PROCESSED AUDIO' }}
+                 </button>
+                 <div class="status-lcd">
+                   MODE: {{ snrParam < 0 ? 'HIGH NOISE' : 'CLEAN' }}
+                 </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+  </mat-card>
+</div>

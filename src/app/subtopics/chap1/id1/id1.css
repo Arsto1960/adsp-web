@@ -1,0 +1,180 @@
+:host {
+  display: block;
+  font-family: 'Segoe UI', Roboto, sans-serif;
+  color: #333;
+  max-width: 1200px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Main Layout: Sidebar (300px) + Content (Rest) */
+.container {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+
+/* --- LEFT SIDEBAR (Controls) --- */
+.controls-panel {
+  background: #f8f9fa; /* Light grey chassis */
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: sticky;
+  top: 20px;
+}
+
+.panel-header {
+  border-bottom: 2px solid #007aff;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-header h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 0;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Control Groups */
+.grp {
+  background: #fff;
+  border: 1px solid #dee2e6;
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.grp label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6c757d;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.grp label span {
+  color: #007aff; /* Value color */
+  font-family: 'Courier New', monospace;
+}
+
+input[type='range'] {
+  width: 100%;
+  accent-color: #007aff;
+  height: 4px;
+  background: #e9ecef;
+  border-radius: 2px;
+  outline: none;
+}
+
+/* Audio Button - Big and Tactile */
+.play-btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #007aff, #0056b3);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 122, 255, 0.2);
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.play-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 8px rgba(0, 122, 255, 0.3);
+}
+
+.play-btn.active {
+  background: linear-gradient(135deg, #ff3b30, #d70015);
+  box-shadow: 0 4px 6px rgba(255, 59, 48, 0.3);
+}
+
+/* Theory Box */
+.theory-box {
+  background: #eef2f6;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  color: #495057;
+}
+.theory-box h4 { margin: 0 0 8px 0; font-size: 0.9rem; color: #343a40; }
+.eq { 
+  background: #fff; 
+  padding: 8px; 
+  border-radius: 4px; 
+  text-align: center; 
+  font-family: 'Times New Roman', serif; 
+  font-style: italic;
+  font-weight: bold;
+  border: 1px solid #dee2e6;
+}
+
+/* --- RIGHT MAIN (The Oscilloscope) --- */
+.scope-container {
+  background: #121212; /* Dark Chassis */
+  border-radius: 12px;
+  padding: 10px; /* Bezel */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  border: 1px solid #333;
+}
+
+.screen-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px 10px 10px;
+  color: #666;
+  font-family: monospace;
+  font-size: 0.8rem;
+}
+
+.live-indicator {
+  color: #00ff00;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.live-dot {
+  width: 8px; height: 8px; background: #00ff00; border-radius: 50%;
+  box-shadow: 0 0 5px #00ff00;
+}
+
+.canvas-wrap {
+  width: 100%;
+  height: 400px; 
+  background: #000;
+  border: 1px solid #333;
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .container { grid-template-columns: 1fr; }
+  .controls-panel { position: static; }
+  .canvas-wrap { height: 300px; }
+}

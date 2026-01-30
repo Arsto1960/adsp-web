@@ -1,0 +1,191 @@
+<!-- <div class="space-y-6">
+
+  <h3 class="text-3xl font-medium font-sans" style="color: rgb(10, 10, 10);">
+      Demo 6: Multirate Processing
+  </h3>
+
+  <mat-card>
+      <div class="container">
+          
+          <div class="sidebar">
+            <div class="title">🎛️ DSP Workbench</div>
+
+            <div class="mode-group">
+              <button class="mode-btn" [class.active]="activeMode === 'DOWN'" (click)="setMode('DOWN')">
+                ⬇️ Downsample
+              </button>
+              <button class="mode-btn" [class.active]="activeMode === 'UP'" (click)="setMode('UP')">
+                ⬆️ Upsample
+              </button>
+            </div>
+
+            <div class="controls">
+              <div class="grp">
+                <label>
+                  Rate Factor (M/L)
+                  <span>{{ factor }}x</span>
+                </label>
+                <input type="range" min="1" max="16" step="1" 
+                       [(ngModel)]="factor" (input)="runSimulation()">
+              </div>
+
+              <div class="grp">
+                <div class="toggle-row">
+                  <label style="margin:0; color:#fff;">
+                    {{ activeMode === 'DOWN' ? 'Anti-Aliasing Filter' : 'Interpolation Filter' }}
+                  </label>
+                  <input type="checkbox" [(ngModel)]="useFilter" (change)="runSimulation()">
+                </div>
+                <div style="font-size:0.75rem; color:#666; margin-top:6px;">
+                  {{ activeMode === 'DOWN' ? 'Removes HF before decimation' : 'Smooths zeros after expansion' }}
+                </div>
+              </div>
+
+              <div class="info-monitor">
+                > {{ infoText }}<br>
+                > BUFFER: {{ activeMode === 'DOWN' ? 'Reducing...' : 'Expanding...' }}
+              </div>
+
+              <div class="audio-deck">
+                <button class="play-btn" [class.playing]="isPlayingOriginal" (click)="playSignal('ORIGINAL')">
+                  <span>▶ Play Source (Input)</span>
+                </button>
+                <button class="play-btn" [class.playing]="isPlayingProcessed" (click)="playSignal('PROCESSED')">
+                  <span>▶ Play Result (Output)</span>
+                </button>
+              </div>
+
+              <div class="theory-card">
+                 <div *ngIf="activeMode === 'DOWN'">
+                   <h4>⚠️ The Aliasing Hazard</h4>
+                   <p>Without filtering, high frequencies fold back into the bass range.</p>
+                   
+                 </div>
+                 <div *ngIf="activeMode === 'UP'">
+                   <h4>👻 Spectral Imaging</h4>
+                   <p>Zero-stuffing creates spectral "ghost" copies at multiples of Fs.</p>
+                   
+                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="main">
+            
+            <div class="charts-grid">
+              
+              <div class="screen-unit">
+                <div class="screen-header">
+                  <span>Time Domain (Oscilloscope)</span>
+                  <span style="color:#666">● 20ms Window</span>
+                </div>
+                <div class="canvas-wrap">
+                  <canvas #timeCanvas></canvas>
+                </div>
+              </div>
+
+              <div class="screen-unit">
+                <div class="screen-header">
+                  <span>Frequency Domain (Spectrum)</span>
+                  <span style="color:#00e5ff">● FFT Analysis</span>
+                </div>
+                <div class="canvas-wrap">
+                  <canvas #freqCanvas></canvas>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+      </div>
+  </mat-card>
+</div> -->
+
+<div class="space-y-6 p-4">
+
+  <h3 class="text-3xl font-medium font-sans text-gray-800">
+      Demo 6: Multirate Signal Processing
+  </h3>
+
+  <div class="container">
+      
+      <div class="sidebar">
+        <div class="title">
+           <span>⚡ DSP LAB 2000</span>
+        </div>
+
+        <div class="mode-group">
+          <button class="mode-btn" [class.active]="activeMode === 'DOWN'" (click)="setMode('DOWN')">
+            DECIMATOR
+          </button>
+          <button class="mode-btn" [class.active]="activeMode === 'UP'" (click)="setMode('UP')">
+            INTERPOLATOR
+          </button>
+        </div>
+
+        <div class="controls">
+          <div class="grp">
+            <label>
+              Factor (M / L)
+              <span>x{{ factor }}</span>
+            </label>
+            <input type="range" min="1" max="16" step="1" 
+                   [(ngModel)]="factor" (input)="runSimulation()">
+          </div>
+
+          <div class="grp">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <label style="margin:0; color:#333;">
+                {{ activeMode === 'DOWN' ? 'Anti-Aliasing' : 'Reconstruction' }}
+              </label>
+              <input type="checkbox" [(ngModel)]="useFilter" (change)="runSimulation()" 
+                     style="width:20px; height:20px; accent-color:#333;">
+            </div>
+            <div style="font-size:0.7rem; color:#555; margin-top:8px; font-style:italic;">
+              {{ activeMode === 'DOWN' ? 'Prevents high freq aliasing.' : 'Smooths zeros into wave.' }}
+            </div>
+          </div>
+
+          <div class="info-monitor">
+            STATUS: {{ activeMode }}SAMPLING<br>
+            RATE: <span style="color: #0f0; font-weight: bold;">{{ fsProcessed }}</span> Hz<br>
+            > {{ infoText }}
+          </div>
+
+          <div class="audio-deck">
+            <button class="play-btn" [class.playing]="isPlayingOriginal" (click)="playSignal('ORIGINAL')">
+              AUDIO IN
+            </button>
+            <button class="play-btn" [class.playing]="isPlayingProcessed" (click)="playSignal('PROCESSED')">
+              AUDIO OUT
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="main">
+        
+        <div class="screen-unit">
+          <div class="screen-header">
+            <span>Oscilloscope (Time)</span>
+            <span style="color:#2ecc71">● LIVE</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas #timeCanvas></canvas>
+          </div>
+        </div>
+
+        <div class="screen-unit">
+          <div class="screen-header">
+            <span>Spectrum Analyzer (Freq)</span>
+            <span style="color:#00d2d3">● FFT</span>
+          </div>
+          <div class="canvas-wrap">
+            <canvas #freqCanvas></canvas>
+          </div>
+        </div>
+
+      </div>
+
+  </div>
+</div>

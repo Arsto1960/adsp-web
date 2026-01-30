@@ -1,0 +1,101 @@
+<div class="space-y-6">
+
+  <h3 class="text-3xl font-medium font-sans" style="color: rgb(10, 10, 10);">
+      Demo 5 : LBG Vector Quantization
+  </h3>
+
+  <mat-card>
+      <div class="container">
+          
+          <div class="sidebar">
+            <div class="title">💠 Quantizer</div>
+
+            <div class="metrics-panel">
+              <div class="mbox">
+                <div class="lbl">Codebook</div>
+                <div class="val" style="color:#a371f7">{{ codebook.length }} / {{ cfg.targetSize }}</div>
+              </div>
+              <div class="mbox highlight">
+                <div class="lbl">Distortion</div>
+                <div class="val">{{ mse | number : '1.4-4' }}</div>
+              </div>
+            </div>
+
+            <div class="main-actions">
+              <button class="btn primary" (click)="doubleN()" [disabled]="codebook.length >= cfg.targetSize">
+                <span>✂️ Split & Optimize</span>
+              </button>
+              <button class="btn secondary" (click)="reset()">
+                <span>🔄 Reset</span>
+              </button>
+            </div>
+
+            <div class="controls">
+              <div class="grp">
+                <div class="grp-title">1. Data Generator</div>
+                <div class="row">
+                  <label>Samples</label>
+                  <span>{{ cfg.nSamples }}</span>
+                </div>
+                <input type="range" min="200" max="2000" step="100" [(ngModel)]="cfg.nSamples" (input)="generateData()">
+                
+                <div class="row" style="margin-top:10px">
+                  <label>Clusters</label>
+                  <span>{{ cfg.nBlobs }}</span>
+                </div>
+                <input type="range" min="1" max="10" step="1" [(ngModel)]="cfg.nBlobs" (input)="generateData()">
+              </div>
+
+              <div class="grp">
+                <div class="grp-title">2. Algorithm Config</div>
+                
+                <div class="row">
+                  <label>Target Size</label>
+                  <select [(ngModel)]="cfg.targetSize">
+                    <option *ngFor="let n of targetOptions" [ngValue]="n">{{ n }} Vectors</option>
+                  </select>
+                </div>
+
+                <div class="row">
+                  <label>Splitting Noise (ε)</label>
+                  <input type="number" style="width:60px" step="0.01" [(ngModel)]="cfg.eps">
+                </div>
+
+                <div class="row" style="justify-content: flex-start; gap: 10px; margin-top: 10px;">
+                  <input type="checkbox" [(ngModel)]="cfg.showTraj" (change)="drawFullScene()">
+                  <label>Show Trajectories</label>
+                </div>
+                
+                <div class="row">
+                   <label>Resolution</label>
+                   <input type="range" min="2" max="10" [(ngModel)]="cfg.regionCellPx" (change)="drawFullScene()">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="main">
+            
+            <div class="viz-card">
+              <div class="canvas-container">
+                 <div class="overlay-legend">
+                   <span><span class="dot data"></span> Data Points</span>
+                   <span><span class="dot cent"></span> Centroids</span>
+                   <span>Status: <b style="color:#a371f7">{{ stage }}</b></span>
+                 </div>
+                 <canvas #viz></canvas>
+              </div>
+            </div>
+
+            <div class="mse-card">
+              <div class="card-header">📉 Error Convergence (MSE)</div>
+              <div class="mse-wrap">
+                <canvas #mseCanvas></canvas>
+              </div>
+            </div>
+
+          </div>
+
+      </div>
+  </mat-card>
+</div>

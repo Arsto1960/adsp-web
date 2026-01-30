@@ -1,0 +1,496 @@
+<div class="m-5 overflow-hidden space-y-6">
+  
+  <div class="text-3xl font-sans font-semibold">
+    <h1>Chapter 5 : Vector Quantization, LBG </h1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined" style="background-color: #6AECE1;">
+      <mat-card-header>
+        <mat-card-title style="color: blue;">Learning Objectives</mat-card-title>
+      </mat-card-header>
+        <mat-card-content class="text-lg">
+          <ul class="list-disc p-4">
+            <li>Understand the motivation for vector quantization (VQ) and how it extends scalar quantization to multi-dimensional signals.</li>
+            <li>Describe a codebook as a finite set of representative vectors (codewords) in R^k.</li>
+            <li>Understand how VQ partitions the input space into Voronoi regions, each mapped to its nearest codeword.</li>
+          </ul>
+        </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title style="color: blue;">Lloyd-Max Quantizer Recap</mat-card-title>
+      </mat-card-header>
+      
+      <mat-card-content class="text-lg">
+        <p class="mt-2">
+          Remember, the Lloyd-Max iteration can be described as follows:
+        </p>
+
+        <ol class="list-decimal p-4 space-y-2">
+          <li>Initialize the algorithm with a random assignment of M reconstruction values (codewords) y_k.</li>
+          <li>Using the reconstruction values, compute the boundary values b_k as midpoints between pairs of reconstruction values (nearest neighbour rule).</li>
+          <li>Using the signal's probability density function and the boundary values, compute new reconstruction values y_k as centroids over the quantization intervals.</li>
+          <li>Repeat step 2 until the update becomes sufficiently small (less than epsilon).</li>
+        </ol>
+
+        <p class="mt-4">
+          This algorithm usually converges to an equilibrium where the reconstruction values no longer change, resulting in minimum distortion D.
+          This concept can be extended to the multidimensional case, known as Vector Quantization (VQ).
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="flex flex-col justify-center items-center my-6">
+    <img src="assets/images/chap4/chap4.an.gif" 
+         class="max-w-full md:max-w-2xl max-h-[400px] w-auto h-auto rounded-lg shadow-md object-contain border border-gray-200">
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-header>
+        <mat-card-title style="color: blue;">5.1 Vector Quantization</mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content class="text-lg">
+        <p class="mt-2">
+          Scalar quantization usually makes the assumption that the signal to quantize, the source, is
+          memoryless, which means each sample is statistically independent of any other sample in the
+          sequence. This can be seen as having no “memory” between the samples. Examples of these sources
+          might be: Thermal noise, white noise, or a sequence of dice tosses, lottery numbers.
+          But many signals do have memory, they have samples which are statistically dependent on other
+          samples in the sequence. Example are: Speech signals, pink noise (noise which has a non-flat
+          spectrum), temperature values over the year, image signals, audio signals.
+          Since many signals of interest indeed have memory, this suggests that we can do a better job. One
+          possible approach to deal with memory (statistical dependencies) in our signal, is to use the
+          so-called Vector Quantization (VQ), see also: [20], section about Vector Quantization.
+          How does VQ work? Instead of quantizing each scalar value (each sample) individually, we first group
+          the sequence of samples $x(n$) into groups of $N$ samples:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ [x(0),\cdots,x(N-1)],[x(N),\cdots,x(2N-1)],[x(2N),..,x(3N-1)],\cdots $$"></p>
+
+        <p class="mt-2">
+          In this way we obtain a sequence of blocks (also called vectors) of size $N$ samples each. In this
+          way we obtain a sequence of samples in an N-dimensional space. In such a way we can capture or use
+          the memory between samples within each block or vector.
+          The resulting samples with memory in the N-dimensional space will then lie on or near a hyperplane
+          or subspace within this N-dimensional space. Hence we don’t need to sample the entire space, but we
+          only need to sample the part of our space where our samples are actually located.
+        </p>
+
+        <p class="mt-2">
+          Example: Take correlated samples, such that one sample is always similar to the
+          previous sample, just like in a sequence of speech or audio samples (usually we don’t
+          have very high frequencies there, and that means the curve through the samples is more
+          or less smooth). Now take the dimension $N=2$. Then we obtain a 2-dimensional vector
+          space of samples, which could look like in the following diagram. The resulting sequence
+          of vectors is:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ [x(0),x(1)],[x(2),x(3)],[x(4),x(5)],\cdots $$"></p>
+
+        <p class="mt-2">For example, if our signal is:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x=[23,45,21,4,-23,-4], $$"></p>
+
+        <p class="mt-2">Then the sequence of vectors becomes:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ [23,45]; [21,4]; [-23,-4] $$"></p>
+
+        <p class="mt-2">
+          Each of these vectors can now be represented as a point in a 2-dimensional space.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+        <h3 class="text-xl font-semibold font-sans mb-3 " style="color: blue;">5.1.1 Python Example</h3>
+
+        <p class="mt-2">Take a speech signal and read it into Python, </p>
+
+        <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+          ipython --pylab
+          import scipy.io.wavfile as wav
+          rate, snd = wav.read(’mspeech.wav’)
+          #Take an excerpt of 1000 samples,
+          #starting at sample 2001 and plot it:
+          spex=snd[2000+np.arange(1,1000)]
+          plot(spex)
+        </pre>
+        <p class="mt-2">
+          In Fig. (5.1) the resulting plot of the speech wave can be seen.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 justify-items-center">
+            <img src="assets/images/chap5/fig5.1.png" class="max-w-full h-auto max-h-[350px] rounded border shadow-sm">
+            <img src="assets/images/chap5/fig5.2.png" class="max-w-full h-auto max-h-[350px] rounded border shadow-sm">
+        </div>
+
+        <p class="mt-2">
+          This script counts how often the signal samples in our signal “snd” fall into one of 50 bins between
+          -max and +max amplitude, normalized between -1 and 1. This distribution is far from uniform and is
+          very “peaky” with most samples being in bin 0, indicating that most samples have a very small
+          amplitude. This histogram can be converted to a probability distribution $p(x)$ by dividing it by
+          the total number of samples so that its sum becomes 1 [14].
+        </p>
+        <p class="mt-2">
+          Now plot the 2-dimensional vectors, with the sample values of even indices on the x-axis, and the
+          sample values of odd indices on the y-axis. Each pair is plotted as a plus symbol:
+        </p>
+
+        <p class="mt-2">
+          plot(spex[2::2], spex[1::2], '+')
+        </p>
+
+        <p class="mt-2">
+          The result can be seen in Fig. (5.2).
+        </p>
+
+        <p class="mt-2">
+          We can see that since the odd and even samples are similar to each other, the vector points appear
+          near the diagonal of the space. This means we only need to sample this space densely near the
+          diagonal. More generally, this shows that fewer reconstruction values or codewords are needed
+          compared to the 1-dimensional case.
+        </p>
+
+        <p class="mt-2">
+          This results in fewer indices and therefore fewer bits for the quantized signal.
+        </p>
+
+        <p class="mt-2">
+          The vector encoder divides the signal into vectors, finds the nearest codeword, and transmits its
+          index to the decoder. The vector decoder reads the corresponding codevector from the codebook using
+          the received index and concatenates all codevectors back into a sample stream.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+        <h3 class="text-xl font-semibold font-sans mb-3" style="color: blue;">5.1.2 Vector Quantization in Higher Dimensions</h3>
+
+        <p class="mt-2">
+          An interesting property is that vector quantizers not only give an advantage for signals with
+          memory, but also for signals without memory. In the scalar case, we can only sample an N-dimensional
+          space on a regular grid, which is given by the coordinate axes of this space, whereas with VQ we can
+          use something like a densest sphere packing in this N-dimensional space, such that we reduce the
+          distance between reconstruction vectors (the codewords), and hence reduce the expectation of the
+          quantisation error even in this case. Fig. (5.3 and (5.4) illustrate the densest sphere packing for
+          the case of memoryless signals.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 justify-items-center">
+            <img src="assets/images/chap5/fig5.3.png" class="max-w-full h-auto max-h-[350px] rounded border shadow-sm">
+            <img src="assets/images/chap5/fig5.4.png" class="max-w-full h-auto max-h-[350px] rounded border shadow-sm">
+        </div>
+
+        <p class="mt-2">
+          Observe that in this way we get a denser packing, shifting the spheres into the gaps of the
+          neighbouring layers, which reduces the reconstruction error.
+        </p>
+
+        <p class="mt-2">
+          How do we perform quantisation in the N-dimensional case in general? We choose N-dimensional
+          reconstruction vectors, called codewords. Using the nearest neighbour rule, each N-dimensional
+          signal vector is mapped to the closest codevector. The neighbourhood can be seen as an N-dimensional
+          sphere around each codevector. Each codevector has an index, and this index is transmitted to the
+          receiver. The receiver outputs the corresponding codevector as the reconstruction value. The
+          collection of all codewords is called a codebook. The size of the codebook determines how many bits
+          are needed for the index. Codebooks are usually fixed and predefined, but there are also adaptive
+          codebooks, for example in speech coding.
+        </p>
+
+        <p class="mt-2">
+          So how do we obtain the codebook (the codevectors)? The procedure is similar to the Lloyd-Max
+          algorithm, but extended to N dimensions. For the N-dimensional case, this method is known as the
+          Linde-Buzo-Gray (LBG) algorithm.
+        </p>
+
+        <p class="mt-2"><strong>The algorithm can be described as follows:</strong></p>
+
+        <ol class="list-decimal pl-5 space-y-2 mt-2">
+          <li>
+            Start with a random assignment of M codewords, each being N-dimensional. These are the initial
+            reconstruction vectors.
+          </li>
+          <li>
+            Using the codewords, compute the decision boundaries. These boundaries form lines or hyperplanes
+            that separate the regions of points that are equally distant from two codewords. These regions
+            are the Voronoi regions. To assign a vector to a region, simply test which codeword is closest.
+          </li>
+          <li>
+            Using the probability distribution of the signal and the decision boundaries, compute new
+            codewords as centroids of the Voronoi regions. This is the same idea as in one dimension, but
+            here the centroid is computed over N dimensions.
+          </li>
+          <li>
+            Repeat step 2 until the update of the codewords becomes sufficiently small (less than a small
+            threshold).
+          </li>
+        </ol>
+
+        <p class="mt-2">
+          Here we assume that we know the probability distribution of the signal. But in practice,
+          multidimensional probability distributions are difficult to estimate, because the space volume
+          increases exponentially with dimension, while the number of available vectors decreases. This leads
+          to sparse data in high-dimensional spaces.
+        </p>
+
+        <p class="mt-2">
+          Therefore, instead of using a multidimensional probability distribution, we often use a training set
+          to obtain the codebook. The training set is a group of signals that have similar statistics to the
+          target signals, and is used only for training the codebook. To evaluate the trained vector
+          quantizer, we use a separate test set that was not used during training.
+        </p>
+
+        <p class="mt-2">
+          We can still use the same algorithm as with the probability distribution; we only compute the
+          centroid differently. The key idea is that an expectation value can be estimated by the average of
+          the training samples. Suppose we have L samples in a Voronoi region and want to compute its
+          centroid. We treat each sample as equally likely and compute the centroid as the average:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y_k = \frac{\sum_{i \in \text{Voronoi region } k} x(i)}{\text{Number of signal vectors} \in \text{Voronoi region}} $$"></p>
+        
+        <p class="mt-2">
+          This sum contains all the training vectors that are closest to codevector k.
+        </p>
+
+        <p class="mt-2">
+          After training the codebook using the training set, we obtain a fixed codebook that we can use to
+          encode new data. The training set must not be the same as the transmitted data.
+        </p>
+
+        <p class="mt-2">
+          The resulting vector quantizer for N = 2 can be visualized as in Fig. (5.5), where the coloured
+          regions represent the Voronoi regions, the magenta crosses are the codevectors, and the black dots
+          are signal vectors from a random Gaussian distribution. The K-Means algorithm, which implements the
+          LBG method, was used.
+        </p>
+
+        <div class="flex flex-col justify-center items-center my-6 gap-2">
+          <img src="assets/images/chap5/fig5.5.png" class="max-w-full md:max-w-xl h-auto rounded-lg shadow-md border p-2">
+          <h1 class="text-sm text-center italic text-gray-600 max-w-lg">
+            Figure 5.5: Example Voronoi regions. The magenta crosses are the 2-dimensional codevectors, the
+            black dots the signal vectors, and the colored regions are the Voronoi regions.
+          </h1>
+        </div>
+        
+        <div class="flex flex-col justify-center items-center my-6 gap-2">
+          <img src="assets/images/chap5/fig5.6.gif" class="max-w-full md:max-w-xl h-auto rounded-lg shadow-md border p-2">
+          <h1 class="text-sm text-center italic text-gray-600 max-w-lg">
+            Animation of the LBG algorithm for vector quantization. The grey dots are 2-D training vectors.
+            Colored regions show Voronoi partitions; large colored markers are codewords (centroids). As
+            iterations proceed, each codeword moves toward the mean of its assigned region, while total
+            distortion (right panel) decreases rapidly and stabilizes upon convergence
+          </h1>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+        <h3 class="text-xl font-semibold font-sans mb-3 " style="color: blue;">
+          5.1.3 Example
+        </h3>
+
+        <p class="mt-3">
+          Determine the codebook vectors of an LBG vector quantizer for dimension N = 2 and number of
+          codevectors M = 2, after one iteration for the given training set:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x = [3,2,4,5,7,8,8,9] $$"></p>
+
+        <p class="mt-3">
+          The initial codebook vectors are:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y_1=[1,2], y_2 =[5,6] $$"></p>
+
+        <p class="mt-3">
+          The training set vectors are:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ [3,2], [4,5], [7,8], [8,9] $$"></p>
+
+        <p class="mt-3">
+          The solution follows the iterative LBG algorithm:
+        </p>
+
+        <ol class="list-decimal pl-5 space-y-4">
+          <li>
+            Start with the given randomly assigned codebook vectors y1 and y2.
+          </li>
+
+          <li>
+            Compute the decision boundary using the nearest neighbour rule. The midpoint between the two
+            codewords is:
+            <br>
+            midpoint = (y1 + y2) / 2 = [3, 4]
+            <br>
+            This point lies on the Voronoi boundary, which is the line of all points that have equal
+            distance to the two codewords. In practice, we do not need the line, because the algorithm
+            always uses the nearest neighbour rule directly.
+          </li>
+
+          <li>
+             Compute new codewords as the centroids of the Voronoi regions. To do this we assign each
+             training vector to the closest codeword using Euclidean distance.
+          </li>
+        </ol>
+        
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y_k = \frac{\sum_{i \in \text{Voronoi region } k} x(i)}{\text{Number of signal vectors} \in \text{Voronoi region}} $$"></p>
+
+        <p class="mt-3"><strong>Distance calculations:</strong></p>
+
+        <div class="bg-gray-50 p-4 rounded-lg my-3">
+            <p class="text-center mt-3 text-lg font-mono">For x1 = [3, 2]: Closest to y1.</p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_1 = \sqrt{(3-1)^2 + (2-2)^2} = \sqrt{4} $$"></p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_2 = \sqrt{(5-3)^2 + (6-2)^2} = \sqrt{20} $$"></p>
+
+            <p class="text-center mt-3 text-lg font-mono">For x2 = [4, 5]: Closest to y2.</p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_1 = \sqrt{(4-1)^2 + (5-2)^2} = \sqrt{18} $$"></p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_2 = \sqrt{(5-4)^2 + (6-5)^2} = \sqrt{2} $$"></p>
+
+            <p class="text-center mt-3 text-lg font-mono">For x3 = [7, 8]: Closest to y2.</p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_1 = \sqrt{(7-1)^2 + (8-2)^2} = \sqrt{72} $$"></p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_2 = \sqrt{(7-5)^2 + (8-6)^2} = \sqrt{8} $$"></p>
+
+            <p class="text-center mt-3 text-lg font-mono">For x4 = [8, 9]: Closest to y2.</p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_1 = \sqrt{(8-1)^2 + (9-2)^2} = \sqrt{98} $$"></p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ d_2 = \sqrt{(8-5)^2 + (9-6)^2} = \sqrt{18} $$"></p>
+        </div>
+
+        <p class="mt-3"><strong>Centroid computation:</strong></p>
+
+        <p class="mt-3">
+          Voronoi region 1 contains only x1 = [3, 2].
+          Therefore:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y_1 = [3, 2] $$"></p>
+
+        <p class="mt-3">
+          Voronoi region 2 contains vectors [4, 5], [7, 8], [8, 9].
+        </p>
+        <p class="mt-3">
+          Their centroid is:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y_2 = \left[\frac{4 + 7 + 8}{3}, \frac{5 + 8 + 9}{3}\right] = \left[6+\frac{1}{3}, 7+\frac{1}{3}\right] $$"></p>
+
+        <p class="mt-3">
+          These are the updated codebook vectors after one iteration. Next, we return to step 2 and continue
+          until convergence.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 justify-items-center">
+             <img src="assets/images/chap5/fig5.6.1.png" class="max-w-full h-auto max-h-[350px] rounded border shadow-sm">
+             <img src="assets/images/chap5/fig5.7.png" class="max-w-full h-auto max-h-[350px] rounded border shadow-sm">
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg">
+        <h3 class="text-xl font-semibold font-sans mb-3 " style="color: blue;">
+          5.1.4 Vector Quantization in an Encoder and Decoder
+        </h3>
+
+        <ul class="list-disc pl-5">
+          <li>Both encoder and decoder store the same codebook.</li>
+          <li>In the encoder, the sample stream is first converted into vectors.</li>
+          <li>Each vector is mapped to its nearest codevector.</li>
+          <li>The index of the selected codevector is transmitted to the decoder.</li>
+          <li>The decoder converts each received index back into a codevector.</li>
+          <li>The codevectors are concatenated and converted back into a stream of samples.</li>
+        </ul>
+
+        <h4 class="font-bold mt-4">Example Encoder:</h4>
+
+        <p class="mt-3"><strong>Stream to vectors:</strong></p>
+        <p class="mt-3">x: [3,4], [7,8], ...</p>
+
+        <p class="mt-3"><strong>Vectors to codevectors:</strong></p>
+        <p class="mt-3">y: [4,5], [6,7]</p>
+
+        <p class="mt-3"><strong>To indices:</strong></p>
+        <p class="mt-3">k: 4, 5</p>
+
+        <h4 class="font-bold mt-4">Decoder:</h4>
+
+        <p class="mt-3"><strong>Indices to vectors:</strong></p>
+        <p class="mt-3">y: [4,5], [6,7]</p>
+
+        <p class="mt-3"><strong>To stream of samples:</strong></p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x_{rek}: 4,5,6,7 $$"></p>
+
+        <p class="mt-3">
+          An example using an audio signal and the K-Means algorithm (which follows the LBG procedure) can be
+          found in the notebook
+          "ADSP_05_VQ_LBG.ipynb" in the GitHub repository.
+        </p>
+
+        <p class="mt-3">
+          The naming difference is historical: "K-Means" is used generally in many fields for clustering,
+          while "LBG" is used in signal processing for efficient data compression, such as in speech and image
+          coding.
+        </p>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="flex flex-col items-center p-3 gap-6">
+    <h2 class="text-2xl font-sans font-semibold mb-4">🧠 Test Your Knowledge</h2>
+
+    @for (q of questions; track q) {
+      <div class="w-full md:w-2/3">
+        <mat-card class="mat-elevation-z6 p-6 font-sans">
+          <mat-card-title>{{ q.text }}</mat-card-title>
+          <br>
+            <mat-card-content>
+              <mat-radio-group [(ngModel)]="q.selectedAnswer" [disabled]="q.isSubmitted">
+                @for (option of q.options; track option) {
+                  <div class="mb-2">
+                    <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
+                  </div>
+                }
+              </mat-radio-group>
+              <div class="mt-4 flex gap-3">
+                <button matFab extended (click)="submitAnswer(q)"
+                  [disabled]="!q.selectedAnswer || q.isSubmitted">
+                  Submit
+                </button>
+                @if (q.isSubmitted) {
+                  <button matFab extended style="background-color:black ; color: aliceblue;"
+                    (click)="tryAgain(q)">
+                    Try Again
+                  </button>
+                }
+              </div>
+              <div class="mt-4">
+                @if (q.isSubmitted && q.selectedAnswer === q.correctAnswer) {
+                  <p
+                    class="text-green-600 font-semibold font-sans">
+                    ✅ Correct!
+                  </p>
+                }
+                @if (q.isSubmitted && q.selectedAnswer !== q.correctAnswer) {
+                  <p
+                    class="text-red-600 font-semibold font-sans">
+                    ❌ Incorrect. Correct answer: <strong>{{ q.correctAnswer }}</strong>.
+                  </p>
+                }
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      }
+    </div>
+
+</div>

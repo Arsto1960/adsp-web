@@ -1,0 +1,96 @@
+<div class="p-6 max-w-[1400px] mx-auto font-sans text-gray-800">
+
+  <h3 class="text-3xl font-bold mb-4">
+      ⭕ Z-Transform: Pole-Zero Explorer
+  </h3>
+
+  <mat-accordion class="mb-6">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>📋 Instructions</mat-panel-title>
+      </mat-expansion-panel-header>
+      <p class="text-sm text-gray-600">
+        Move Poles and Zeros in the complex plane. Observe how their position relative to the 
+        <strong>Unit Circle</strong> (dashed line) dictates the system's 
+        <strong>Stability</strong> and <strong>Frequency Response</strong>.
+      </p>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+  <div class="bg-[#f0f2f6] p-6 rounded-lg mb-8 border border-gray-200 shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <div class="control-group">
+        <label class="block text-sm font-bold mb-1">Pole Radius (r): {{ params.r_p | number:'1.2-2' }}</label>
+        <input type="range" min="0" max="1.5" step="0.05" 
+               class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-blue-600"
+               [(ngModel)]="params.r_p" (input)="update()">
+      </div>
+
+      <div class="control-group">
+        <label class="block text-sm font-bold mb-1">Pole Angle (θ): {{ params.theta_p }}°</label>
+        <input type="range" min="0" max="180" step="5" 
+               class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-blue-600"
+               [(ngModel)]="params.theta_p" (input)="update()">
+      </div>
+
+      <div class="control-group">
+        <label class="block text-sm font-bold mb-1">Zero Radius (r): {{ params.r_z | number:'1.2-2' }}</label>
+        <input type="range" min="0" max="1.5" step="0.05" 
+               class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-blue-600"
+               [(ngModel)]="params.r_z" (input)="update()">
+      </div>
+
+      <div class="control-group">
+        <label class="block text-sm font-bold mb-1">Zero Angle (θ): {{ params.theta_z }}°</label>
+        <input type="range" min="0" max="180" step="5" 
+               class="w-full h-2 bg-gray-300 rounded-lg appearance-none cursor-pointer accent-blue-600"
+               [(ngModel)]="params.theta_z" (input)="update()">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.5fr] gap-8 items-start">
+    
+    <div class="flex flex-col gap-4">
+      <div class="canvas-card relative">
+        <canvas #zPlaneCanvas></canvas>
+        <div class="absolute top-2 right-2 px-3 py-1 rounded text-sm font-bold"
+             [ngClass]="isStable ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+           {{ isStable ? '✅ STABLE' : '⚠️ UNSTABLE' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="flex flex-col gap-6">
+      
+      <div class="canvas-card">
+        <canvas #freqCanvas></canvas>
+      </div>
+
+      <div class="canvas-card">
+        <canvas #impulseCanvas></canvas>
+      </div>
+
+    </div>
+
+  </div>
+
+  <mat-accordion class="mt-8">
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>📚 Theory: What am I seeing?</mat-panel-title>
+      </mat-expansion-panel-header>
+      <div class="text-sm text-gray-700 space-y-2 pt-4">
+        <p><strong>The Rules of the Game:</strong></p>
+        <ul class="list-disc pl-5 space-y-1">
+          <li><strong>Stability:</strong> Look at the <strong>Poles (X)</strong>. If <em>any</em> pole moves outside the green Unit Circle ($r > 1$), the system explodes.</li>
+          <li><strong>Resonance:</strong> As a pole gets closer to the unit circle (radius → 1), the system resonates more at that angle. This creates a sharp peak in the Frequency Response.</li>
+          <li><strong>Nulls:</strong> Zeros (O) "kill" frequencies. If you place a zero at a certain angle, the Frequency Response will drop to zero (a notch) at that frequency.</li>
+        </ul>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+
+</div>

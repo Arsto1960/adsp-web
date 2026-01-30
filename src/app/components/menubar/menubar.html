@@ -1,0 +1,55 @@
+<mat-toolbar class="mat-elevation-z8" style="background:linear-gradient(to right, #090909, #777575); color: white;">
+  <button (click)="drawer.toggle()" mat-icon-button>
+    <mat-icon style="color: white;">menu</mat-icon>
+  </button>
+  <span class="text-2xl font-medium font-sans">Acoustic Signal Processing</span>
+  <span class="example-spacer"></span>
+
+  <button mat-icon-button class="hover:scale-105" matTooltip="Home">
+    <mat-icon [routerLink]="'/'"  style="color: white;" >home</mat-icon>
+  </button>
+</mat-toolbar>
+
+<mat-drawer-container>
+  <mat-drawer #drawer opened="true"   [mode]="isMobile ? 'over' : 'side'"
+    [attr.role]="isMobile ? 'dialog' : 'navigation'"
+    [style.width.px]="isMobile ? 220 : 250" position="start">
+
+    <mat-tree #tree [dataSource]="dataSource" [childrenAccessor]="childrenAccessor">
+
+      <!-- LEAF NODE (No children, only navigation) -->
+      <mat-tree-node *matTreeNodeDef="let node" matTreeNodePadding>
+        <button mat-icon-button disabled>
+          <mat-icon>{{ node.icon }}</mat-icon>
+        </button>
+
+        <a mat-list-item [routerLink]="node.route"  class="text-md">
+          <span   >{{ node.label }}</span>
+        </a>
+      </mat-tree-node>
+
+      <!-- PARENT NODE (Expandable + navigable) -->
+      <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
+        <!-- ICON BUTTON → expands/collapses -->
+        <button mat-icon-button matTreeNodeToggle (click)="$event.stopPropagation()">
+          <mat-icon>
+            {{ tree.isExpanded(node) ? 'expand_more' : node.icon }}
+          </mat-icon>
+        </button>
+
+        <!-- LABEL → navigates to route -->
+        <a mat-list-item [routerLink]="node.route" (click)="$event.stopPropagation()"  class="text-base">
+          <span>{{ node.label }}</span>
+        </a>
+      </mat-tree-node>
+
+    </mat-tree>
+
+  </mat-drawer>
+
+  <mat-drawer-content class="bg-gray-200">
+    <div class="p-1 m-1">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-drawer-content>
+</mat-drawer-container>

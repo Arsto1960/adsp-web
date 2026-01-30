@@ -1,0 +1,47 @@
+:host {
+  display: block;
+  background-color: #ffffff; /* Clean white background */
+}
+
+/* Simulate Streamlit's container look */
+.canvas-card {
+  background: white;
+  border-radius: 0.5rem; /* rounded-lg */
+  /* No visible border for plots to mimic matplotlib default figure look, 
+     or subtle shadow if preferred */
+  overflow: hidden;
+  position: relative;
+  /* Ensure charts have height */
+  min-height: 300px; 
+}
+
+/* Specific size for Z-Plane to keep it square-ish */
+.canvas-card canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Adjust height for right column plots */
+.canvas-card:not(:first-child) {
+  height: 250px; 
+}
+
+/* Force range input styles if Tailwind doesn't catch them */
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #2563eb; /* blue-600 */
+  cursor: pointer;
+  margin-top: -4px;
+}
+input[type=range]::-moz-range-thumb {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: #2563eb;
+  cursor: pointer;
+  border: none;
+}

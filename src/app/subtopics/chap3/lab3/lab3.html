@@ -1,0 +1,176 @@
+<div class="m-2 space-y-4">
+
+    <div class="text-3xl font-sans font-semibold">
+        <h1>Chapter 3 : Lab</h1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Objective
+                </h3>
+
+                <p class="mt-4">
+                    Apply SNR analysis and non-uniform quantization concepts through hands-on Python exercises. You will
+                    compute SNR for different signal types, implement μ-law companding, and compare uniform vs.
+                    non-uniform quantizers.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 1: SNR Penalty from Signal Backoff
+                </h3>
+
+                <p class="mt-4">
+                    Goal:  Investigate how SNR degrades when signals don't use the full quantizer range.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Test different signal amplitudes and verify the 6 dB per factor-of-2 rule.
+                </p>
+
+               
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter3example1">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. Verify the rule: SNR penalty = -20 log₁₀(backoff) dB
+                </p>
+
+                <p class="mt-3">
+                    2. At what backoff factor does the signal become severely degraded?
+                </p>
+                 <p class="mt-3">
+                    3. Why is using full-scale range important for maximizing SNR?
+                </p>
+
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 2: Companding vs. Uniform - SNR Comparison
+                </h3>
+
+                <p class="mt-4">
+                    Goal: Compare SNR performance across different signal amplitudes for both methods.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Sweep signal amplitude and measure SNR for uniform vs. μ-law quantization.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter3example2">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. At what signal level is μ-law most beneficial?
+                </p>
+
+                <p class="mt-3">
+                    2. Why does uniform quantization SNR degrade with amplitude backoff?
+                </p>
+
+                <p class="mt-3">
+                    3. How does μ-law maintain more constant SNR across amplitudes?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 3:  Monte Carlo Verification of SNR Theory
+                </h3>
+
+                <p class="mt-4">
+                    Goal: Use Monte Carlo simulation to verify theoretical SNR formulas.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Run repeated trials with random signals and confirm the 6.02N rule empirically.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 [code]="chapter3example3">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. Does the empirical slope match the theoretical 6.02 dB/bit?
+                </p>
+
+                <p class="mt-3">
+                    2. Why is there small trial-to-trial variation in SNR?
+                </p>
+
+                <p class="mt-3">
+                    3. How would the results change for a sinusoidal signal?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+   
+
+</div>

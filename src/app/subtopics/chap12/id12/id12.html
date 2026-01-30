@@ -1,0 +1,285 @@
+<!-- <div class="space-y-6">
+
+  <h3 class="text-3xl font-medium font-sans" style="color: rgb(10, 10, 10);">
+      Chapter 12 : Signal Operations Lab
+  </h3>
+
+  <mat-card>
+      <div class="ops-container">
+          
+          <div class="sidebar">
+            <div class="brand">📡 OPS CENTER</div>
+        
+            <div class="mission-select">
+              <div class="label">SELECT MISSION</div>
+        
+              <button class="mission-btn" [class.active]="activeMission === 'HUNTER'" (click)="setMission('HUNTER')">
+                <span class="icon">🎯</span>
+                <div class="btn-text">
+                   <div class="m-title">OP: HUNTER</div>
+                   <div class="sub">Matched Filter</div>
+                </div>
+              </button>
+        
+              <button class="mission-btn" [class.active]="activeMission === 'CLARITY'" (click)="setMission('CLARITY')">
+                <span class="icon">🧹</span>
+                <div class="btn-text">
+                   <div class="m-title">OP: CLARITY</div>
+                   <div class="sub">Wiener Filter</div>
+                </div>
+              </button>
+        
+              <button class="mission-btn" [class.active]="activeMission === 'ORACLE'" (click)="setMission('ORACLE')">
+                <span class="icon">🔮</span>
+                <div class="btn-text">
+                   <div class="m-title">OP: ORACLE</div>
+                   <div class="sub">LPC Prediction</div>
+                </div>
+              </button>
+            </div>
+        
+            <div class="controls-area">
+              
+              <div *ngIf="activeMission === 'CLARITY'" class="ctrl-group">
+                <div class="briefing">
+                  <strong>Objective:</strong> Minimize MSE to recover intelligence using Wiener Filtering.
+                  [Image of wiener filter block diagram signal noise]
+                </div>
+                <div class="ctrl-title">Filter Config</div>
+                <div class="grp">
+                   <div class="lbl-row"><label>Taps (L)</label> <span>{{ wienerParams.taps }}</span></div>
+                   <input type="range" min="2" max="50" [(ngModel)]="wienerParams.taps" (input)="runMission()">
+                </div>
+                <div class="grp">
+                   <label>Jamming Level</label>
+                   <select [(ngModel)]="wienerParams.noiseLevel" (change)="runMission()">
+                     <option>Low</option>
+                     <option>Medium</option>
+                     <option>High</option>
+                     <option>Critical</option>
+                   </select>
+                </div>
+              </div>
+        
+              <div *ngIf="activeMission === 'HUNTER'" class="ctrl-group">
+                <div class="briefing">
+                  <strong>Objective:</strong> Maximize SNR using Matched Filtering to lock target location.
+                  [Image of matched filter signal detection correlation]
+                </div>
+                <div class="ctrl-title">Sonar Config</div>
+                <div class="grp">
+                   <label>Signature</label>
+                   <select [(ngModel)]="hunterParams.shape" (change)="runMission()">
+                     <option value="Rect">Rect (Pulse)</option>
+                     <option value="Gaussian">Gaussian (Radar)</option>
+                     <option value="Chirp">Chirp (Sonar)</option>
+                   </select>
+                </div>
+                <div class="grp">
+                   <div class="lbl-row"><label>Atmospheric Noise</label> <span>{{ hunterParams.noisePwr }}</span></div>
+                   <input type="range" min="0.1" max="4.0" step="0.1" [(ngModel)]="hunterParams.noisePwr" (input)="runMission()">
+                </div>
+              </div>
+        
+              <div *ngIf="activeMission === 'ORACLE'" class="ctrl-group">
+                <div class="briefing">
+                  <strong>Objective:</strong> Predict future states using Linear Predictive Coding (LPC).
+                  [Image of linear predictive coding block diagram]
+                </div>
+                <div class="ctrl-title">Predictor Config</div>
+                <div class="grp">
+                   <div class="lbl-row"><label>Order (p)</label> <span>{{ oracleParams.order }}</span></div>
+                   <input type="range" min="1" max="20" [(ngModel)]="oracleParams.order" (input)="runMission()">
+                </div>
+                <div class="grp">
+                   <div class="lbl-row"><label>Horizon</label> <span>{{ oracleParams.horizon }}</span></div>
+                   <input type="range" min="10" max="100" [(ngModel)]="oracleParams.horizon" (input)="runMission()">
+                </div>
+              </div>
+            </div>
+          </div>
+        
+          <div class="main-display">
+            <div class="display-header">
+              <h2>
+                {{ activeMission === 'HUNTER' ? 'TARGET DETECTION' : 
+                   activeMission === 'CLARITY' ? 'SIGNAL RESTORATION' : 
+                   'FUTURE PREDICTION' }}
+              </h2>
+              <div class="grid-line"></div>
+            </div>
+        
+            <div class="canvas-wrapper">
+              <canvas #mainCanvas></canvas>
+            </div>
+
+            <div class="console-bar">
+              
+              <div class="console-row" *ngIf="activeMission === 'HUNTER'">
+                <button class="action-btn" (click)="hunterScramble()">
+                  🎲 SCRAMBLE TARGET
+                </button>
+                <div class="live-metric" [class.success]="hunterResult.success" [class.error]="!hunterResult.success">
+                  <div class="lm-lbl">STATUS</div>
+                  <div class="lm-val">{{ hunterResult.success ? 'TARGET ACQUIRED' : 'SEARCHING...' }}</div>
+                  <div class="lm-sub">Loc: {{ hunterResult.detectedLoc }}</div>
+                </div>
+              </div>
+
+              <div class="console-row" *ngIf="activeMission === 'CLARITY'">
+                <button class="action-btn" (click)="wienerNewTx()">
+                  🔄 NEW TRANSMISSION
+                </button>
+                <div class="live-metric success">
+                  <div class="lm-lbl">SNR BOOST</div>
+                  <div class="lm-val">+{{ wienerMetrics.improvement | number : '1.1-1' }} dB</div>
+                  <div class="lm-sub">MSE reduced from {{ wienerMetrics.mseRaw | number:'1.2-2' }}</div>
+                </div>
+              </div>
+
+              <div class="console-row" *ngIf="activeMission === 'ORACLE'">
+                <button class="action-btn" (click)="runMission()">
+                  ⚡ REGENERATE SYSTEM
+                </button>
+                <div class="live-metric warn">
+                  <div class="lm-lbl">PREDICTION ERROR</div>
+                  <div class="lm-val">{{ oracleError | number : '1.4-4' }}</div>
+                  <div class="lm-sub">Mean Squared Error</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+      </div>
+  </mat-card>
+</div> -->
+
+<div class="ops-container">
+  
+  <div class="sidebar">
+    <div class="brand"><span class="icon">📡</span> OPS CENTER</div>
+
+    <div class="mission-select">
+      <div class="label">SELECT ACTIVE MISSION</div>
+
+      <button class="mission-btn" [class.active]="activeMission === 'HUNTER'" (click)="setMission('HUNTER')">
+        OP: HUNTER <br /><span class="sub">Matched Filter</span>
+      </button>
+
+      <button class="mission-btn" [class.active]="activeMission === 'CLARITY'" (click)="setMission('CLARITY')">
+        OP: CLARITY <br /><span class="sub">Wiener Filter</span>
+      </button>
+
+      <button class="mission-btn" [class.active]="activeMission === 'ORACLE'" (click)="setMission('ORACLE')">
+        OP: ORACLE <br /><span class="sub">LPC Prediction</span>
+      </button>
+    </div>
+
+    <div class="status-panel">
+      <div class="status-row">
+        <span>STATUS:</span> <span class="green">ACTIVE</span>
+      </div>
+      <div class="status-row">
+        <span>SYSTEM:</span> <span class="green">ONLINE</span>
+      </div>
+    </div>
+
+    <div class="controls-area">
+      
+      <div *ngIf="activeMission === 'CLARITY'" class="ctrl-group">
+        <div class="briefing">
+          <strong>Briefing:</strong> Intercepted corrupted transmission.<br />
+          <strong>Objective:</strong> Configure <em>Wiener Filter</em> to minimize MSE.
+        </div>
+        <div class="ctrl-title">Filter Config</div>
+        <label>Filter Taps (L): {{ wienerParams.taps }}</label>
+        <input type="range" min="2" max="50" [(ngModel)]="wienerParams.taps" (input)="runMission()" />
+        <label>Jamming Level</label>
+        <select [(ngModel)]="wienerParams.noiseLevel" (change)="runMission()">
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+          <option>Critical</option>
+        </select>
+        <button class="action-btn" (click)="wienerNewTx()">🔄 New Transmission</button>
+        <div class="metric-box">
+          <div class="m-label">SIGNAL BOOST</div>
+          <div class="m-val green">+{{ wienerMetrics.improvement | number : '1.1-1' }} dB</div>
+        </div>
+      </div>
+
+      <div *ngIf="activeMission === 'HUNTER'" class="ctrl-group">
+        <div class="briefing">
+          <strong>Briefing:</strong> Stealth target hidden in noise floor.<br />
+          <strong>Objective:</strong> Use <em>Matched Filter</em> to maximize SNR.
+        </div>
+        <div class="ctrl-title">Sonar Config</div>
+        <label>Target Signature</label>
+        <select [(ngModel)]="hunterParams.shape" (change)="runMission()">
+          <option value="Rect">Rect (Pulse)</option>
+          <option value="Gaussian">Gaussian (Radar)</option>
+          <option value="Chirp">Chirp (Sonar)</option>
+        </select>
+        <label>Atmospheric Noise: {{ hunterParams.noisePwr }}</label>
+        <input type="range" min="0.1" max="4.0" step="0.1" [(ngModel)]="hunterParams.noisePwr" (input)="runMission()" />
+      </div>
+
+      <div *ngIf="activeMission === 'ORACLE'" class="ctrl-group">
+        <div class="briefing">
+          <strong>Briefing:</strong> Chaotic system stability at risk.<br />
+          <strong>Objective:</strong> Use <em>LPC</em> to forecast future.
+        </div>
+        <div class="ctrl-title">Predictor Config</div>
+        <label>Order (p): {{ oracleParams.order }}</label>
+        <input type="range" min="1" max="20" [(ngModel)]="oracleParams.order" (input)="runMission()" />
+        <label>Horizon: {{ oracleParams.horizon }}</label>
+        <input type="range" min="10" max="100" [(ngModel)]="oracleParams.horizon" (input)="runMission()" />
+        <button class="action-btn" (click)="runMission()">⚡ Regenerate System</button>
+        <div class="metric-box">
+          <div class="m-label">PREDICTION MSE</div>
+          <div class="m-val yellow">{{ oracleError | number : '1.4-4' }}</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="main-display">
+    
+    <div class="display-header-row">
+      <h2>
+        {{ activeMission === 'HUNTER' ? 'TARGET DETECTION' : activeMission === 'CLARITY' ? 'SIGNAL RESTORATION' : 'FUTURE PREDICTION' }}
+      </h2>
+
+      <div class="header-controls" *ngIf="activeMission === 'HUNTER'">
+         <button class="header-btn" (click)="hunterScramble()">🎲 Scramble Loc</button>
+         
+         <div class="mini-status" [class.alert]="!hunterResult.success">
+            <span class="lbl">STATUS: </span>
+            <span class="val" [class.green]="hunterResult.success" [class.red]="!hunterResult.success">
+               {{ hunterResult.success ? 'ACQUIRED' : 'LOST' }}
+            </span>
+            <span class="coords"> | T: {{hunterParams.targetLoc}} / D: {{hunterResult.detectedLoc}}</span>
+         </div>
+      </div>
+    </div>
+    
+    <div class="grid-line"></div>
+
+    <div class="canvas-wrapper">
+      <canvas #mainCanvas></canvas>
+    </div>
+
+    <div class="intel-panel">
+      <div *ngIf="activeMission === 'CLARITY'">
+        <strong>INTEL:</strong> The Wiener filter minimizes Mean Squared Error by solving <b>h = R⁻¹r</b>.
+      </div>
+      <div *ngIf="activeMission === 'HUNTER'">
+        <strong>INTEL:</strong> The Matched Filter convolves the input with a time-reversed template to maximize SNR.
+      </div>
+      <div *ngIf="activeMission === 'ORACLE'">
+        <strong>INTEL:</strong> LPC estimates future samples as a linear combination of past samples (Yule-Walker eq).
+      </div>
+    </div>
+  </div>
+</div>

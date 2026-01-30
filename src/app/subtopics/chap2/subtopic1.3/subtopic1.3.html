@@ -1,0 +1,64 @@
+<div class="m-2 space-y-4">
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+
+                <h2 class="text-2xl font-semibold mt-6">2.5 Non-uniformly Distributed Signals</h2>
+
+                <p class="text-lg mt-3">
+                    The other assumption we made concerned the type of signal we quantize. What if we do not
+                    have a uniformly distributed signal? As we saw, speech and audio signals are best modeled
+                    by a Laplacian distribution or a Gaussian mixture model, and similar models apply for
+                    audio signals in general.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Even a simple sine wave does not fulfill the assumption of a uniform distribution.
+                    What is the pdf of a simple sine wave? (see Figure 2.3).
+                </p>
+
+                <p class="text-lg mt-3">
+                    Observe: If a sinusoid represents a full-range signal, its values lie between
+                    −A/2 and +A/2, just like in the previous examples.
+                </p>
+
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap2/fig2.3.png" class="w-200 h-100 ">
+        <h1 class="text-wrap">
+            Figure 2.3: Sine wave with a non-uniform PDF
+        </h1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+
+                <h2 class="text-2xl font-semibold mt-6">2.6 Conclusion</h2>
+
+                <p class="text-lg mt-3">
+                    In summary, the SNR for a quantizer can be easily calculated using the derived formulas,
+                    and the resulting SNR in dB increases by approximately 6 dB for every additional bit of
+                    the quantizer, given the assumptions of uniform distribution and full-range signals.
+                </p>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+
+</div>

@@ -1,0 +1,645 @@
+<div class="m-4">
+    <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+
+        <mat-card-content class="text-lg">
+            <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                7.2 Filters
+            </h3>
+
+
+            <p class="mt-4">
+                Filters are linear, time-invariant systems. This means they fulfil the following properties:
+            </p>
+
+            <p>
+                If F(x(n)) is our filter function of input signal x(n), then we have:
+            </p>
+
+            <ul>
+                <li>
+                    <strong>Linearity:</strong> for two signals x₁(n) and x₂(n),
+                    <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ F(x_1(n) + x_2(n)) = F(x_1(n)) + F(x_2(n))
+
+ $$">
+                    </p>
+
+
+                    <p>With a scaling factor a:</p>
+                    <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ F(a · x(n)) = a · F(x(n))
+
+ $$">
+                    </p>
+
+                    <p>
+                        This means we can pull sums and constant factors out of the filter function.
+                    </p>
+                </li>
+
+                <li>
+                    <strong>Time-Invariance:</strong> if
+                    <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = F(x(n))
+
+ $$">
+                    </p>
+
+                    <p>then for a delay of n₀:</p>
+                    <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n + n0) = F(x(n + n0))
+
+ $$">
+                    </p>
+
+                    <p>
+                        This means the system behavior does not change with time.
+                    </p>
+                </li>
+            </ul>
+
+            <h3>7.2.1 Finite Impulse Response (FIR) Filters</h3>
+
+            <p>
+                A simple Finite Impulse Response (FIR) filter has the following difference equation, where
+                x(n) is the input and y(n) is the output:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = \sum_{m=0}^{M} b(m) x(n - m)
+
+ $$">
+            </p>
+
+
+            <p>
+                This operation is a convolution of the signal x(n) with the sequence b(n).
+                The values b(m) are the filter coefficients, also called the impulse response.
+            </p>
+
+            <p>
+                The coefficients b(n) are often called “taps” because the filter can be viewed as tapping
+                a delay line at different points.
+            </p>
+
+            <div class="flex flex-col justify-around items-center gap-2">
+                <img src="assets/images/chap7/fig7.3.png" class="w-180 h-90 ">
+            </div>
+
+            <p>
+                The dashed branches indicate additional delay-and-multiply stages that are not shown.
+                This difference equation is how FIR filters are typically implemented in MATLAB or Python.
+            </p>
+
+            <p>
+                In the time domain, blocks labeled z⁻¹ represent a delay of one sample, not a multiplication.
+                After the first delay block we obtain x(n−1), after the second delay block x(n−2), and so on.
+            </p>
+
+            <p>
+                Each delay block stores the input sample for one sampling period and releases it in the next cycle.
+            </p>
+
+            <p>
+                Taking the z-transform of the difference equation gives:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = \sum_{m=0}^{M} b(m) x(n - m)
+
+ $$">
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$Y(z) = \sum_{m=0}^{M} b(m) \cdot z^{-m} \cdot X(z) = X(z) \cdot \sum_{m=0}^{M} b(m) \cdot z^{-m}
+ $$">
+            </p>
+
+
+            <p>
+                The transfer function is defined as the ratio of output to input:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(z) := \frac{Y(z)}{X(z)} = \sum_{m=0}^{M} b(m) \cdot z^{-m}
+
+ $$">
+            </p>
+
+
+            <p>
+                This transfer function is simply the z-transform of the impulse response b(n).
+            </p>
+
+            <p>
+                The frequency response of the filter is obtained by replacing z with
+                exp(jΩ), allowing us to analyze which frequencies are passed or attenuated.
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(e^{j\Omega}) = \sum_{m=0}^{M} b(m) \cdot e^{-j\Omega \cdot m}
+
+ $$">
+            </p>
+
+            <h3>Frequency Response</h3>
+
+            <p>
+                Since exp(jΩ) is a complex number, the frequency response is also complex.
+                Therefore, H(exp(jΩ)) is a complex value for each frequency Ω.
+            </p>
+
+            <p>
+                The frequency response is usually visualized using two plots:
+            </p>
+
+            <ul>
+                <li><strong>Magnitude plot</strong> – shows how much each frequency is amplified or attenuated</li>
+                <li><strong>Phase plot</strong> – shows the phase shift introduced at each frequency</li>
+            </ul>
+
+            <p>
+                Using these two plots, we can design filters with desired properties,
+                such as stop-bands or pass-bands at specific frequencies.
+            </p>
+
+            <p>
+                In both MATLAB and Python, the function used to compute and plot
+                the magnitude and phase response of a signal or transfer function is:
+            </p>
+
+            <pre>
+freqz
+</pre>
+
+            <p>
+                We have already encountered this function earlier.
+            </p>
+            <p class="h-2">
+
+            </p>
+            <hr>
+            <p class="h-2">
+
+            </p>
+
+            <h3>7.2.2 Infinite Impulse Response (IIR) Filters</h3>
+
+            <p>
+                The difference equation of an Infinite Impulse Response (IIR) filter is:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = \sum_{m=0}^{M} b(m) \cdot x(n - m) + \sum_{r=1}^{N} a(r) \cdot y(n - r) \tag{7.2}
+ $$">
+            </p>
+
+
+            <p>
+                This equation contains two convolution operations:
+            </p>
+
+            <ul>
+                <li>One convolution with the input signal x(n)</li>
+                <li>One convolution with the past output values y(n)</li>
+            </ul>
+
+            <p>
+                The second term represents feedback from the output back into the system.
+                This feedback is what gives IIR filters their name: the impulse response
+                theoretically lasts forever.
+            </p>
+
+            <p>
+                Notice that the feedback terms start at y(n−1) and not y(n).
+                This avoids so-called <strong>delayless loops</strong>.
+            </p>
+
+            <p>
+                A delayless loop would require the value y(n) before it has been computed,
+                which is not physically or computationally possible.
+            </p>
+
+            <p>
+                Just like FIR filters, this difference equation is the standard way
+                IIR filters are implemented in MATLAB, Octave, and Python.
+            </p>
+
+            <p>
+                In Python, IIR filters are commonly implemented using:
+            </p>
+
+            <pre>
+scipy.signal.lfilter
+</pre>
+
+            <p>
+                Figure 7.2 illustrates the corresponding block diagram of an IIR filter,
+                showing both feedforward and feedback paths.
+            </p>
+
+            <div class="flex flex-col justify-around items-center gap-2">
+                <img src="assets/images/chap7/fig7.4.png" class="w-180 h-110 ">
+            </div>
+            <p>
+                Again, the boxes labeled z⁻¹ represent a delay of one sampling period,
+                and the oval shapes represent a multiplication by the factor written next to them.
+            </p>
+
+            <p>
+                The z-transform of the IIR filter difference equation (equation 7.2) can be written as:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = \sum_{m=0}^{M} b(m) \cdot X(z) \cdot z^{-m} + \sum_{r=1}^{N} a(r) \cdot Y(z) \cdot z^{-r} \tag{7.3}
+
+ $$">
+            </p>
+
+            <p>
+                Important note:
+                MATLAB, Octave, and Python’s <code>scipy.signal.lfilter</code>
+                define the feedback coefficients <code>a</code> with opposite signs
+                compared to the convention used here and in Oppenheim &amp; Schafer.
+            </p>
+
+            <p>
+                You can verify this by checking:
+            </p>
+
+            <pre>
+help filter
+help(scipy.signal.lfilter)
+</pre>
+
+            <hr>
+
+            <h4>Transfer Function of an IIR Filter</h4>
+
+            <p>
+                To obtain the transfer function, we first move all terms containing Y(z)
+                to one side of the equation:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z)\left(1 - \sum_{r=1}^{N} a(r) \cdot z^{-r}\right) = X(z) \cdot \sum_{m=0}^{M} b(m) \cdot z^{-m}
+
+ $$">
+            </p>
+
+
+            <p>
+                Dividing the output by the input gives the transfer function:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(z) = \frac{Y(z)}{X(z)} = \frac{\sum_{m=0}^{M} b(m) \cdot z^{-m}}{1 - \sum_{r=1}^{N} a(r) \cdot z^{-r}}
+
+ $$">
+            </p>
+
+
+            <p>
+                An important observation:
+                Using the z-transform allows us to find a closed-form expression
+                for the transfer function, even though the system contains feedback.
+                This is a major advantage of the z-transform.
+            </p>
+
+            <p>
+                Because the denominator is a polynomial in z⁻¹, the transfer function
+                contains poles. This means the filter can potentially become unstable.
+            </p>
+
+            <p>
+                The zeros of the denominator polynomial correspond to the poles of the filter.
+                If all poles lie strictly inside the unit circle, the filter is stable.
+            </p>
+
+            <p>
+                Therefore, stability can be ensured by designing the coefficients a(n)
+                such that all poles remain inside the unit circle.
+            </p>
+
+            <hr>
+
+            <h3>7.2.3 IIR Filter with Minimum Number of Memory Elements</h3>
+
+            <p>
+                For hardware implementations, it is often desirable to minimize the number
+                of required memory elements.
+            </p>
+
+            <p>
+                This can be achieved by combining the memory elements of the feedforward
+                and feedback paths of the IIR filter.
+            </p>
+
+            <p>
+                To do this, we redefine:
+            </p>
+
+            <ul>
+                <li>N as the maximum of M and N</li>
+                <li>All coefficients beyond their original limits are set to zero</li>
+            </ul>
+
+            <p>
+                With this assumption, the z-domain representation becomes:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = b(0) \cdot X(z) + \sum_{m=1}^{N} z^{-m} \cdot (b(m) \cdot X(z) + a(m) \cdot Y(z))
+
+ $$">
+            </p>
+
+
+            <p>
+                This expression can be expanded as a nested delay structure:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = b(0) \cdot X(z) + z^{-1} \cdot (b(1) \cdot X(z) + a(1) \cdot Y(z) + z^{-1} \cdot (\ldots + z^{-1} (b(N) \cdot X(z) + a(N) \cdot Y(z))))
+
+ $$">
+            </p>
+
+
+            <p>
+                For implementation, we also use the fact that the delay operator z⁻¹ is linear.
+                This means the delay can be applied after multiplication:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ z^{-1} \cdot (b(m) \cdot X(z) + a(m) \cdot Y(z)) = (b(m) \cdot X(z) + a(m) \cdot Y(z)) \cdot z^{-1}
+
+ $$">
+            </p>
+
+
+            <p>
+                This results in a memory-efficient FIR-IIR structure,
+                which is the structure used internally by the Python function:
+            </p>
+
+            <pre>
+scipy.signal.lfilter
+</pre>
+
+            <p>
+                The corresponding signal flow diagram is shown in Figure 7.3.
+            </p>
+            <div class="flex flex-col justify-around items-center gap-2">
+                <img src="assets/images/chap7/fig7.5.png" class="w-180 h-110 ">
+            </div>
+
+
+
+            <h3>7.2.4 IIR Filter Example</h3>
+
+            <p>
+                Returning to our simple example of an exponentially decaying signal,
+                we now show how to implement it using an IIR filter.
+            </p>
+
+            <p>
+                We need a system with a single pole at position <strong>p</strong>.
+                This can be achieved by choosing:
+            </p>
+
+            <ul>
+                <li>b(0) = 1</li>
+                <li>a(1) = p</li>
+            </ul>
+
+            <p>
+                This leads to the following difference equation:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = 1 \cdot x(n) + p \cdot y(n - 1) \tag{7.4}
+
+ $$">
+            </p>
+
+
+            <p>
+                If the input signal x(n) is a unit impulse, the output becomes:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 1, p, p^2, p^3, \ldots
+ $$">
+
+
+            <div class="flex flex-col justify-around items-center gap-2">
+                <img src="assets/images/chap7/fig7.6.png" class="w-180 h-80 ">
+            </div>
+            <p>
+                This is an infinitely long impulse response, which is why such filters
+                are called Infinite Impulse Response (IIR) filters.
+            </p>
+
+            <p>
+                The corresponding flow diagram of this filter is shown in Figure 7.4.
+                You can compare it with the Python implementation block diagram
+                shown earlier in Figure 7.3, using:
+            </p>
+
+            <ul>
+                <li>b[0] = 1</li>
+                <li>a[0] = 1</li>
+                <li>a[1] = p</li>
+            </ul>
+
+            <p>
+                Python requires the coefficient a[0] to be explicitly specified,
+                and it must be equal to 1. See also:
+            </p>
+
+            <pre>
+help(lfilter)
+</pre>
+
+            <p>
+                In the z-domain, the difference equation becomes:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = X(z) + p \cdot z^{-1} \cdot Y(z)
+
+ $$">
+            </p>
+
+            <p>
+                Dividing output by input gives the transfer function:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \rightarrow H(z) = \frac{Y(z)}{X(z)} = \frac{1}{1 - p \cdot z^{-1}}
+
+ $$">
+            </p>
+
+
+            <p>
+                This clearly reveals the feedback loop in the system.
+                It is also identical to the z-transform of the exponential sequence
+                derived earlier.
+            </p>
+
+            <p>
+                When transformed back to the time domain, the impulse response becomes:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 1, p, p^2, p^3, \ldots
+
+ $$">
+            </p>
+
+            <p>
+                This confirms that the impulse response is an exponentially decaying
+                sequence.
+            </p>
+
+            <hr>
+
+            <h3>7.2.5 Computing the Resulting Frequency Response</h3>
+
+            <p>
+                The Python function <code>freqz</code> can be used to compute and plot
+                the magnitude and phase response of a digital filter.
+            </p>
+
+            <p>
+                Its input consists of the filter coefficients:
+            </p>
+
+            <pre>
+freqz(b, a)
+</pre>
+
+            <p>
+                For example, choosing p = 0.9 gives:
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+from scipy.signal import freqz
+import numpy as np
+import matplotlib.pyplot as plt
+
+a = [1, -0.9]
+b = [1]
+
+w, H = freqz(b, a)
+
+plt.figure()
+plt.subplot(2, 1, 1)
+plt.title("Frequency Response")
+plt.plot(w, 20 * np.log10(abs(H)))
+plt.ylabel("Amplitude (dB)")
+
+plt.subplot(2, 1, 2)
+plt.plot(w, np.angle(H))
+plt.ylabel("Phase (radians)")
+plt.xlabel("Normalized Frequency")
+plt.show()
+</pre>
+
+            <p>
+                The resulting plot is shown in Figure 7.5.
+                The horizontal axis represents normalized frequency,
+                where the rightmost point corresponds to the Nyquist frequency.
+            </p>
+            <div class="flex flex-col justify-around items-center gap-2">
+                <img src="assets/images/chap7/fig7.7.png" class="w-180 h-110 ">
+            </div>
+            <p>
+                The magnitude response clearly shows a low-pass characteristic.
+                This simple IIR filter is often used to estimate the mean or average
+                of a signal, since the mean corresponds to the zero-frequency component.
+            </p>
+
+            <p>
+                A commonly used form of this filter is:
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = p \cdot y(n - 1) + (1 - p) \cdot x(n)
+
+ $$">
+            </p>
+
+
+            <hr>
+
+            <h3>Poles and Zeros</h3>
+
+            <p>
+                We can visualize poles and zeros using a pole-zero plot in the complex
+                z-plane.
+            </p>
+            <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(z) = \frac{1}{1 - p \cdot z^{-1}}
+
+ $$">
+            </p>
+            <p>
+                The pole and zero locations are computed using:
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+np.roots(a)  // poles
+np.roots(b)  // zeros
+</pre>
+
+            <p>
+                They can be plotted using:
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+from zplane import zplane
+zplane(np.roots(b), np.roots(a))
+</pre>
+
+            <p>
+                In the resulting plot (Figure 7.6):
+            </p>
+            <div class="flex flex-col justify-around items-center gap-2">
+                <img src="assets/images/chap7/fig7.8.png" class="w-180 h-110 ">
+            </div>
+            <ul>
+                <li>Zeros are marked with circles (o)</li>
+                <li>Poles are marked with crosses (x)</li>
+            </ul>
+
+            <p>
+                The pole is located at z = 0.9, which lies inside the unit circle.
+            </p>
+
+            <p>
+                In general:
+            </p>
+
+            <ul>
+                <li>The closer a pole is to the unit circle, the larger the peak in the magnitude response</li>
+                <li>The closer a zero is to the unit circle, the more the magnitude response is suppressed</li>
+            </ul>
+
+            <p>
+                Since the pole here lies on the positive real axis,
+                the magnitude response peaks at zero normalized frequency,
+                which matches the observed low-pass behavior.
+            </p>
+
+            <hr>
+
+            <h3>7.2.6 Python Example</h3>
+
+            <p>
+                The impulse response of this IIR filter can be computed using
+                <code>scipy.signal.lfilter</code>.
+            </p>
+
+            <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+import numpy as np
+import scipy.signal
+import matplotlib.pyplot as plt
+
+x = np.zeros(10)
+x[0] = 1  # unit impulse
+
+A = [1, -0.9]
+B = [1]
+
+y = scipy.signal.lfilter(B, A, x)
+
+plt.plot(y, '*')
+plt.xlabel("Sample")
+plt.ylabel("Value")
+plt.show()
+</pre>
+
+            <p>
+                The resulting plot (Figure 7.7) shows the first 10 samples of the impulse
+                response.
+            </p>
+
+            <div class="flex flex-col justify-around items-center gap-2">
+                <img src="assets/images/chap7/fig7.9.png" class="w-180 h-110 ">
+            </div>
+
+            <p>
+                As expected, the response is an exponentially decaying sequence.
+                This confirms that the filter is stable, since its pole lies inside
+                the unit circle.
+            </p>
+
+
+        </mat-card-content>
+
+    </mat-card>
+</div>
+</div>

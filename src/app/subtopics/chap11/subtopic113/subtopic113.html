@@ -1,0 +1,99 @@
+<div class="m-2 space-y-4">
+
+
+    
+
+    <div>
+
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-sans mb-3" style="color: blue;">11.3 Summary
+                </h3>
+
+
+                <p>
+                    The Hilbert transform is a crucial tool in signal processing that creates an analytic signal
+                    by combining a signal’s real part with a 90-degree phase-shifted imaginary counterpart.
+                    It has several applications, including amplitude modulation and instantaneous frequency
+                    analysis.
+                </p>
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+   
+
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans mb-3" style="color: rgb(13, 13, 13);">
+                 Key Points
+                </h3>
+
+                <ol class="list-decimal ml-6 mt-4 text-lg leading-relaxed space-y-3">
+                    <li>
+                        <strong>Definition and Purpose:</strong>
+                        The Hilbert Transform removes negative frequency components, producing a one-sided,
+                        positive frequency spectrum. This operation facilitates the creation of an <em>analytic
+                            signal</em>,
+                        which pairs the original signal (real part) with its Hilbert-transformed version (imaginary
+                        part).
+                    </li>
+
+
+
+                    <li>
+                        <strong>Impulse Response:</strong>
+                        The impulse response of the Hilbert Transform filter, denoted as h<sub>H</sub>(n),
+                        is designed to apply a 90° phase shift. The response values depend on whether the index
+                        <em>n</em> is odd or even.
+                    </li>
+
+                    <li>
+                        <strong>Frequency Characteristics:</strong>
+                        The frequency response of the Hilbert Transform introduces a +90° phase shift for positive
+                        frequencies
+                        and a −90° phase shift for negative frequencies.
+                    </li>
+
+                    <li>
+                        <strong>Implementation:</strong>
+                        Python examples in this chapter demonstrate the design and application of Hilbert Transform
+                        filters.
+                        The <code>scipy.signal.remez()</code> function can be used to efficiently design such filters
+                        for real-world use.
+                    </li>
+
+                    <li>
+                        <strong>Applications:</strong>
+                        The Hilbert Transform is used to compute instantaneous amplitude and phase,
+                        enabling easy analysis of a signal’s envelope and frequency content at any given time.
+                    </li>
+                </ol>
+
+
+                <p>
+
+                </p>
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+   
+
+      <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.9.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+
+</div>

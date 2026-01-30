@@ -1,0 +1,80 @@
+<div>
+    <div class="space-y-6">
+
+        <div class="flex flex-row justify-start items-center  ">
+            <h3 class="font-sans text-2xl font-medium ">Verify the identity : </h3>
+
+            <p class="text-lg font-mono mt-3 " appMathJax="$$   
+↓N∘H(z)≡H(z 
+N
+ )∘↓N
+ $$"></p>
+
+        </div>
+
+        <mat-card class="p-5 space-y-2 w-150 bg-gradient-to-r from-blue-300 to-blue-600 " appearance="outlined">
+
+            <mat-label class="text-xl ">Downsample Factor (M): </mat-label>
+            <mat-select style="width: 30%;" [(ngModel)]="M" (selectionChange)="updateNoble()">
+                <mat-option *ngFor="let val of [2,3,4]" [value]="val">{{val}}</mat-option>
+            </mat-select>
+
+        </mat-card>
+
+
+
+        <mat-card class="p-5 space-y-2 w-150 bg-gradient-to-r from-blue-300 to-green-600 " appearance="outlined">
+            <mat-label class="text-xl ">Input Signal:</mat-label>
+            <mat-select style="width: 40%;" [(ngModel)]="signalType" (selectionChange)="updateNoble()">
+                <mat-option value="Step">Step</mat-option>
+                <mat-option value="Ramp">Ramp</mat-option>
+                <mat-option value="Random">Random</mat-option>
+            </mat-select>
+
+
+        </mat-card>
+
+
+
+
+        <div style="margin-top:1rem;">
+            <p *ngIf="verifyIdentity()" style="color:green; font-weight:medium;">
+                ✅ Identity Verified! The outputs are identical.
+            </p>
+            <p *ngIf="!verifyIdentity()" style="color:red; font-weight:bold;">
+                ❌ Mismatch found (check boundary conditions).
+            </p>
+        </div>
+    </div>
+
+    <div class="space-y-6">
+
+        <mat-card class="p-4 w-250 h-140" appearance="outlined">
+
+
+            <h4 class="font-sans text-xl font-medium ">Input Signal</h4>
+            <canvas baseChart [data]="inputChartData" [type]="inputChartType"></canvas>
+
+        </mat-card>
+
+        <mat-card class="p-4 w-280 h-160" appearance="outlined">
+
+
+
+            <h4 class="font-sans text-xl font-medium ">Left Side: Downsample → Filter</h4>
+            <canvas baseChart [data]="leftChartData" [type]="leftChartType"></canvas>
+
+        </mat-card>
+
+        <mat-card class="p-4 w-280 h-160" appearance="outlined">
+
+
+            <h4 class="font-sans text-xl font-medium ">Right Side: Filter → Downsample</h4>
+            <canvas baseChart [data]="rightChartData" [type]="rightChartType"></canvas>
+
+        </mat-card>
+
+
+
+    </div>
+</div>

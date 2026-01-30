@@ -1,0 +1,111 @@
+<div class="m-2">
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-header>
+                <mat-card-title class="text-blue-600">3.1. SNR with Sinusoidal Signals </mat-card-title>
+            </mat-card-header>
+            <br />
+            <mat-card-content class="text-lg">
+                <p class="text-lg ">
+                    What is our SNR if we have a sinusoidal signal? What is its PDF?
+                    Basically, it is its normalized histogram such that its integral becomes 1 to obtain
+                    a probability distribution.
+                </p>
+
+                <p class="text-lg mt-3">
+                    If we look at the signal and try to see how probable it is for the signal to be in a
+                    certain small interval on the y-axis, we see that the signal stays longest around +1
+                    and −1 because there the signal slowly turns around. Hence, we would expect a PDF
+                    which has peaks at +1 and −1.
+                </p>
+
+                <p class="text-lg mt-3">
+                    If you calculate the PDF of a sine wave x = sin(t), with t being continuous and with
+                    a range larger than 2π, then the result is (see Figure 3.1):
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+p(x) = \frac{1}{\pi\sqrt{1 - x^2}}
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    This results from the derivative of the inverse sine function (arcsin). This derivation can be
+                    found in various sources, such as Wikipedia [9] and standard digital signal processing textbooks
+                    [10], [11]. For our probability density function, we need to know how fast a signal x passes
+                    through a given bin in x. This is what we obtain if we compute the inverse function
+                    x = f-inverse(y) and then its derivative df-inverse(y)/dy.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Here we can see that p(x) indeed becomes infinite at x = plus or minus 1. We could now use the same
+                    approach as before to obtain the expectation of the power by multiplying it with x squared and
+                    integrating it. But this seems to be somewhat tedious. However, since we now have a deterministic
+                    signal, we can also try an alternative solution since the sine function is not a probabilistic
+                    function but a deterministic function. We can simply directly compute the power of our sine signal
+                    over time t, and then take the average over at least one period of the sine function.
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+E[x^2] = \frac{1}{2\pi} \int_0^{2\pi} \sin^2(t) \, dt = \frac{1}{2\pi} \int_0^{2\pi} \frac{1 - \cos(2t)}{2} \, dt
+ $$"></p>
+
+
+                <p class="text-lg mt-4">
+                    The cosine integrated over complete periods becomes 0, hence we get
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ E[x^2] = \frac{1}{2\pi} \int_0^{2\pi} \frac{1}{2} \, dt = \frac{1}{2\pi} \cdot \frac{\pi}{2} = \frac{1}{2}
+
+ $$"></p>
+                <p class="text-lg mt-4">
+                    What do we get for a sinusoid with a different amplitude say $A \cdot \sin(t)$? The expected power
+                    is
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ E[x^2] = \frac{A^2}{8}
+
+ $$"></p>
+
+
+                <p class="text-lg mt-4">
+                    So this leads to an SNR of
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \text{SNR} = \frac{A^2}{8\Delta^2/12} = \frac{3A^2}{2\Delta^2}
+
+ $$"></p>
+
+
+                <p class="text-lg mt-4">
+                    Now assume again we have an A/D converter with N bits and the sinusoid is at full range for this
+                    converter. Then $A = 2^N \cdot \Delta$. We can plug in this result into the above equation and get
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \text{SNR} = \frac{3 \cdot 2^{2N} \cdot \Delta^2}{2\Delta^2} = 1.5 \cdot 2^{2N}
+
+ $$"></p>
+
+                <p class="text-lg mt-4">
+                    In dB this will now be
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$  \text{SNR}_{\text{dB}} = 10 \cdot \log_{10}(\text{SNR}) = 10 \cdot \log_{10}(1.5) + N \cdot 20 \cdot \log_{10}(2) = 1.76 \text{ dB} + N \cdot 6.02 \text{ dB}
+
+ $$"></p>
+
+
+                <p class="text-lg mt-4">
+                    Here we can see now that using a sinusoidal signal instead of a uniformly distributed signal gives
+                    us a
+                    boost of 1.76 dB in SNR. This is because it is more likely to have larger values! We see that our
+                    rule
+                    of 6dB more SNR for each bit still holds!
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap3/fig3.11.png" class="w-180 h-110 ">
+                </div>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap3/fig3.21.png" class="w-180 h-110 ">
+                </div>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+</div>

@@ -1,0 +1,115 @@
+<div class="space-y-6">
+
+  <h3 class="text-3xl font-medium font-sans" style="color: rgb(10, 10, 10);">
+      Chapter 11 : Hilbert Transform
+  </h3>
+
+  <mat-card>
+      <div class="container">
+          
+          <div class="sidebar">
+            <div class="title">📡 Comm Lab</div>
+            
+            <div class="nav-menu">
+              <button [class.active]="activeTab === 'FILTER'" (click)="setTab('FILTER')">
+                Hilbert Filter
+              </button>
+              <button [class.active]="activeTab === 'ANALYTIC'" (click)="setTab('ANALYTIC')">
+                Analytic Signal
+              </button>
+              <button [class.active]="activeTab === 'SSB'" (click)="setTab('SSB')">
+                SSB Modulation
+              </button>
+            </div>
+
+            <div class="ctrl-panel" *ngIf="activeTab === 'FILTER'">
+              <div class="desc">
+                <strong>Ideally:</strong> A 90° Phase Shifter.<br>
+                <strong>In Practice:</strong> An FIR filter with odd symmetry.
+                Note how the impulse response h[n] is 0 at even indices (except 0).
+                
+              </div>
+              
+              <div class="grp">
+                <div class="lbl-row">
+                  <label>Filter Taps (N)</label>
+                  <span>{{ filterParams.N }}</span>
+                </div>
+                <input type="range" min="11" max="101" step="2" 
+                       [(ngModel)]="filterParams.N" (input)="render()">
+              </div>
+            </div>
+
+            <div class="ctrl-panel" *ngIf="activeTab === 'ANALYTIC'">
+              <div class="desc">
+                <strong>Analytic Signal:</strong> x_a(t) = x(t) + j·H(x(t)).<br>
+                It removes negative frequencies and creates a "rotating vector" (Phasor) in the complex plane.
+                
+              </div>
+
+              <div class="grp">
+                <label>Signal Type</label>
+                <select [(ngModel)]="analyticParams.type" (change)="render()">
+                  <option value="AM">AM Signal</option>
+                  <option value="Chirp">Chirp</option>
+                </select>
+              </div>
+
+              <div class="grp" *ngIf="analyticParams.type === 'AM'">
+                <div class="lbl-row"><label>Carrier</label> <span>{{ analyticParams.fc }} Hz</span></div>
+                <input type="range" min="50" max="200" [(ngModel)]="analyticParams.fc" (input)="render()">
+                
+                <div class="lbl-row"><label>Mod Index</label> <span>{{ analyticParams.modIdx }}</span></div>
+                <input type="range" min="0" max="1" step="0.1" [(ngModel)]="analyticParams.modIdx" (input)="render()">
+              </div>
+
+              <div class="grp" *ngIf="analyticParams.type === 'Chirp'">
+                <div class="lbl-row"><label>Start Freq</label> <span>{{ analyticParams.fStart }} Hz</span></div>
+                <input type="range" min="10" max="50" [(ngModel)]="analyticParams.fStart" (input)="render()">
+                
+                <div class="lbl-row"><label>End Freq</label> <span>{{ analyticParams.fEnd }} Hz</span></div>
+                <input type="range" min="100" max="300" [(ngModel)]="analyticParams.fEnd" (input)="render()">
+              </div>
+            </div>
+
+            <div class="ctrl-panel" *ngIf="activeTab === 'SSB'">
+              <div class="desc">
+                <strong>SSB Modulation:</strong><br>
+                Using the Hilbert Transform to mathematically cancel one sideband.
+                USB = m·cos - m̂·sin
+                
+              </div>
+
+              <div class="grp">
+                <div class="lbl-row"><label>Carrier</label> <span>{{ ssbParams.carrier }} Hz</span></div>
+                <input type="range" min="1000" max="3000" [(ngModel)]="ssbParams.carrier" (input)="render()">
+              </div>
+
+              <div class="grp">
+                <label>Sideband Select</label>
+                <select [(ngModel)]="ssbParams.sideband" (change)="render()">
+                  <option value="USB">USB (Upper)</option>
+                  <option value="LSB">LSB (Lower)</option>
+                </select>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="main">
+            <div class="canvas-card">
+               <div class="canvas-wrap" [hidden]="activeTab !== 'FILTER'">
+                 <canvas #canvas1></canvas>
+               </div>
+               <div class="canvas-wrap" [hidden]="activeTab !== 'ANALYTIC'">
+                 <canvas #canvas2></canvas>
+               </div>
+               <div class="canvas-wrap" [hidden]="activeTab !== 'SSB'">
+                 <canvas #canvas3></canvas>
+               </div>
+            </div>
+          </div>
+
+      </div>
+  </mat-card>
+</div>

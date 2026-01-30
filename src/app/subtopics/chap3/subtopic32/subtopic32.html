@@ -1,0 +1,123 @@
+ <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-header>
+                <mat-card-title class="text-blue-600">3.2 Companding </mat-card-title>
+            </mat-card-header>
+            <mat-card-content class="text-lg">
+
+
+                <p class="text-lg mt-4">
+                    This is a scheme to make the SNR less dependent on the signal size. This is a synonym for
+                    compression and expanding. Uniform quantization can be seen as a quantization value which is
+                    constant on the absolute scale. Non-uniform quantization using companding can be seen as having step
+                    sizes which stay constant relative to the amplitude; their step size grows with the amplitude. We
+                    obtain this non-uniform quantization by first applying a non-linear function to the signal (to boost
+                    small values) and then apply a uniform quantizer. On the decoding side, we first apply the reverse
+                    quantizer and then the inverse non-linear function (the expansion we reduce small values again to
+                    restore their original size).
+                </p>
+
+                <p class="text-lg mt-4">
+                    The range of (index) values is compressed; smaller values become larger, large values don’t grow as
+                    fast. The following functions are standardized as "u-Law" and "A-Law" (see Figure 3.3):
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap3/fig3.31.png" class="w-180 h-110 ">
+                </div>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y = \text{sign}(x) \cdot \frac{\ln(1 + 255 \cdot \frac{|x|}{A})}{\ln(1 + 255)} \tag{3.1}
+ $$"></p>
+
+
+                <p class="text-lg mt-4">
+                    In the example of 8-bit mu-law PCM, the quantization index is then (for a Mid-Tread quantizer
+                    following this compression function):
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\text{index} = \text{round}\left(\frac{y}{\Delta}\right)
+ $$"></p>
+
+
+                <p class="text-lg mt-4">
+                    Here y has the range of -1 to +1. Hence the quantization step size for 8 bits is </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\Delta = \frac{1 - (-1)}{2^8} = \frac{2}{256} = \frac{1}{128}
+ $$"></p>
+
+
+
+                <p class="text-lg mt-4">
+                    The index is then encoded as an 8-bit codeword.
+
+                    In the decoder, we compute the de-quantized $y$ from a Mid-Tread de-quantizer including its sign
+                    from the index
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y_{\text{rek}} = \text{index} \cdot \Delta
+                $$"></p>
+
+
+
+                <p class="text-lg mt-4">
+                    and we compute the inverse compression function, the “expanding” function (hence the name
+                    “companding”, see Figure 3.3):
+                </p>
+
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap3/fig3.41.png" class="w-180 h-30 ">
+                </div>
+
+                <p class="text-lg mt-4">
+                    We obtain the inverse through the following steps
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y \cdot \ln(256)= \ln(1 + 255 \cdot \frac{|x|}{A})                $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+e^{\ln(256) \cdot y} = 1 + 255 \cdot \frac{|x|}{A}                $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+256^y - 1 = 255 \cdot \frac{|x|}{A}                $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+
+y = \frac{\ln(1 + 255 \cdot \frac{|x|}{A})}{\ln(1 + 255)}                 $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x = \text{sign}(y) \cdot \frac{A}{255} \cdot (256^y - 1)                $$"></p>
+
+                <p class="text-lg mt-4">
+                    (In the decoder, we replace y by y_rek and x by x_rek).
+                    This x is now our de-quantized value or signal.
+                    Observe that with this companding the effective quantisation step size
+                    remains approximately constant relative to the signal amplitude.
+                    Large signal components have large effective step sizes and hence larger
+                    quantisation errors; small signals have smaller effective quantisation
+                    step sizes and hence smaller quantisation errors.
+                    In this way, we get a more or less constant SNR over a wide range of
+                    signal amplitudes [12].
+                </p>
+
+                <p class="text-lg mt-4">
+                    <strong>Important point to remember:</strong>
+                    This approach is identical to having non-uniform quantization step sizes;
+                    smaller step sizes at smaller signal values and larger step sizes at larger
+                    signal values. The compression and expanding of the signal makes the uniform
+                    step sizes “look” relatively smaller to the signal, since it has more
+                    quantization steps to cover.
+                </p>
+
+                <p class="text-lg mt-4">
+                    And this has the same effect as a smaller signal with smaller quantization
+                    steps.
+                </p>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+

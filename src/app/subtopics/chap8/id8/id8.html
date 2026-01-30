@@ -1,0 +1,160 @@
+
+<div class="space-y-6 p-4 max-w-[1400px] mx-auto">
+
+  <h3 class="text-3xl font-medium font-sans text-gray-800">
+      Demo 8: Filters, Noble Identities
+  </h3>
+
+  <div class="container">
+      
+      <div class="sidebar">
+        <div class="title">🎛️ DSP STUDIO 8000</div>
+
+        <div class="mode-group">
+          <button class="mode-btn" [class.active]="activeTab === 'DESIGN'" (click)="setTab('DESIGN')">
+            FIR DESIGN
+          </button>
+          <button class="mode-btn" [class.active]="activeTab === 'NOBLE'" (click)="setTab('NOBLE')">
+            NOBLE ID
+          </button>
+          <button class="mode-btn" [class.active]="activeTab === 'POLYPHASE'" (click)="setTab('POLYPHASE')">
+            POLYPHASE
+          </button>
+        </div>
+
+        <div class="controls">
+          
+          <div *ngIf="activeTab === 'DESIGN'" class="anim-fade">
+            <div class="grp">
+              <div class="grp-header">
+                <span>FILTER SPECS</span>
+                <span class="led" [class.on]="designMetrics.isLinearPhase" 
+                      [style.background-color]="designMetrics.isLinearPhase ? '#4ade80' : '#ef4444'">
+                </span>
+              </div>
+              
+              <label>
+                Order (N)
+                <span class="readout">{{ designParams.N }}</span>
+              </label>
+              <input type="range" min="8" max="128" step="2" 
+                     [(ngModel)]="designParams.N" (input)="render()">
+
+              <label>
+                Cutoff Freq
+                <span class="readout">{{ designParams.cutoff | number:'1.2-2' }}</span>
+              </label>
+              <input type="range" min="0.01" max="0.45" step="0.01" 
+                     [(ngModel)]="designParams.cutoff" (input)="render()">
+              
+              <div class="info-lcd">
+                STATUS: {{ designMetrics.isLinearPhase ? 'LINEAR PHASE' : 'NON-LINEAR' }}
+              </div>
+            </div>
+            
+            <div class="theory-card">
+              <h4>📝 Design Note</h4>
+              <p>Windowed sinc method guarantees stability (FIR). Linear phase is achieved via symmetric coefficients.</p>
+            </div>
+          </div>
+
+          <div *ngIf="activeTab === 'NOBLE'" class="anim-fade">
+            <div class="grp">
+              <div class="grp-header">
+                <span>IDENTITY CHECK</span>
+                <span class="led" [class.on]="nobleStatus.verified" 
+                      [style.background-color]="nobleStatus.verified ? '#4ade80' : '#ef4444'">
+                </span>
+              </div>
+
+              <label>Decimation (M)</label>
+              <div class="radio-row">
+                <button [class.sel]="nobleParams.M === 2" (click)="nobleParams.M=2; render()">2</button>
+                <button [class.sel]="nobleParams.M === 3" (click)="nobleParams.M=3; render()">3</button>
+                <button [class.sel]="nobleParams.M === 4" (click)="nobleParams.M=4; render()">4</button>
+              </div>
+
+              <label>Input Signal</label>
+              <select [(ngModel)]="nobleParams.sigType" (change)="render()" class="retro-select">
+                <option>Step</option>
+                <option>Ramp</option>
+                <option>Random</option>
+              </select>
+
+              <div class="info-lcd">
+                RESULT: {{ nobleStatus.verified ? 'MATCH (VERIFIED)' : 'MISMATCH' }}
+              </div>
+            </div>
+
+            <div class="theory-card">
+              <h4>🔄 Noble Identity 1</h4>
+              <p>Downsampling after filtering $H(z)$ is equivalent to filtering with $H(z^M)$ then downsampling.</p>
+            </div>
+          </div>
+
+          <div *ngIf="activeTab === 'POLYPHASE'" class="anim-fade">
+            <div class="grp">
+              <div class="grp-header">DECOMPOSITION</div>
+              
+              <label>
+                Branches (M)
+                <span class="readout">{{ polyParams.M }}</span>
+              </label>
+              <input type="range" min="2" max="8" step="1" 
+                     [(ngModel)]="polyParams.M" (input)="render()">
+
+              <label>
+                Filter Len (N)
+                <span class="readout">{{ polyParams.N }}</span>
+              </label>
+              <input type="range" min="16" max="128" step="4" 
+                     [(ngModel)]="polyParams.N" (input)="render()">
+            </div>
+
+            <div class="kpi-panel">
+               <div class="kpi">
+                 <small>DIRECT OPS</small>
+                 <div>{{ polyMetrics.directOps | number }}</div>
+               </div>
+               <div class="kpi">
+                 <small>POLY OPS</small>
+                 <div>{{ polyMetrics.polyOps | number }}</div>
+               </div>
+               <div class="kpi highlight">
+                 <small>SPEEDUP</small>
+                 <div>x{{ polyMetrics.speedup }}</div>
+               </div>
+            </div>
+
+            <div class="theory-card">
+              <h4>🚀 Efficiency</h4>
+              <p>Polyphase moves filtering to the lower sampling rate domain (after downsampling), saving computations.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="main">
+        
+        <div class="screen-unit">
+          <div class="screen-header">
+            <span>
+              {{ activeTab === 'DESIGN' ? 'Response Analysis' : 
+                 activeTab === 'NOBLE' ? 'Signal Flow Comparison' : 
+                 'Polyphase Structure' }}
+            </span>
+            <span style="color:#4ade80">● LIVE MONITOR</span>
+          </div>
+          
+          <div class="canvas-wrap">
+            <canvas #canvas1 [hidden]="activeTab !== 'DESIGN'"></canvas>
+            <canvas #canvas2 [hidden]="activeTab !== 'NOBLE'"></canvas>
+            <canvas #canvas3 [hidden]="activeTab !== 'POLYPHASE'"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+  </div>
+</div>

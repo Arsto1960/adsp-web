@@ -1,0 +1,185 @@
+<nav #navbar class=" w-full  ">
+    <div #navcontainer class=" h-16 flex  justify-between items-center border shadow-xl p-4 m-8 ">
+        <div #nav1 class=" flex  justify-start items-center gap-2 sm:gap-4 font-sans font-bold text-2xl">
+            <mat-icon>menu</mat-icon>
+            <span>ADSP</span>
+        </div>
+
+        <ul #nav2
+            class="navmenu flex justify-around items-center gap-4 sm:gap-10 lg:gap-15 font-sans font-medium text-lg">
+
+            <li><button class=" bg-gray-900 hover:bg-blue-700 text-gray-50 h-10 rounded-xl w-20 ">
+                    About
+                </button>
+            </li>
+            <li>
+                <Button class=" bg-gray-900 hover:bg-blue-700 text-gray-50 h-10 rounded-xl w-20 hover" [routerLink]="'/main'" >
+                    Explore
+                </Button>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div class=" grid grid-cols-1 sm:grid-cols-8 md:grid-cols-4  px-10 lg:px-20">
+    <div #center1
+        class=" min-h-[40vh] sm:min-h-[50vh]   sm:col-span-4 md:col-span-2 flex flex-col items-start justify-center gap-10 font-sans px-8 ">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl    ">
+            Acoustic Signal Processing
+        </h1>
+        <h2 class="text-xl md:text-2xl lg:text-3xl uppercase">
+            Web Based Learning Platform
+        </h2>
+        <button [routerLink]="'/main'"
+            class="text-md md:text-lg bg-gray-900 hover:bg-yellow-400 hover:text-gray-900 h-8 sm:h-15 text-gray-50 rounded-lg px-6 sm:text-lg lg:text-xl ">
+            Explore the Chapters
+        </button>
+    </div>
+    <div #center2 class="  min-h-[40vh] sm:min-h-[50vh]  md:col-span-2  sm:col-span-4 items-center flex rounded-xl ">
+        <img src="assets/images/lpp.jpg" />
+
+    </div>
+</div>
+
+<div #platform class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 px-30 mt-10 ">
+    <h1 class="font-sans lg text-2xl sm:text-4xl md:text-6xl uppercase border border-b-6 border-gray-900  rounded-2xl shadow-xl p-2 col-span-1 text-gray-50
+bg-gradient-to-r from-cyan-500 to-emerald-500 ">
+        About the Platform
+    </h1>
+</div>
+
+<div #about class=" grid grid-cols-1 sm:grid-cols-2  px-10 lg:px-20 mt-10 lg:gap-20">
+    <div #about1
+        class=" min-h-[40vh] sm:min-h-[50vh]  sm:col-span-1  flex flex-col items-start justify-center gap-10 font-sans px-8 ">
+        <h1 class="text-xl md:text-3xl    ">
+            This platform is an interactive online learning environment designed to teach both fundamental and advanced
+            concepts in Acoustic Signal Processing (ASP).
+
+        </h1>
+        <h2 class="text-xl md:text-3xl ">
+            It combines theoretical explanations, interactive simulations, and listening experiments — bridging the gap
+            between textbook learning and real signal understanding.
+
+        </h2>
+
+    </div>
+    <div #about2 class="about2  min-h-[40vh] sm:min-h-[50vh] sm:col-span-1 items-center flex ">
+        <img src="assets/images/lpp2.jpg" class="rounded-2xl h-60 sm:h-110 md:h-120 lg:h-140 m-auto" />
+
+    </div>
+</div>
+
+<div class="h-10 sm:h-20 md:h-30"></div>
+
+<div class="flex items-center justify-center ">
+    <h1 class="text-4xl sm:text-7xl uppercase font-sans text-bold">Key Highlights</h1>
+</div>
+<div class="h-10 sm:h-20 md:h-30"></div>
+
+<div class="carousel mx-auto p-2 w-[70%] flex overflow-x-auto ">
+    <div class="group flex justify-center items-center gap-5 sm:gap-10 ">
+        <div class="card  h-80 w-30 rounded-xl  ">
+            <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2 "  >
+                    <h1 class="text-3xl text-gray-900 border-2 border-b-6 rounded-xl p-1 ">🚦 Signal Fundamentals</h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 "> Explore Wave behaviour and math descriptions</p>
+                    <hr class="w-[60%] text-gray-900 ">
+                </div>
+
+
+            </mat-card>
+        </div>
+        <div class="card  h-80 w-30 rounded-xl  ">
+            <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2"  >
+                    <h1 class="text-2xl text-gray-900 border-2 border-b-6 rounded-xl p-1 ">▶️ Interactive Simulations </h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 ">Experiment with sampling, Aliasing, Fourier synthesis.</p>
+                    <hr class="w-[80%] text-gray-900 ">
+                </div>
+
+
+            </mat-card>
+        </div>
+        <div class="card  h-80 w-30 rounded-xl ">
+            <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2"  >
+                    <h1 class="text-2xl text-gray-900 border-2 border-b-6 rounded-xl p-1 "> 🏝️ Accesible and open</h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 "> Web Based Learning Platform using Angular, Material UI</p>
+                    <hr class="w-[60%] text-gray-900 text-bold">
+                </div>
+
+
+            </mat-card>
+        </div>
+        <div class="card  h-80 w-30 rounded-xl ">
+             <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2"  >
+                    <h1 class="text-2xl text-gray-900 border-2 border-b-6 rounded-xl p-1 ">🗺️ Digital Audio Processing</h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 "> Learn Filters and Analysis</p>
+                    <hr class="w-[60%] text-gray-900 text-bold">
+                </div>
+
+
+            </mat-card>
+        </div>
+
+    </div>
+    <div aria-hidden class="group flex justify-center items-center gap-5 sm:gap-10 ">
+        <div class="card  h-80 w-30 rounded-xl  ">
+            <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2 "  >
+                    <h1 class="text-3xl text-gray-900 border-2 border-b-6 rounded-xl p-1 ">🚦 Signal Fundamentals</h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 "> Explore Wave behaviour and math descriptions</p>
+                    <hr class="w-[60%] text-gray-900 ">
+                </div>
+
+
+            </mat-card>
+        </div>
+        <div class="card  h-80 w-30 rounded-xl  ">
+            <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2"  >
+                    <h1 class="text-2xl text-gray-900 border-2 border-b-6 rounded-xl p-1 ">▶️ Interactive Simulations </h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 ">Experiment with sampling, Aliasing, Fourier synthesis.</p>
+                    <hr class="w-[80%] text-gray-900 ">
+                </div>
+
+
+            </mat-card>
+        </div>
+        <div class="card  h-80 w-30 rounded-xl ">
+            <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2"  >
+                    <h1 class="text-2xl text-gray-900 border-2 border-b-6 rounded-xl p-1 "> 🏝️ Accesible and open</h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 "> Web Based Learning Platform using Angular, Material UI</p>
+                    <hr class="w-[60%] text-gray-900 text-bold">
+                </div>
+
+
+            </mat-card>
+        </div>
+        <div class="card  h-80 w-30 rounded-xl ">
+             <mat-card class="w-full h-full " >
+                <div class="flex flex-col items-center justify-around h-full m-8 g-2"  >
+                    <h1 class="text-2xl text-gray-900 border-2 border-b-6 rounded-xl p-1 "> 📺 Digital Audio Processing</h1>
+                    <p class="text-xl text-gray-50 bg-gray-900 hover:bg-blue-800 border-2 rounded-xl p-1 "> Learn Filters and Analysis</p>
+                    <hr class="w-[60%] text-gray-900 text-bold">
+                </div>
+
+
+            </mat-card>
+        </div>
+
+    </div>
+</div>
+
+<div class="h-10 sm:h-20 md:h-30"></div>
+<div class="grid sm:object-contain md:object-cover  lg:h-[80vh] 
+         xl:h-[100vh]">
+        <img src="assets/images/lpp4.jpg"  class="lg:w-[75%] lg:m-auto w-full h-auto  " />
+    </div>
+
+ <div class="grid sm:object-contain md:object-cover  lg:h-[80vh] 
+         xl:h-[100vh]">
+        <img src="assets/images/lpp3.jpg"  class="lg:w-[75%] lg:m-auto w-full h-auto  " />
+    </div>

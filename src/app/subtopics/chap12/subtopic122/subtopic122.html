@@ -1,0 +1,473 @@
+<div class="m-4">
+
+
+    
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-xl font-semibold  text-blue-700">12.2 Matched Filters</h3>
+
+
+                <p class="text-lg mt-3">
+                    Remember the goal of a matched filter (h_M(n)):
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y(n) * h_M(n) \to x(n+n_d) * h_M(n)
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    with some signal delay (n_d). The objective is not signal fidelity but a high SNR at detection time.
+                    Here
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y(n) = x(n+n_d) + v(n)
+ $$"></p>
+
+
+                <p class="text-lg mt-3">
+                    is our delayed signal with additive noise v(n).
+                </p>
+
+                <p class="text-lg mt-3">
+                    Application examples include communications, where you want to detect a 0 or 1 — for example in
+                    <strong>CDMA</strong>, where each user has a unique pseudo-random 1/0 sequence (chip-sequences) to
+                    represent symbols; different users/signals are separated using matched filters.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Another example is detecting known signals or patterns, such as object or face recognition in
+                    images. In general, matched filters are used to detect deterministic signals x(n).
+                </p>
+
+                <p class="text-lg mt-3">
+                    The goal is to maximize the signal-to-noise ratio (SNR) at the instant of detection for the original
+                    signal x(n) and noise v(n). The SNR can be written as:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+SNR = \frac{|x(n) * h_M(n)|^2}{E(|v(n) * h_M(n)|^2)}
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    We want to maximize the SNR at the time of detection using the matched filter h_M(n).
+                </p>
+
+                <p class="text-lg mt-3">
+                    To do this, we assume that v(n) is independent white noise. Under this assumption, the denominator
+                    of the SNR becomes a fixed, known power value.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Using the matrix V that contains the noise samples and the row vector h_M that contains the filter
+                    coefficients, we obtain:
+                </p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\begin{align*}
+E(|v(n) * h_M(n)|^2) &= E(|{V} \cdot {h}_M^T|^2) \\
+&= E({h}_M \cdot {V}^T \cdot {V} \cdot {h}_M^T)\\
+&= {h}_M \cdot E({V}^T \cdot {V}) \cdot {h}_M^T\\
+&= {h}_M \cdot \sigma_v^2 \cdot {I} \cdot {h}_M^T \\
+&= \sigma_v^2 \cdot {h}_M \cdot {h}_M^T
+\end{align*}
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    White noise has an autocorrelation function shaped like a weighted delta function, because each
+                    noise sample is uncorrelated with its neighbors and only correlated with itself. That correlation
+                    equals the noise power (sigma_v squared).
+                </p>
+
+                <p class="text-lg mt-3">
+                    Therefore, the autocorrelation matrix E(V^T multiplied by V) has zeros everywhere except on the
+                    diagonal, where each diagonal element equals the noise power. This means the matrix equals sigma_v
+                    squared times the identity matrix I.
+                </p>
+
+                <p class="text-lg mt-3">
+                    The final expression above is simply the squared norm (sum of squares) of the vector of filter
+                    coefficients h_M, multiplied by the noise power sigma_v squared.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Keeping the above norm of our filter vector (h_M * h_M^T) constant, the entire denominator is fixed,
+                    and we only need to maximize the numerator of our SNR fraction to maximize the SNR:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+|x(n) * h_M(n)|^2
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    We rewrite our numerator as:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+|x(n) * h_M(n)|^2 = |x(n) \cdot {h}_M^T|^2
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    This is written analog to our matrix formulation, as a scalar vector multiplication, with h_M as our
+                    row vector of the matched filter impulse response, and now with only one row of the signal matrix A
+                    (from last time) at a time, for only one convolution sample at a time.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Observe that for matched filters the signal to detect can be much shorter than for the Wiener
+                    filter, and hence we can decide to make the matched filter the same size as our signal to detect.
+                </p>
+
+                <p class="text-lg mt-3">
+                    The signal row vector is:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{x}(n) = [x(L - 1 - n), x(L - 2 - n), \ldots, x(n)]
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    where L is the size of our filter vector. Observe that it is time-reversed to obtain a value of the
+                    convolution.
+                </p>
+
+                <p class="text-lg mt-3">
+                    We apply the Cauchy–Schwarz inequality (see Wikipedia), which states that for two column vectors a
+                    and b, their scalar product satisfies:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+a^T b \le \sqrt{a^T a}\,\sqrt{b^T b}
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    This is also written using the norm |a| and the inner product &lt;a, b&gt; as:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+|\langle {a}, {b} \rangle| \leq \|{a}\| \cdot \|{b}\|
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    We obtain equality if both vectors are co-linear, meaning b = k · a for some scalar k.
+                </p>
+
+                <p class="text-lg mt-3">
+                    This tells us how to solve the maximization task.
+                </p>
+
+                <p class="text-lg mt-3">
+                    We can now apply the Cauchy–Schwarz inequality if we set a = x(n) and b = h_M:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+|{x}(n) \cdot {h}_M^T|^2 \leq \|{x}(n)\|^2 \cdot \|{h}_M\|^2
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    We get equality (the maximum) if we set:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+{h}_M = k \cdot {x}(n)
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    where we can choose the factor k = 1.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Since we have this inequality for all time steps n of our convolution, we choose the time index n
+                    where the row vector x(n) has the maximum energy.
+                </p>
+
+                <p class="text-lg mt-3">
+                    This is the point where we capture the entire non-zero waveform of our signal x(n) with our filter.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Since our filter vector h_M contains the time-reversed impulse response, we obtain the entire
+                    time-reversed signal as our matched filter:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+h_M(n) = x(L - 1 - n)
+ $$"></p>
+
+                <p class="text-lg mt-3">
+                    Assuming our signal to detect is located between 0 ≤ n &lt; L.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Since we have a convolution of the signal with its time-reversed version, we get a convolution
+                    length of (2L − 1) samples, with its maximum at the center, when both waveforms completely overlap.
+                    This happens after L samples, which is exactly the signal length.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Hence we get the <b>detection of our signal</b> after we have completely received it, at the end of
+                    our signal.
+                </p>
+
+                <p class="text-lg mt-3"><b>Observe:</b></p>
+
+                <p class="text-lg mt-3">
+                    Since we convolve the signal with the time-reversed version of the pattern to be detected, this is
+                    identical to computing the <b>correlation</b> of the signal with the pattern to be detected.
+                </p>
+
+                <p class="text-lg mt-3"><b>Also observe:</b></p>
+
+                <p class="text-lg mt-3">
+                    The longer the signal is, the more energy is captured in it, and the higher the <b>SNR</b> will be
+                    at the time of detection.
+                </p>
+
+                <p class="text-lg mt-3">
+                    This is important for very weak signals, for example in <b>deep space communications</b>.
+                </p>
+
+                <p class="text-lg mt-3"><b>In conclusion:</b>
+                    The matched filter has the shape of the time-reversed signal that we want to detect.
+                </p>
+
+
+
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap12/fig12.2.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap12/fig12.3.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-xl font-semibold font-sans mb-3" style="color: blue;">12.2.1 Python Example
+                </h3>
+
+                <p class="text-lg mt-3">
+                    Construct a signal to be detected, sig (length 11):
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+ipython --pylab
+sig = arange(0, 1.1, 0.1)
+sig
+#Out: array([ 0. , 0.1, 0.2, 0.3, 0.4, 0.5, #0.6, 0.7, 0.8, 0.9, 1. ])
+plot(sig)
+xlabel(’Sample’)
+ylabel(’Value’)
+title(’An Example Signal’)
+
+</pre>
+                <p class="mt-2">
+                    The resulting plot can be seen in Fig. (12.13). We put this signal to detect at some
+                    point in time in a longer signal,
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.4.png" class="w-180 h-110 ">
+
+
+                </div>
+
+
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+sig\_inzeros=hstack([zeros(4),sig,zeros(5)])
+plot(sig\_inzeros)
+xlabel(’Sample’)
+ylabel(’Value’)
+title(’The Signal at Some Point in Time’)
+
+</pre>
+
+                <p class="mt-2">
+                    The resulting plot can be seen in Fig. (12.14). Now we add noise and extend the length of our signal
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.5.png" class="w-180 h-110 ">
+
+
+                </div>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+signoise = random.rand(20)-0.5+sig\_inzeros
+plot(signoise)
+xlabel(’Sample’)
+ylabel(’Value’)
+title(’The Example Signal in Noise’)
+The resulting plot can be seen in Fig. (12.15). Now we apply our matched filter to it:
+h = sig[::-1] # fliplr
+signoisemf = sp.lfilter(h, 1, signoise)
+plot(signoisemf)
+xlabel(’Sample’)
+ylabel(’Value’)
+title(’The Example Signal in Noise after Macthed Filtering’)
+
+</pre>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.6.png" class="w-180 h-110 ">
+
+
+                </div>
+                <p class="mt-2">
+                    The resulting plot can be seen in Fig. (12.16). This is now the output of our matched
+                    filter. We can see that we have a maximum at time 14, which marks the end of our
+                    detected signal. Hence we know that the signal started at sample 14-L(length of the
+                    filter)=14-11=3, which was indeed the case since we added 4 zeros in the beginning. So
+                    matched filtering did a good job!
+                    The matched filtering process can also be viewed as computing the correlation of the
+                    noisy signal with the original signal.
+                </p>
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap12/fig12.7.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap12/fig12.8.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+
+
+
+    <div>
+
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-xl font-semibold font-sans mb-3" style="color: blue;">12.2.2 Convolutional Neural Network
+                    Implementation
+                </h3>
+
+
+                <p class="text-lg mt-3">
+                    Observe that we got a high peak for the detection of our signal, but the peak was somewhat broad,
+                    which makes determining the precise location of the signal more difficult.
+                    This is because we specified as a target for our optimization that we want to have a
+                    high peak, but not necessarily a narrow peak. To remedy this, we can use numerical
+                    optimization instead of our closed form solution for matched filters.
+                    For that, we can use the optimization of a neural network library, like Pythons “Pytorch”. Pytorch
+                    has the advantage, compared to e.g. Keras, that “print” commands
+                    work, which is important and useful for debugging.
+                    The following example also serves as a short introduction into neural networks and its
+                    terminology
+                </p>
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.7.png" class="w-130 h-60 ">
+
+                </div>
+
+
+                <p class="text-lg mt-3">
+                    We can implement our filter using a 1-dimensional “convolutional layer”, object conv1d,
+                    without “bias” and without a non-linear “activation function”.
+                    The library “Pytorch” is obtained and installed from www.pytorch.org.
+                    For it we need to specify a “training” signal, here our signal to detect (the “ramp”
+                    function) x, and the “target” signal y, which is the desired output of the convolutional
+                    layer which the optimization should reach as closely as possible during the optimization
+                    or “training”
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+Our training set is:
+x= np.hstack((np.zeros(4),np.arange(0,1.1,0.1),np.zeros(5)))
+y = np.zeros(30)
+y[16]=1 #Detecting the signal at its end
+
+</pre>
+
+                <p class="text-lg mt-3">
+                    Observe that for the target y we specified a single peak (the “1”) at the position
+                    the filter should detect the signal, and zeros everywhere else. This also leads to a
+                    minimization of the output outside the signal detection, which we didn’t have in our
+                    closed form solution! We specify our convolutional detector layer as,
+                    detector=nn.Sequential(nn.Conv1d(in_channels=1, out_channels=1, kernel_size=11,
+                    stride=1, padding=10, bias=False))
+                </p>
+
+
+                <p class="text-lg mt-3">
+                    Observe that for the target y we specified a single peak (the “1”) at the position
+                    the filter should detect the signal, and zeros everywhere else. This also leads to a
+                    minimization of the output outside the signal detection, which we didn’t have in our
+                    closed form solution! We specify our convolutional detector layer as,
+                    detector=nn.Sequential(nn.Conv1d(in_channels=1, out_channels=1, kernel_size=11,
+                    stride=1, padding=10, bias=False))
+                </p>
+
+                <p class="text-lg mt-3">
+                    python3 pytorch_simpl_convnet_detector.py
+                    We use the same type as input as before. The resulting plot can be seen in Fig.
+                    (12.17). The figure shows the obtained weights or coefficients, in pytorch they are used
+                    as correlation instead of convolution, and hence the plot is a time-reversed impulse
+                    response.
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.8.png" class="w-130 h-60 ">
+
+                </div>
+
+
+
+
+
+                <p class="text-lg mt-3">
+                    The resulting plot can be seen in Fig. (12.18). Observe that it looks indeed different
+                    from our matched filter, which was simply the (time-reversed) ramp signal. This is
+                    because the optimization also tries to minimized the output outside the detection time
+                    point.
+
+                </p>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.9.png" class="w-130 h-60 ">
+
+                </div>
+
+                <div class="flex flex-col justify-around items-center gap-2">
+                    <img src="assets/images/chap12/fig12.10.png" class="w-130 h-60 ">
+
+                </div>
+
+
+
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+
+
+
+</div>

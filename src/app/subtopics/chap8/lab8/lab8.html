@@ -1,0 +1,185 @@
+<div class="m-2 space-y-4">
+
+    <div class="text-3xl font-sans font-semibold">
+        <h1>Chapter 8 : Lab</h1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Objective
+                </h3>
+
+                <p class="mt-4">
+                    Apply filter design techniques and multirate processing concepts through hands-on Python exercises.
+                    You will design FIR filters using the Parks-McLellan algorithm, implement Noble Identities, and
+                    build efficient polyphase sampling rate converters.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 1: FIR Filter Design with remez
+                </h3>
+
+                <p class="mt-4">
+                    Design a half-band low-pass filter using the Parks-McLellan algorithm and explore the effect of
+                    filter length and weights
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Design a half-band low-pass filter with pass band up to 0.4π and stop band
+                    from 0.5π (transition band: 0.4π – 0.5π).
+                </p>
+
+
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 title="Examples of Uniform PDFs" [code]="chapter8example1">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. Is the phase linear? How can you tell from the plot?
+                </p>
+
+                <p class="mt-3">
+                    2.What happens to stop band attenuation if you change the weight to W = [1, 1000]?
+                </p>
+                <p class="mt-3">
+                    3.Try increasing N to 64. What improves?
+                </p>
+                <p class="mt-3">
+                    4.What is the relationship between the stop band weight and attenuation?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 2: Noble Identity Verification
+                </h3>
+
+                <p class="mt-4">
+                    Goal: Verify the Noble Identity for downsampling:
+                </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \downarrow N \circ H(z) = H(z^N) \circ \downarrow N
+
+ $$">
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong> Implement both sides of the Noble Identity and confirm they produce identical
+                    outputs.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 title="Examples of Uniform PDFs" [code]="chapter8example2">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. Why do both methods produce the same result?
+                </p>
+
+                <p class="mt-3">
+                    2. What is the computational advantage of the left-side approach?
+                </p>
+
+                <p class="mt-3">
+                    3. Try with N = 2 and a different filter. Does it still hold?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Exercise 3: Polyphase Decimation (Downsampling)
+                </h3>
+
+                <p class="mt-4">
+                    Goal: Implement a polyphase decimator that operates at the lower sampling rate.
+                </p>
+
+                <p class="mt-4">
+                    <strong>Task:</strong>Decompose a filter into polyphase components and implement efficient downsampling.
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+    <div>
+        <app-pycodechap1 title="Examples of Uniform PDFs" [code]="chapter8example3">
+        </app-pycodechap1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+            <mat-card-content class="text-lg">
+
+                <h3 class="text-2xl font-semibold font-sans" style="color: blue;">
+                    Questions:
+                </h3>
+
+                <p class="mt-4">
+                    1. Why does the polyphase method produce the same result?
+                </p>
+
+                <p class="mt-3">
+                    2. What is the computational savings factor? How does it relate to N?
+                </p>
+
+                <p class="mt-3">
+                    3. Which method would you use in real-time audio processing?
+                </p>
+
+            </mat-card-content>
+        </mat-card>
+    </div>
+
+   
+
+</div>

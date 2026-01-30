@@ -1,0 +1,619 @@
+<div class="m-5 overflow-hidden space-y-6 max-w-[1400px] mx-auto">
+  
+  <div class="text-3xl font-sans font-semibold">
+    <h1>Chapter 7 : z-Transform, Filters</h1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined" style="background-color: #6AECE1;">
+      <mat-card-header>
+        <mat-card-title style="color: blue;">Learning Objectives</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="text-lg">
+        <ul class="space-y-4 m-4 list-disc">
+          <li>Understand the one-sided z-transform, the Region of Convergence (ROC), and how a discrete delay maps to <span class="font-mono">z<sup>-1</sup></span>.</li>
+          <li>Relate the Discrete-Time Fourier Transform (DTFT) to the z-transform.</li>
+          <li>Derive FIR/IIR difference equations and corresponding transfer functions (<span class="font-mono">H(z)</span>), and analyze stability via pole locations and ROC.</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="flex flex-col justify-center items-center my-6">
+    <img src="assets/images/chap7/chp8fig1.gif" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+    <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+      Figure 7.1: Surface plot illustrating poles, zeros, and ROC in the z-domain.
+    </p>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg gap-4">
+        
+        <h3 class="text-2xl font-semibold font-sans mb-3" style="color: blue;">
+          7.1 The z-Transform
+        </h3>
+
+        <p class="mt-3">
+          The z-Transform is a more general transform than the Fourier Transform and is a key tool in achieving perfect reconstruction in filter banks and wavelets. To explore this, we analyze the effects of sampling and examine system behavior in the z-domain.
+        </p>
+
+        <p class="mt-3">
+          Since most practical systems are causal, we use the one-sided z-Transform, defined as:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ X(z) = \sum_{n=0}^{\infty} x(n)z^{-n} $$"></p>
+
+        <p class="mt-3">
+          This representation turns the sequence <span class="font-mono">x(n)</span> into a polynomial in z. Notice that we obtain the usual frequency response (the DTFT for a causal signal) when we evaluate the z-transform along the unit circle in the z-plane:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ z = e^{j\Omega} $$"></p>
+
+        <p class="mt-3">
+          This links the z-Transform with the Discrete-Time Fourier Transform (DTFT), except for the index range: the one-sided z-transform starts at <em>n = 0</em>, while the DTFT includes <em>n = −∞</em>.
+        </p>
+
+        <p class="mt-3">
+          In general, the complex variable <span class="font-mono">z</span> can be written in polar form as:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ z = r \cdot e^{j\Omega} $$"></p>
+
+        <p class="mt-3">
+          Here, <em>Ω</em> is the normalized angular frequency, and <em>r</em> represents a damping factor. When <em>r &lt; 1</em>, the system exhibits exponentially decaying oscillations; when <em>r &gt; 1</em>, it shows exponential growth.
+        </p>
+
+        <p class="mt-3">
+          Note that this damping factor does not appear in the DTFT. Thus, in the z-transform, the transform sum can still converge even for unstable signals or systems — by selecting an appropriate <em>r</em>. This defines the Region of Convergence (ROC).
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ z^{-1} = \frac{1}{r} \cdot e^{-j\Omega} $$"></p>
+
+        <p class="mt-3">
+          To grasp the essence of the z-Transform, it’s crucial to first understand the DTFT. The key is not just solving the equations, but <strong>understanding what the math represents</strong> in terms of system behavior and signal evolution.
+        </p>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig8.2.gif" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.2
+          </p>
+        </div>
+
+        <h3 class="text-2xl font-semibold font-sans mb-3 mt-6" style="color: blue;">
+          7.1.1 Properties of the z-Transform
+        </h3>
+
+        <h4 class="text-xl font-semibold mt-4 text-blue-800">1. Shift Property</h4>
+
+        <p class="mt-3">
+          Take two causal sequences (causal means sample value 0 for negative indices): Sequence <span class="font-mono bg-gray-100 px-1 rounded">x(n)</span>, and <span class="font-mono bg-gray-100 px-1 rounded">x(n-1)</span>, which is the same sequence but delayed by one sample. Then their z-transforms are:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n) \to \sum_{n=0}^{\infty} x(n) \cdot z^{-n} =: X(z) $$"></p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n - 1) \to \sum_{n=0}^{\infty} x(n - 1) \cdot z^{-n} = \sum_{n=1}^{\infty} x(n - 1) \cdot z^{-n} $$"></p>
+
+        <p class="mt-3">
+          Use the index substitution, <span class="font-mono bg-gray-100 px-1 rounded">n' ← n-1</span> or <span class="font-mono bg-gray-100 px-1 rounded">n'+1 ← n</span> to get rid of the "n-1" in the transform:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ = \sum_{n'=0}^{\infty} x(n') \cdot z^{-(n'+1)} = z^{-1} \cdot \sum_{n'=0}^{\infty} x(n') \cdot z^{-n'} = X(z) \cdot z^{-1} $$"></p>
+
+        <p class="mt-3">
+          This shows that a delay by 1 sample in the signal sequence (time domain) corresponds to the multiplication with <span class="font-bold bg-yellow-100 px-1 rounded">z^(-1)</span> in the z-domain:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n) \to X(z) $$"></p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n - 1) \to X(z) \cdot z^{-1} $$"></p>
+
+        <div class="mt-4 bg-blue-50 p-4 border-l-4 border-blue-500 rounded">
+          <h4 class="font-semibold text-blue-900">Example:</h4>
+          <p class="mt-2">
+            Take an example signal: <span class="font-mono text-sm">x0 = [1, 2, 3]</span> ⇒ <span class="font-mono text-sm">X0(z) = 1 + 2·z^(-1) + 3·z^(-2)</span>
+          </p>
+          <p class="mt-2">
+            And this signal, delayed by 1 sampling period: <span class="font-mono text-sm">x1 = [0, 1, 2, 3]</span> ⇒ <span class="font-mono text-sm">X1(z) = 0 + 1·z^(-1) + 2·z^(-2) + 3·z^(-3)</span>
+          </p>
+          <p class="mt-2">
+            In the z-domain this delay shows up as multiplication with <span class="font-mono text-sm">z^(-1)</span>:
+          </p>
+          <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ = X_0(z) \cdot z^{-1} $$"></p>
+        </div>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">Z-Transform of the Shifted Unit Pulse</h4>
+
+        <p class="mt-3">
+          Related to the shift property is the z-transform of the shifted unit pulse. The unit pulse is defined as:
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \delta(n) = \begin{cases} 1, & \text{if } n = 0 \\ 0, & \text{else} \end{cases} $$"></p>
+
+        <p class="mt-3">
+          So it is just a zero sequence with a 1 at time 0. Its z-Transform is then:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \delta(n) \to 1 $$"></p>
+
+        <p class="mt-3">
+          The z-transform of the shifted unit pulse delayed by <span class="font-mono">d</span> samples is:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \delta(n - d) \to z^{-d} $$"></p>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">Linearity Property</h4>
+
+        <p class="mt-3">
+          Using the linearity property of the z-transform yields:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ a \cdot x(n) \to a \cdot X(z) $$"></p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n) + y(n) \to X(z) + Y(z) $$"></p>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">2. Convolution Property</h4>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n) \ast y(n) \to X(z) \cdot Y(z) $$"></p>
+
+        <p class="mt-3">
+          The z-transform turns a convolution into a multiplication. Remember that the convolution is defined as:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n) \ast y(n) = \sum_{m=-\infty}^{\infty} x(m) \cdot y(n - m) $$"></p>
+
+        <p class="mt-3">
+          This is because the convolution of 2 sequences behaves in the same way as the multiplication of 2 polynomials (the z-transforms) of these sequences. This is one of the main advantages of the z-Transform, since it turns convolution into a simpler multiplication (which in principle is invertible).
+        </p>
+
+        <div class="mt-4 bg-blue-50 p-4 border-l-4 border-blue-500 rounded">
+          <h4 class="font-semibold text-blue-900">Example: Exponential Decaying Sequence</h4>
+          <p class="mt-2">The example signal is an exponential decaying sequence:</p>
+          <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x(n) = p^n $$"></p>
+          <p class="mt-2">for n=0,1,..., meaning the sequence 1, p, p^2, p^3, ...</p>
+          <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ X(z) = \sum_{n=0}^{\infty} p^n \cdot z^{-n} $$"></p>
+          <p class="mt-2">Remember from last time: we had a closed form solution for this type of geometric sums:</p>
+          <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ S = \sum_{k=0}^{N-1} c^k \implies S = \frac{c^N - 1}{c - 1} $$"></p>
+          <p class="mt-2">
+            But now we have an infinite sum, which means N goes towards infinity. If <span class="font-mono text-sm">|c| &lt; 1</span>, then <span class="font-mono text-sm">c^N → 0</span>. Now we have <span class="font-mono text-sm">c = p · z^(-1)</span>. Hence, if <span class="font-mono text-sm">|p · z^(-1)| &lt; 1</span> we get:
+          </p>
+          <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \rightarrow X(z) = \frac{1}{1 - p \cdot z^{-1}} = \frac{z}{z - p} \tag{7.1} $$"></p>
+        </div>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">Poles and Zeros</h4>
+
+        <p class="mt-3">
+          Observe that this fraction has a <strong>pole</strong> at position <span class="font-mono bg-gray-100 px-1 rounded">z=p</span>, and a <strong>zero</strong> at position <span class="font-mono bg-gray-100 px-1 rounded">z=0</span>. Hence if we know the pole position, we know <span class="font-mono">p</span>, and if we know <span class="font-mono">p</span> we know the time sequence (except for a constant factor). So the location of the pole gives us very important information about the signal.
+        </p>
+
+        <p class="mt-3">
+          Keep in mind that this solution is only valid for all <span class="font-mono">p</span> which fulfill <span class="font-mono">|p · z^(-1)| &lt; 1</span>. We see that this is true for <span class="font-mono">|z| > |p|</span>. This is also called the <strong>"Region of Convergence" (ROC)</strong>.
+        </p>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">Stability and Region of Convergence</h4>
+
+        <p class="mt-3">
+          The ROC is connected to the resulting stability of the system or signal. The region of convergence is outside the pole locations. If the region of convergence includes the unit circle (which describes constant, bounded oscillations), we have a stable system. This means: <strong>if the poles are inside the unit circle, we have a stable system</strong>.
+        </p>
+
+        <p class="mt-3">
+          The sum of <span class="font-mono">x(n)</span> converges (we get the sum if we set <span class="font-mono">z = 1</span>) if <span class="font-mono">|p| &lt; 1</span>. In this case we also say that the signal or system is <strong>stable</strong> (meaning for a bounded input we obtain a bounded output, so-called "BIBO stability"). In this case we see that the resulting pole of our z-transform is inside the unit circle.
+        </p>
+
+        <p class="mt-3">
+          If <span class="font-mono">|p| > 1</span>, we have an exponential growth of the impulse response, which is basically an "exploding" signal or system (meaning the output grows towards infinity), hence it is <strong>unstable</strong>.
+        </p>
+
+        <div class="mt-4 bg-yellow-50 p-4 border-l-4 border-yellow-500 rounded">
+          <strong>General Rule:</strong> A system or a signal is stable if the poles of its z-transform are inside the unit circle in the z-domain, or unstable if at least one pole is outside the unit circle (it will exponentially grow).
+        </div>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">Using Properties for Analysis</h4>
+
+        <p class="mt-3">
+          These are basic properties, which can be used to derive z-transforms of more complicated expressions, and they can also be used to obtain an inverse z-transform, by inspection.
+        </p>
+
+        <p class="mt-3">
+          For instance if we see a fraction with a pole in the z-Transform, we know that the underlying time sequence has an exponential decay or oscillation in it.
+        </p>
+
+        <p class="mt-3">
+          Observe that we can obtain a real valued decayed oscillation if we have 2 poles, each the conjugate complex of the other, or one with <span class="font-mono">+Ω</span> and one with <span class="font-mono">-Ω</span>. In this way, we cancel the imaginary part.
+        </p>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">Comparison with DTFT</h4>
+
+        <p class="mt-3">
+          One of the main differences of the z-transform compared to the Discrete Time Fourier Transform (DTFT): With the z-transform we can see if a signal or system is stable by looking at the position of the poles in the z-domain. This is not possible for the DTFT, since there we don't know the positions of the poles.
+        </p>
+
+        <h4 class="text-xl font-semibold mt-6 text-blue-800">Downsampling and Aliasing</h4>
+
+        <p class="mt-3">Now take a look at our downsampled signal from last time:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ x_d(n) = x(n) \cdot \Delta_N(n) = x(n) \cdot \frac{1}{N} \sum_{k=0}^{N-1} e^{j\frac{2\pi}{N} \cdot k \cdot n} $$"></p>
+
+        <p class="mt-3">Now we can z-transform it:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \sum_{n=0}^{\infty} x_d(n) \cdot z^{-n} = \sum_{n=0}^{\infty} x(n) \cdot \frac{1}{N} \sum_{k=0}^{N-1} e^{j\frac{2\pi}{N} \cdot k \cdot n} \cdot z^{-n} $$"></p>
+
+        <p class="mt-3">Hence the effect of multiplying our signal with the delta impulse train in the z-domain is:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ X_d(z) = \frac{1}{N} \sum_{k=0}^{N-1} X(e^{-j\frac{2\pi}{N} \cdot k} \cdot z) $$"></p>
+
+        <p class="mt-3">
+          Observe that here the <strong>aliasing components</strong> appear by multiplying <span class="font-mono">z</span> with <span class="font-mono">e^(-j·2π/N·k)</span>, which in effect is a shift of the frequency.
+        </p>
+
+        <p class="mt-3">
+          Remember from last time, the effect of the removal or re-insertion of the zeros (changing the sampling rate) from or into the signal <span class="font-mono">x_d(n)</span> at the higher sampling rate and <span class="font-mono">y(m)</span> at the lower sampling rate.
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined">
+      <mat-card-content class="text-lg gap-4">
+        
+        <h3 class="text-2xl font-semibold font-sans mb-3" style="color: blue;">
+          7.2 Filters
+        </h3>
+
+        <p class="mt-3">
+          Filters are linear, time-invariant systems. This means they fulfil the following properties. If F(x(n)) is our filter function of input signal x(n), then we have:
+        </p>
+
+        <ul class="space-y-4 m-4 list-disc">
+          <li>
+            <strong>Linearity:</strong> for two signals x₁(n) and x₂(n),
+            <p class="text-lg font-mono mt-2 text-center" appMathJax="$$ F(x_1(n) + x_2(n)) = F(x_1(n)) + F(x_2(n)) $$"></p>
+            <p class="mt-2">With a scaling factor a:</p>
+            <p class="text-lg font-mono mt-2 text-center" appMathJax="$$ F(a \cdot x(n)) = a \cdot F(x(n)) $$"></p>
+            <p class="mt-2 text-sm text-gray-600 italic">This means we can pull sums and constant factors out of the filter function.</p>
+          </li>
+
+          <li>
+            <strong>Time-Invariance:</strong> if
+            <p class="text-lg font-mono mt-2 text-center" appMathJax="$$ y(n) = F(x(n)) $$"></p>
+            <p class="mt-2">then for a delay of n₀:</p>
+            <p class="text-lg font-mono mt-2 text-center" appMathJax="$$ y(n + n0) = F(x(n + n0)) $$"></p>
+            <p class="mt-2 text-sm text-gray-600 italic">This means the system behavior does not change with time.</p>
+          </li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-6">7.2.1 Finite Impulse Response (FIR) Filters</h3>
+
+        <p class="mt-3">
+          A simple Finite Impulse Response (FIR) filter has the following difference equation, where x(n) is the input and y(n) is the output:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = \sum_{m=0}^{M} b(m) x(n - m) $$"></p>
+
+        <p class="mt-3">
+          This operation is a convolution of the signal x(n) with the sequence b(n). The values b(m) are the filter coefficients, also called the impulse response. The coefficients b(n) are often called “taps” because the filter can be viewed as tapping a delay line at different points.
+        </p>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig7.3.png" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.3
+          </p>
+        </div>
+
+        <p class="mt-3">
+          The dashed branches indicate additional delay-and-multiply stages that are not shown. This difference equation is how FIR filters are typically implemented in MATLAB or Python.
+        </p>
+
+        <p class="mt-3">
+          In the time domain, blocks labeled z⁻¹ represent a delay of one sample, not a multiplication. Each delay block stores the input sample for one sampling period and releases it in the next cycle.
+        </p>
+
+        <p class="mt-3">
+          Taking the z-transform of the difference equation gives:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = \sum_{m=0}^{M} b(m) x(n - m) $$"></p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = \sum_{m=0}^{M} b(m) \cdot z^{-m} \cdot X(z) = X(z) \cdot \sum_{m=0}^{M} b(m) \cdot z^{-m} $$"></p>
+
+        <p class="mt-3">
+          The transfer function is defined as the ratio of output to input:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(z) := \frac{Y(z)}{X(z)} = \sum_{m=0}^{M} b(m) \cdot z^{-m} $$"></p>
+
+        <p class="mt-3">
+          This transfer function is simply the z-transform of the impulse response b(n). The frequency response of the filter is obtained by replacing z with exp(jΩ), allowing us to analyze which frequencies are passed or attenuated.
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(e^{j\Omega}) = \sum_{m=0}^{M} b(m) \cdot e^{-j\Omega \cdot m} $$"></p>
+
+        <h4 class="text-xl font-semibold mt-6">Frequency Response</h4>
+
+        <p class="mt-3">
+          Since exp(jΩ) is a complex number, the frequency response is also complex. Therefore, H(exp(jΩ)) is a complex value for each frequency Ω. The frequency response is usually visualized using two plots:
+        </p>
+
+        <ul class="space-y-2 m-4 list-disc">
+          <li><strong>Magnitude plot</strong> – shows how much each frequency is amplified or attenuated</li>
+          <li><strong>Phase plot</strong> – shows the phase shift introduced at each frequency</li>
+        </ul>
+
+        <p class="mt-3">
+          Using these two plots, we can design filters with desired properties, such as stop-bands or pass-bands at specific frequencies. In both MATLAB and Python, the function used to compute and plot the magnitude and phase response of a signal or transfer function is:
+        </p>
+
+        <pre class="bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto font-mono mt-2 border border-gray-300">freqz</pre>
+
+        <h3 class="text-xl font-semibold mt-6">7.2.2 Infinite Impulse Response (IIR) Filters</h3>
+
+        <p class="mt-3">
+          The difference equation of an Infinite Impulse Response (IIR) filter is:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = \sum_{m=0}^{M} b(m) \cdot x(n - m) + \sum_{r=1}^{N} a(r) \cdot y(n - r) \tag{7.2} $$"></p>
+
+        <p class="mt-3">
+          This equation contains two convolution operations:
+        </p>
+        <ul class="space-y-2 m-4 list-disc">
+          <li>One convolution with the input signal x(n)</li>
+          <li>One convolution with the past output values y(n)</li>
+        </ul>
+
+        <p class="mt-3">
+          The second term represents feedback from the output back into the system. This feedback is what gives IIR filters their name: the impulse response theoretically lasts forever. Notice that the feedback terms start at y(n−1) and not y(n). This avoids so-called <strong>delayless loops</strong>.
+        </p>
+
+        <p class="mt-3">
+          In Python, IIR filters are commonly implemented using:
+        </p>
+        <pre class="bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto font-mono mt-2 border border-gray-300">scipy.signal.lfilter</pre>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig7.4.png" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.4: Block diagram of an IIR filter.
+          </p>
+        </div>
+
+        <p class="mt-3">
+          The z-transform of the IIR filter difference equation (equation 7.2) can be written as:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = \sum_{m=0}^{M} b(m) \cdot X(z) \cdot z^{-m} + \sum_{r=1}^{N} a(r) \cdot Y(z) \cdot z^{-r} \tag{7.3} $$"></p>
+
+        <p class="mt-3 bg-yellow-50 p-4 border-l-4 border-yellow-500 rounded">
+          <strong>Important note:</strong> MATLAB, Octave, and Python’s <code>scipy.signal.lfilter</code> define the feedback coefficients <code>a</code> with opposite signs compared to the convention used here and in Oppenheim &amp; Schafer.
+        </p>
+
+        <pre class="bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto font-mono mt-2 border border-gray-300">
+help filter
+help(scipy.signal.lfilter)
+        </pre>
+
+        <h4 class="text-xl font-semibold mt-6">Transfer Function of an IIR Filter</h4>
+
+        <p class="mt-3">
+          To obtain the transfer function, we first move all terms containing Y(z) to one side of the equation:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z)\left(1 - \sum_{r=1}^{N} a(r) \cdot z^{-r}\right) = X(z) \cdot \sum_{m=0}^{M} b(m) \cdot z^{-m} $$"></p>
+
+        <p class="mt-3">
+          Dividing the output by the input gives the transfer function:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(z) = \frac{Y(z)}{X(z)} = \frac{\sum_{m=0}^{M} b(m) \cdot z^{-m}}{1 - \sum_{r=1}^{N} a(r) \cdot z^{-r}} $$"></p>
+
+        <p class="mt-3">
+          An important observation: Using the z-transform allows us to find a closed-form expression for the transfer function, even though the system contains feedback. Because the denominator is a polynomial in z⁻¹, the transfer function contains poles. This means the filter can potentially become unstable.
+        </p>
+
+        <h3 class="text-xl font-semibold mt-6">7.2.3 IIR Filter with Minimum Number of Memory Elements</h3>
+
+        <p class="mt-3">
+          For hardware implementations, it is often desirable to minimize the number of required memory elements. This can be achieved by combining the memory elements of the feedforward and feedback paths. We redefine N as the maximum of M and N, and set coefficients beyond their original limits to zero.
+        </p>
+
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = b(0) \cdot X(z) + \sum_{m=1}^{N} z^{-m} \cdot (b(m) \cdot X(z) + a(m) \cdot Y(z)) $$"></p>
+
+        <p class="mt-3">
+          This expression can be expanded as a nested delay structure:
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = b(0) \cdot X(z) + z^{-1} \cdot (b(1) \cdot X(z) + a(1) \cdot Y(z) + z^{-1} \cdot (\ldots + z^{-1} (b(N) \cdot X(z) + a(N) \cdot Y(z)))) $$"></p>
+
+        <p class="mt-3">
+          For implementation, we also use the fact that the delay operator z⁻¹ is linear.
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ z^{-1} \cdot (b(m) \cdot X(z) + a(m) \cdot Y(z)) = (b(m) \cdot X(z) + a(m) \cdot Y(z)) \cdot z^{-1} $$"></p>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig7.5.png" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.5: Signal flow diagram of memory-efficient structure.
+          </p>
+        </div>
+
+        <h3 class="text-xl font-semibold mt-6">7.2.4 IIR Filter Example</h3>
+
+        <p class="mt-3">
+          Returning to our simple example of an exponentially decaying signal, we now show how to implement it using an IIR filter. We need a system with a single pole at position <strong>p</strong>. This can be achieved by choosing:
+        </p>
+        <ul class="space-y-2 m-4 list-disc">
+          <li>b(0) = 1</li>
+          <li>a(1) = p</li>
+        </ul>
+
+        <p class="mt-3">This leads to the following difference equation:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = 1 \cdot x(n) + p \cdot y(n - 1) \tag{7.4} $$"></p>
+
+        <p class="mt-3">If the input signal x(n) is a unit impulse, the output becomes:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 1, p, p^2, p^3, \ldots $$"></p>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig7.6.png" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.6
+          </p>
+        </div>
+
+        <p class="mt-3">
+          This is an infinitely long impulse response. The corresponding flow diagram of this filter is shown in Figure 7.4. Python requires the coefficient a[0] to be explicitly specified, and it must be equal to 1.
+        </p>
+
+        <p class="mt-3">In the z-domain, the difference equation becomes:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ Y(z) = X(z) + p \cdot z^{-1} \cdot Y(z) $$"></p>
+
+        <p class="mt-3">Dividing output by input gives the transfer function:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ \rightarrow H(z) = \frac{Y(z)}{X(z)} = \frac{1}{1 - p \cdot z^{-1}} $$"></p>
+
+        <p class="mt-3">
+          This clearly reveals the feedback loop in the system. It is also identical to the z-transform of the exponential sequence derived earlier.
+        </p>
+
+        <h3 class="text-xl font-semibold mt-6">7.2.5 Computing the Resulting Frequency Response</h3>
+
+        <p class="mt-3">
+          The Python function <code>freqz</code> can be used to compute and plot the magnitude and phase response of a digital filter. Its input consists of the filter coefficients. For example, choosing p = 0.9 gives:
+        </p>
+
+        <pre class="bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto font-mono mt-2 border border-gray-300">
+from scipy.signal import freqz
+import numpy as np
+import matplotlib.pyplot as plt
+
+a = [1, -0.9]
+b = [1]
+
+w, H = freqz(b, a)
+
+plt.figure()
+plt.subplot(2, 1, 1)
+plt.title("Frequency Response")
+plt.plot(w, 20 * np.log10(abs(H)))
+plt.ylabel("Amplitude (dB)")
+
+plt.subplot(2, 1, 2)
+plt.plot(w, np.angle(H))
+plt.ylabel("Phase (radians)")
+plt.xlabel("Normalized Frequency")
+plt.show()
+        </pre>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig7.7.png" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.7
+          </p>
+        </div>
+
+        <p class="mt-3">
+          The resulting plot is shown in Figure 7.5 (likely Figure 7.7 in this context). The magnitude response clearly shows a low-pass characteristic. This simple IIR filter is often used to estimate the mean or average of a signal.
+        </p>
+
+        <p class="mt-3">A commonly used form of this filter is:</p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ y(n) = p \cdot y(n - 1) + (1 - p) \cdot x(n) $$"></p>
+
+        <h3 class="text-xl font-semibold mt-6">Poles and Zeros</h3>
+
+        <p class="mt-3">
+          We can visualize poles and zeros using a pole-zero plot in the complex z-plane.
+        </p>
+        <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ H(z) = \frac{1}{1 - p \cdot z^{-1}} $$"></p>
+
+        <p class="mt-3">The pole and zero locations are computed using:</p>
+        <pre class="bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto font-mono mt-2 border border-gray-300">
+np.roots(a)  // poles
+np.roots(b)  // zeros
+        </pre>
+
+        <p class="mt-3">They can be plotted using:</p>
+        <pre class="bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto font-mono mt-2 border border-gray-300">
+from zplane import zplane
+zplane(np.roots(b), np.roots(a))
+        </pre>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig7.8.png" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.8: Pole-Zero Plot. Zeros are marked with circles (o), Poles with crosses (x).
+          </p>
+        </div>
+
+        <p class="mt-3">
+          The pole is located at z = 0.9, which lies inside the unit circle. In general:
+        </p>
+        <ul class="space-y-2 m-4 list-disc">
+          <li>The closer a pole is to the unit circle, the larger the peak in the magnitude response</li>
+          <li>The closer a zero is to the unit circle, the more the magnitude response is suppressed</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-6">7.2.6 Python Example</h3>
+
+        <p class="mt-3">
+          The impulse response of this IIR filter can be computed using <code>scipy.signal.lfilter</code>.
+        </p>
+
+        <pre class="bg-gray-100 text-sm p-4 rounded-lg overflow-x-auto font-mono mt-2 border border-gray-300">
+import numpy as np
+import scipy.signal
+import matplotlib.pyplot as plt
+
+x = np.zeros(10)
+x[0] = 1  # unit impulse
+
+A = [1, -0.9]
+B = [1]
+
+y = scipy.signal.lfilter(B, A, x)
+
+plt.plot(y, '*')
+plt.xlabel("Sample")
+plt.ylabel("Value")
+plt.show()
+        </pre>
+
+        <div class="flex flex-col justify-center items-center my-6">
+          <img src="assets/images/chap7/fig7.9.png" class="max-w-full md:max-w-xl h-auto rounded shadow-sm">
+          <p class="text-sm text-gray-600 italic mt-3 text-center px-4 max-w-lg">
+            Figure 7.9: The first 10 samples of the impulse response.
+          </p>
+        </div>
+
+        <p class="mt-3">
+          As expected, the response is an exponentially decaying sequence. This confirms that the filter is stable, since its pole lies inside the unit circle.
+        </p>
+
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="h-6"></div>
+
+  <div class="flex flex-col items-center p-3 gap-6">
+    <h2 class="text-2xl font-sans font-semibold mb-4">🧠 Test Your Knowledge</h2>
+
+    @for (q of questions; track q) {
+      <div class="w-full md:w-2/3">
+        <mat-card class="mat-elevation-z6 p-6 font-sans">
+          <mat-card-title>{{ q.text }}</mat-card-title>
+          <br>
+          <mat-card-content>
+            <mat-radio-group [(ngModel)]="q.selectedAnswer" [disabled]="q.isSubmitted">
+              @for (option of q.options; track option) {
+                <div class="mb-2">
+                  <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
+                </div>
+              }
+            </mat-radio-group>
+            <div class="mt-4 flex gap-3">
+              <button matFab extended (click)="submitAnswer(q)" [disabled]="!q.selectedAnswer || q.isSubmitted">
+                Submit
+              </button>
+              @if (q.isSubmitted) {
+                <button matFab extended style="background-color:black ; color: aliceblue;" (click)="tryAgain(q)">
+                  Try Again
+                </button>
+              }
+            </div>
+            <div class="mt-4">
+              @if (q.isSubmitted && q.selectedAnswer === q.correctAnswer) {
+                <p class="text-green-600 font-semibold font-sans">✅ Correct!</p>
+              }
+              @if (q.isSubmitted && q.selectedAnswer !== q.correctAnswer) {
+                <p class="text-red-600 font-semibold font-sans">❌ Incorrect. Correct answer: <strong>{{ q.correctAnswer }}</strong>.</p>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+  </div>
+
+</div>

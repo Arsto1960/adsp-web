@@ -1,0 +1,96 @@
+<div class="space-y-6 p-4 max-w-[1400px] mx-auto">
+
+  <h3 class="text-3xl font-medium font-sans text-gray-800">
+      Demo 9 : Allpass Filters & Frequency Warping
+  </h3>
+
+  <div class="container">
+      
+      <div class="sidebar">
+        <div class="title">🌀 Allpass Lab</div>
+        
+        <div class="nav-menu">
+          <button [class.active]="activeTab === 'FUNDAMENTALS'" (click)="setTab('FUNDAMENTALS')">
+            Fundamentals
+          </button>
+          <button [class.active]="activeTab === 'FRACTIONAL'" (click)="setTab('FRACTIONAL')">
+            Fractional Delays
+          </button>
+          <button [class.active]="activeTab === 'WARPING'" (click)="setTab('WARPING')">
+            Freq. Warping
+          </button>
+        </div>
+
+        <div class="controls-area">
+            
+            <div *ngIf="activeTab === 'FUNDAMENTALS'" class="fade-in">
+              <div class="desc">
+                <strong>First-Order Allpass:</strong><br>
+                Moves phase while magnitude remains constant. Adjust pole 'a' to push group delay.
+              </div>
+              <div class="grp">
+                <div class="lbl-row">
+                  <label>Pole (a)</label>
+                  <span>{{ fundParams.a }}</span>
+                </div>
+                <input type="range" min="-0.9" max="0.9" step="0.1" 
+                       [(ngModel)]="fundParams.a" (input)="render()">
+              </div>
+            </div>
+
+            <div *ngIf="activeTab === 'FRACTIONAL'" class="fade-in">
+              <div class="desc">
+                <strong>Fractional Delays:</strong><br>
+                Delay signal by non-integer samples (e.g. 4.5).
+                <ul class="list-disc pl-4 mt-2">
+                  <li class="text-blue-600">FIR: Windowed Sinc</li>
+                  <li class="text-red-600">IIR: Thiran Allpass</li>
+                </ul>
+              </div>
+              <div class="grp">
+                <div class="lbl-row">
+                  <label>Delay</label>
+                  <span>{{ fracParams.delay | number:'1.1-1' }}</span>
+                </div>
+                <input type="range" min="0.1" max="10.0" step="0.1" 
+                       [(ngModel)]="fracParams.delay" (input)="render()">
+                
+                <div class="lbl-row mt-4">
+                  <label>FIR Length</label>
+                  <span>{{ fracParams.firLen }}</span>
+                </div>
+                <input type="range" min="4" max="30" step="1" 
+                       [(ngModel)]="fracParams.firLen" (input)="render()">
+              </div>
+            </div>
+
+            <div *ngIf="activeTab === 'WARPING'" class="fade-in">
+              <div class="desc">
+                <strong>Bilinear Warping:</strong><br>
+                Stretches frequency axis to increase resolution at low frequencies (similar to Bark scale).
+              </div>
+              <div class="grp">
+                <div class="lbl-row">
+                  <label>Warp Coeff (a)</label>
+                  <span>{{ warpParams.a }}</span>
+                </div>
+                <input type="range" min="0.0" max="0.95" step="0.05" 
+                       [(ngModel)]="warpParams.a" (input)="render()">
+              </div>
+            </div>
+
+        </div>
+      </div>
+
+      <div class="main">
+        <div class="canvas-card">
+           <div class="canvas-wrap">
+             <canvas #canvas1 [hidden]="activeTab !== 'FUNDAMENTALS'"></canvas>
+             <canvas #canvas2 [hidden]="activeTab !== 'FRACTIONAL'"></canvas>
+             <canvas #canvas3 [hidden]="activeTab !== 'WARPING'"></canvas>
+           </div>
+        </div>
+      </div>
+
+  </div>
+</div>

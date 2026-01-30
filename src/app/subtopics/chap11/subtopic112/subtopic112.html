@@ -1,0 +1,292 @@
+<div class="m-2 space-y-4">
+
+ 
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl  mt-1 text-blue-700">11.1 Python Example</h3>
+
+                <p class="text-lg mt-3">
+                    Plot the Hilbert transformer for n = −10 … 10:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+ipython --pylab
+h = zeros(20)
+n = arange(-9, 10, 2)
+h[n + 10] = 2 / (pi * n)
+stem(arange(-10, 10), h)
+xlabel('Sample')
+ylabel('Value')
+title('Part of Imp. Resp. of Hilbert Transform')
+</pre>
+
+                <p class="text-lg mt-3">
+                    The resulting plot can be seen in Fig. (11.2).
+                    Here we see that we have negative indices. If we want to obtain a causal system,
+                    we need to shift them to or above zero using a suitable delay; hence the Hilbert
+                    transform involves some delay. To make the imaginary and real parts align,
+                    we must delay the real part accordingly.
+                </p>
+
+                <p class="text-lg mt-3">
+                    This type of complex signal, with a one-sided spectrum, is called an
+                    <strong>analytic signal</strong>.
+                </p>
+
+                <p class="text-lg mt-3">
+                    Let’s take a look at the frequency response of our filter. Since we have included a
+                    delay, our phase should be the 90° (π/2 radians) phase shift plus the linear phase
+                    from the delay. Hence, our phase curve should hit the phase axis at frequency 0
+                    at π/2 radians, for which we zoom into this region:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+from freqz import *
+freqz(h, axisFreqz=[0, pi, -50, 10], axisPhase=[0, pi, -pi, pi])
+</pre>
+
+                <p class="text-lg mt-3">
+                    The resulting plot can be seen in Fig. (11.3).
+                    Here we can see that the phase curve indeed hits the π/2 radians (90°) mark
+                    on the vertical phase axis. The magnitude plot reaches about 0 dB attenuation
+                    at approximately 0.08π and shows higher attenuation below about 0.05π and
+                    above 0.95π. Hence, it works effectively as a Hilbert transformer only within
+                    this frequency range.
+                </p>
+
+
+
+                <p class="text-lg mt-3">
+                    If we want to plot the frequency response of our entire filter (not just the Hilbert transformer
+                    part),
+                    which passes only the positive frequencies, we first need to construct our resulting complex filter,
+                    and then plot the frequency response over the full frequency circle.
+
+                    First, we create a delayed unit impulse as the real part:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+# construct a delayed impulse to implement the
+# delay for the real part:
+delt = np.zeros(20)
+delt[9] = 1
+#delt =
+#0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0
+#Then we need to add our imaginary part as our
+#Hilbert transform to obtain our complex filter:
+h = np.zeros(20);
+n = np.arange(-9, 10+1, 2);
+h[n+9] = 2./(np.pi*n);
+hone = delt+h*1jhone
+print(hone)
+array([0.-0.07073553j, 0.+0.j, 0.-0.09094568j, 0.+0.j,
+0.-0.12732395j, 0.+0.j, 0.-0.21220659j, 0.+0.j,
+
+0.-0.63661977j, 1.+0.j, 0.+0.63661977j, 0.+0.j,
+0.+0.21220659j, 0.+0.j, 0.+0.12732395j, 0.+0.j,
+0.+0.09094568j, 0.+0.j, 0.+0.07073553j, 0.+0.j])
+
+</pre>
+                <p class="text-lg mt-3">
+                    This is our <strong>complex-valued filter impulse response</strong> — the real part (delayed
+                    impulse)
+                    represents the original signal path, and the imaginary part implements the
+                    Hilbert transform that removes negative frequencies. Together, they form a
+                    filter that passes only the positive frequency components.
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+freqz(hone,1, whole=True, axisFreqz=[0, 6.28,-40,10]);
+
+</pre>
+
+                <p class="text-lg mt-3">
+                    The resulting plot can be seen in Fig. (11.4). Here we can see that we have indeed a
+                    passband at the positive frequencies between 0 and pi. Observe that the passband is at
+                    about 6 dB (above 0dB), because we multiplied our filter by a factor of 2 to make it
+                    simpler.
+                    The negative frequencies appear between pi and 2pi on the frequency axis, and we
+                    can see that we get about 30 dB attenuation there, which is not very much, but which
+                    we could increase it by making the filter longer. This also gives us a good indication of
+                    how well our filter is working!
+                    Observe that the phase is now starting at 0, because the filter has the Hilbert transform
+                    only as part of it, to obtain this frequency response.
+                    The Python function “remez” also has an option for a Hilbert transform filter. We get
+                    a similar design with
+
+
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+from freqz import *
+import scipy.signal as sp
+b=sp.remez(21, [0.03, 0.47],[1], type=’hilbert’);
+freqz(b,axisFreqz=[0,pi,-50,10],axisPhase=[0,pi, -
+pi,pi])
+
+</pre>
+
+                <p class="text-lg mt-3">
+
+                    Observe that in the remez argument “0.5” corresponds to the Nyquist frequency, hence
+                    the entire positive frequency band would go from 0 to π. The specified passband does
+                    not go all the way to 0 and 0.5, it leaves transition bands at the sides. The further away
+                    the passband is from these edges, the less ripples we will have in the passband, and
+                    the more attenuation we will have for the negative frequencies! The resulting frequency
+                    response can be seen in Fig. (11.5).
+                    Observe that this design now has a +90 Degrees (+3.14/2) phase shift at frequency
+                    close to zero. This is a phase difference of 180 Degrees from our previous design with
+                    the rectangular window, and results from a sign change of the coefficients.
+                    Let’s look at the resulting one sided complex valued filter at the whole frequency circle
+                    again, in iPython:
+                </p>
+
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+#Delay for the real part:
+
+delt = np.zeros(21)
+delt[10] = 1
+#The complex filter:
+honeremez = delt + 1j*b
+honeremez
+array([ 0. -8.35889141e-05j, 0. +7.28072838e-02j, 0. +7.11334936e-05j,
+0. +6.79343477e-02j, 0. -7.21513298e-06j, 0. +1.10111613e-01j,
+0. +2.67809302e-05j, 0. +2.01516354e-01j, 0. -8.96356182e-06j,
+0. +6.32971502e-01j, 1. +0.00000000e+00j, 0. -6.32971502e-01j,
+0. +8.96356182e-06j, 0. -2.01516354e-01j, 0. -2.67809302e-05j,
+0. -1.10111613e-01j, 0. +7.21513298e-06j, 0. -6.79343477e-02j,
+0. -7.11334936e-05j, 0. -7.28072838e-02j, 0. +8.35889141e-05j])
+#Observe the sign change compared to hone above.
+#Now look at the frequency response for pos. and neg. frequencies:
+freqz(honeremez,1, whole=True, axisFreqz=[0, 6.28,-40,10]);
+
+
+</pre>
+
+                <p class="text-lg mt-3">
+                    The resulting plot can be seen in Fig. (12.13). Here we can see that we have again
+                    only about 30 dB attenuation in the stopband, which is now for the positive frequencies,
+                    because of the sign change of our remez filter. We obtain more practical filters, with
+                    more attenuation in the stopband, if we change the corner frequencies to more above 0
+                    and below 0.5 in remez (increasing the transition bandwidth).
+                    Also observe the equi-ripple behaviour in the stopband, which is what we expect from
+                    remez.
+                </p>
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+   
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.2.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.3.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.4.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.5.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.6.png" class="w-150 h-80 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl  font-sans mb-3" style="color: blue;">11.2 Example for the Measurement
+                    of the (Instantaneous) Amplitude</h3>
+
+                <p>
+                    We can now test our application example of measuring the Amplitude of a sinusoid with
+                    our Hilbert transform design. We saw that the lower end for the passband of our design
+                    is at normalized frequency of about 0.05. Hence we test a sinusoid of that frequency,
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+x = 2*sin(pi*0.05*arange(0, 40))
+plot(x)
+
+</pre>
+                <p class="mt-2">
+                    The resulting plot can be seen in Fig. (12.14). Now we can filter it with our filter which passes
+                    only positive frequencies “hone”, an creates a complex valued signal xhone:
+                </p>
+                <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+xhone = sp.convolve(x, hone);
+plot(real(xhone))
+plot(imag(xhone),’r’)
+
+</pre>
+
+                <p class="mt-2">
+                    The resulting plot can be seen in Fig. (12.15). Here we can see that we get indeed a
+                    90 degree phase shifted version, the red curve, about between sample 15 and 45.
+                    Now we can compute the magnitude of this complex signal “xhone” to obtain the
+                    amplitude of our sinusoidal signal,
+                    plot(abs(xhone))
+                    The resulting plot can be seen in Fig. (12.16). We see that between about sample 15
+                    and 45 we obtain the amplitude of our sinusoidal signal with about 10% accuracy, which
+                    roughly corresponds to the 20dB attenuation (corresponding to an attenuation factor of
+                    0.1) that our filter “hone” provides. This also hints at the fact that we can improve the
+                    magnitude estimation by having a filter with a higher attenuation at negative frequencies.
+                    Also observe that this only works for sinusoids inside our passband!
+                </p>
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+   
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.7.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+    <div class="flex flex-col justify-around items-center gap-2">
+        <img src="assets/images/chap11/fig12.8.png" class="w-130 h-60 ">
+        <h1 class="text-wrap">
+
+        </h1>
+    </div>
+
+
+
+   
+
+
+</div>

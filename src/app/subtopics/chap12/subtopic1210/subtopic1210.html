@@ -1,0 +1,116 @@
+<div class="m-4">
+
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.10 Homework Problems
+                </h3>
+
+                <br>
+
+                <h3>Problem 1: Wiener Filter Design</h3>
+
+                <p>Given a noisy signal</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x(n) = 0.9x(n-1) + v(n)
+ $$"></p>
+
+
+                <p>x(n) is the original clean signal. w(n) is additive white Gaussian noise with zero mean and variance
+                    sigma_w_squared.</p>
+
+                <ol>
+                    <li>Derive the Wiener filter coefficients used to estimate x(n) from y(n).</li>
+
+                    <li>
+                        Assume x(n) follows a first-order autoregressive model:
+                        <pre>x(n) = 0.9 * x(n - 1) + v(n)</pre>
+                        where v(n) is white noise with variance sigma_v_squared = 0.1.
+                        Compute the Wiener filter coefficients.
+                    </li>
+
+                    <li>Implement the Wiener filter in Python and compare the original and estimated signals.</li>
+                </ol>
+
+                <br>
+
+                <h3>Problem 2: Matched Filter</h3>
+
+                <p>A deterministic signal s(t) is transmitted through a channel with additive white Gaussian noise w(t).
+                </p>
+
+                <p>The received signal is:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+r(t) = s(t) + w(t) $$"></p>
+
+
+                <p>The signal s(t) is a rectangular pulse of duration T:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+s(t) = \begin{cases} 1, & 0 \leq t \leq T \\ 0, & \text{otherwise} \end{cases}) $$"></p>
+
+
+                <ul>
+                    <li>Derive the matched filter response for s(t).</li>
+                    <li>Show that the matched filter maximizes the output signal-to-noise ratio.</li>
+                    <li>Plot the matched filter output for r(t) using Python.</li>
+                </ul>
+
+                <br>
+
+                <h3>Problem 3: Prediction Using Wiener Filter</h3>
+
+                <p>Consider the signal model:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+x(n) = 0.8x(n-1) + v(n)
+ $$"></p>
+
+
+                <p>where v(n) is white Gaussian noise with variance sigma_v_squared = 0.05.</p>
+
+                <ol>
+                    <li>Design a one-step predictor to estimate x(n) from past samples.</li>
+                    <li>Compute the mean squared prediction error.</li>
+                    <li>Simulate the prediction process in Python and compare predicted and actual signals.</li>
+                </ol>
+
+                <br>
+
+                <h3>Problem 4: Applications of Matched Filter</h3>
+
+                <p>In a binary communication system, the transmitted symbols are +1 and -1. The received signal is:</p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+r(t) = \pm s(t) + w(t)
+ $$"></p>
+
+
+                <p>s(t) is the pulse shape and w(t) is additive noise.</p>
+
+                <ol>
+                    <li>Explain how a matched filter is used to detect the transmitted symbols.</li>
+                    <li>Derive the probability of detection error when w(t) is Gaussian.</li>
+                </ol>
+
+                <br>
+
+                <h3>Problem 5: Neural Network Extensions</h3>
+
+                <p>Consider using a Convolutional Neural Network (CNN) as an adaptive matched filter.</p>
+
+                <ol>
+                    <li>Describe how the CNN can be trained to detect a known signal s(t) hidden in noise.</li>
+                    <li>Discuss the advantages and challenges of neural networks compared to traditional matched
+                        filters.</li>
+                </ol>
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+    
+    
+
+</div>

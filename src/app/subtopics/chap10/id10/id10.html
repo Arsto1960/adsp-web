@@ -1,0 +1,96 @@
+<div class="space-y-6">
+
+  <h3 class="text-3xl font-medium font-sans" style="color: rgb(10, 10, 10);">
+      Demo 10 : Minimum Phase Systems
+  </h3>
+
+  <mat-card>
+      <div class="container">
+          
+          <div class="sidebar">
+            <div class="title">🎛️ Analysis Workbench</div>
+            
+            <div class="menu">
+              <button [class.active]="activeModule === 'PHASE'" (click)="setModule('PHASE')">
+                Phase Analysis
+              </button>
+              <button [class.active]="activeModule === 'EQUALIZER'" (click)="setModule('EQUALIZER')">
+                Channel Equalizer
+              </button>
+            </div>
+        
+            <div class="controls" *ngIf="activeModule === 'PHASE'">
+               <div class="desc">
+                 <strong>Concept:</strong> Linear Phase vs Minimum Phase.
+                 Minimum Phase filters concentrate energy at the start (lower Group Delay), crucial for real-time control loops.
+                 
+               </div>
+
+               <div class="grp">
+                 <label>Filter Taps: {{ phaseParams.taps }}</label>
+                 <input type="range" min="5" max="51" step="2" [(ngModel)]="phaseParams.taps" (input)="runSimulation()">
+               </div>
+
+               <div class="grp">
+                 <label>Window Type</label>
+                 <select [(ngModel)]="phaseParams.window" (change)="runSimulation()">
+                   <option value="hamming">Hamming</option>
+                   <option value="hann">Hann</option>
+                   <option value="blackman">Blackman</option>
+                 </select>
+               </div>
+
+               <div class="metrics">
+                 <div class="box">
+                   <div class="lbl">Linear Delay</div>
+                   <div class="val">{{ phaseMetrics.linDelay | number:'1.1-1' }}</div>
+                 </div>
+                 <div class="box highlight">
+                   <div class="lbl">Min Delay</div>
+                   <div class="val">{{ phaseMetrics.minDelay | number:'1.1-1' }}</div>
+                 </div>
+               </div>
+            </div>
+
+            <div class="controls" *ngIf="activeModule === 'EQUALIZER'">
+               <div class="desc">
+                 <strong>Concept:</strong> Inverse Filtering ($H_{{ '{' }}eq{{ '}' }} = 1/H_{{ '{' }}chan{{ '}' }}$).
+                 To invert a system stably, the original system must be Minimum Phase (all zeros inside unit circle).
+                 
+               </div>
+
+               <div class="grp">
+                 <label>Channel Type</label>
+                 <div class="radio-grp">
+                   <label>
+                     <input type="radio" name="eq" value="MIN" [(ngModel)]="eqParams.type" (change)="runSimulation()">
+                     Min Phase (Stable)
+                   </label>
+                   <label>
+                     <input type="radio" name="eq" value="NON_MIN" [(ngModel)]="eqParams.type" (change)="runSimulation()">
+                     Non-Min (Unstable)
+                   </label>
+                 </div>
+               </div>
+
+               <div class="status-badge" [class.success]="!eqStatus.unstable" [class.error]="eqStatus.unstable">
+                  {{ eqStatus.unstable ? '⚠️ UNSTABLE INVERSE' : '✅ STABLE INVERSION' }}
+               </div>
+            </div>
+
+          </div>
+        
+          <div class="main">
+            <div class="canvas-card">
+               <div class="canvas-wrap" [hidden]="activeModule !== 'PHASE'">
+                 <canvas #canvas1></canvas>
+               </div>
+               <div class="canvas-wrap" [hidden]="activeModule !== 'EQUALIZER'">
+                 <canvas #canvasEq></canvas>
+               </div>
+            </div>
+          </div>
+
+      </div>
+  </mat-card>
+</div>

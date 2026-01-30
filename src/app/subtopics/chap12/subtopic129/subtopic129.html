@@ -1,0 +1,104 @@
+<div class="m-4">
+
+    
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+                    12.9 Summary
+                </h3>
+
+
+                <p class="mt-4">
+
+
+                    This chapter explores advanced filtering techniques for signal processing, focusing on **noise
+                    reduction**, **signal detection**, and **prediction**.
+
+
+                </p>
+
+                <p class="mt-4">
+                    The key components are summarized below:
+                </p>
+
+                <h2>1. Wiener Filter</h2>
+
+                <ul>
+                    <li><strong>Purpose:</strong> To approximate the original signal x(n) from a distorted signal y(n)
+                        by minimizing the mean squared error.</li>
+
+                    <li><strong>Mathematical Framework:</strong> Uses the Wiener–Hopf and Yule–Walker equations to
+                        determine optimal filter coefficients. Matrix formulations and the Moore–Penrose pseudo-inverse
+                        are used to solve the convolution problem.</li>
+
+                    <li><strong>Applications:</strong> Noise suppression in audio, image processing, and other domains.
+                    </li>
+                </ul>
+
+                <br>
+
+                <h2>2. Matched Filter</h2>
+
+                <ul>
+                    <li><strong>Purpose:</strong> Designed to maximize the signal-to-noise ratio (SNR) for detecting
+                        specific patterns or signals.</li>
+
+                    <li><strong>Key Insight:</strong> The filter is tuned to the expected signal, making it effective
+                        for deterministic signal detection.</li>
+
+                    <li><strong>Applications:</strong> Used in communications, radar, and object recognition.</li>
+                </ul>
+
+                <br>
+
+                <h2>3. Prediction</h2>
+
+                <ul>
+                    <li><strong>Description:</strong> A Wiener filter variant used to predict future signal samples
+                        based on past samples, minimizing prediction error.</li>
+
+                    <li><strong>Key Equations:</strong> Prediction coefficients are derived using autocorrelation and
+                        cross-correlation matrices.</li>
+
+                    <li><strong>Practical Use:</strong> Commonly applied in predictive coding, such as LPC coders in
+                        speech processing.</li>
+                </ul>
+
+                <br>
+
+                <h2>4. Python Implementations</h2>
+
+                <ul>
+                    <li><strong>Overview:</strong> Practical Python examples show Wiener filters, matched filters, and
+                        predictive filtering.</li>
+
+                    <li><strong>Applications:</strong> Include denoising noisy signals and predicting signal behavior
+                        using matrix operations and numerical libraries.</li>
+                </ul>
+
+                <br>
+
+                <h2>5. Applications of Prediction Filters</h2>
+
+                <ul>
+                    <li>Predictive coding of speech signals for low-bit-rate transmission.</li>
+                    <li>Reconstruction of signals using predictive decoders to minimize error.</li>
+                </ul>
+
+                <br>
+
+                <h2>6. Neural Network Extensions</h2>
+
+                <ul>
+                    <li>Introduces the use of Convolutional Neural Networks (CNNs) to optimize detection filters using
+                        adaptive learning methods.</li>
+                </ul>
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+    <div>
+</div>

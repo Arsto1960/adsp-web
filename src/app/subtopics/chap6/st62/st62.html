@@ -1,0 +1,77 @@
+<div class="m-2 space-y-4 " >
+    
+    <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+                <h3 class="text-2xl font-semibold font-sans mb-3" style="color: blue;">
+                    6.2 Upsampling </h3>
+
+
+
+                <p class="mt-4">
+                    What is still missing in our system is the upsampling, which is the opposite operation of
+                    downsampling, for cases where we want to increase the sampling rate.
+                </p>
+
+                <p class="mt-4">
+                    One common (but incorrect) approach to upsampling by a factor of N is to simply repeat each sample
+                    N-1 times. This is equivalent to first inserting N-1 zeros after each sample, and then filtering the
+                    resulting sequence with a low-pass filter whose impulse response is N ones. This is a very special
+                    case.
+                </p>
+
+                <p class="mt-4">
+                    In general, we upsample by first inserting N-1 zeros after each sample, and then applying an
+                    interpolation filter (low-pass, high-pass, or band-pass as needed) to reconstruct the signal. This
+                    process helps to select the correct spectral copy of the original signal.
+                </p>
+
+                <p class="mt-4">
+                    We take the signal at the lower sampling rate as y(m), where m is the index at the lower sampling
+                    rate. The upsampled signal, including the inserted zeros, is x<sup>d</sup>(n), where n is the index
+                    at the higher sampling rate. This is simply the reverse of the final step in downsampling.
+                </p>
+
+                <p class="mt-4">
+                    From downsampling, we have the relation:
+                </p>
+
+                <p class="text-center mt-3 text-lg font-mono">
+                    X<sup>d</sup>(Omega) = Y(Omega * N)
+                </p>
+
+                <p class="mt-4">
+                    Or equivalently:
+                </p>
+
+                <p class="text-center mt-3 text-lg font-mono">
+                    X<sup>d</sup>(Omega / N) = Y(Omega)
+                </p>
+
+                <p class="mt-4">
+                    Here we are going from y(m) to the upsampled signal x<sup>d</sup>(n). For example, if a frequency
+                    component was at pi before upsampling, it becomes pi / 2 for the upsampled signal when N=2. This
+                    effectively extends the frequency range.
+                </p>
+
+                <p class="mt-4">
+                    Since the upsampled signal x<sup>d</sup>(n) includes zeros, its spectrum is again periodic in
+                    frequency, similar to the downsampling case. The periodicity remains because the original signal was
+                    2*pi periodic, and after upsampling, the frequency scale adjusts accordingly.
+                </p>
+
+
+
+            </mat-card-content>
+
+        </mat-card>
+
+
+    </div>
+
+
+
+
+
+</div>

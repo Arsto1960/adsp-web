@@ -1,0 +1,398 @@
+<div class="m-5 overflow-hidden space-y-4 ">
+  <div class=" text-3xl font-sans font-semibold">
+    <h1>Chapter 4 : Lloyd-Max Quantizer </h1>
+  </div>
+
+  <div>
+    <mat-card class="example-card text-2xl" appearance="outlined" style="background-color: #6AECE1;">
+      <mat-card-header>
+        <mat-card-title style="color: blue;"> Learning Objectives</mat-card-title>
+      </mat-card-header>
+        <mat-card-content class="text-lg">
+          <ul class="space-y-4 m-4 list-disc ">
+            <li>Explain the purpose of Lloyd–Max quantization and how it differs from companding.</li>
+            <li>Describe the two optimality conditions for minimizing mean-squared quantization error.</li>
+            <li>Derive the update rules for decision boundaries and reconstruction levels.</li>
+          </ul>
+
+  </mat-card-content>
+
+</mat-card>
+
+
+</div>
+
+<div class="flex flex-col justify-center items-center my-6">
+  <img src="assets/images/chap4/chap4.an.gif" 
+       class="max-w-full md:max-w-lg max-h-[400px] w-auto h-auto rounded-lg shadow-md object-contain">
+</div>
+
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+    <mat-card-header>
+      <mat-card-title style="color: blue;">4.1. Introduction</mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content class="text-lg">
+
+      <p class="mt-2">
+        In this chapter, we will explore the Lloyd-Max quantizer, which is a type of non-uniform quantizer
+        adapted to the signal’s probability density function (PDF). It minimizes the expectation of the
+        quantization error given the PDF of the signal to quantize [13].
+      </p>
+
+    </mat-card-content>
+  </mat-card>
+</div>
+
+
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+
+    <mat-card-content class="text-lg">
+      <h3 class="text-xl font-semibold font-sans mb-3 " style="color: blue;">4.2 Histogram of a Typical Mixed
+      Speech and Music File</h3>
+
+      <p class="mt-2">
+      Consider the histogram of a typical mixed speech and music file in Python: </p>
+      
+      
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        ipython --pylab
+        import scipy.io.wavfile as wav
+        rate, snd = wav.read(’mixedshort.wav’)
+        hist(snd/(2.0**15), 50)
+
+      </pre>
+
+      <p class="mt-2">
+        This script counts how often the signal samples in our signal “snd” fall into one of 50 bins between
+        -max and +max amplitude, normalized between -1 and 1. This distribution is far from uniform and is
+        very “peaky” with most samples being in bin 0, indicating that most samples have a very small
+        amplitude. This histogram can be converted to a probability distribution $p(x)$ by dividing it by
+        the total number of samples so that its sum becomes 1 [14].
+      </p>
+
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+</div>
+
+
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+
+    <mat-card-content class="text-lg">
+      <h3 class="text-xl font-semibold font-sans mb-3" style="color: blue;">4.3 Lloyd-Max Quantizer Concept
+      </h3>
+
+      <p class="mt-2">
+        The idea behind the Lloyd-Max quantizer is to choose smaller quantization steps where signal samples
+        appear most often to reduce the quantization error and larger steps where there are fewer samples.
+        This concept differs from $\mu$-law companding, where small values get the smallest quantization
+        step sizes. In Lloyd-Max quantization, the most likely values get the smallest quantization step
+        sizes [13], [15].
+      </p>
+
+      <p class="mt-2">
+        The quantization function Q(x) minimizes the expectation of the quantization error power D:
+      </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+D = E[(x - Q(x))^2] \tag{4.1}
+ $$"></p>
+
+
+      <p class="mt-2">
+        The goal is to minimize this expectation. Starting with the probability density function (PDF) of
+        the signal, the result should be the quantization intervals and the reconstruction values. We need
+        to define the intervals and their reconstruction values, as shown in Figure 4.1.
+      </p>
+      
+      <div class="flex flex-col justify-center items-center my-6 gap-2">
+        <img src="assets/images/chap4/fig4.1.png" 
+             alt="Lloyd-Max Quantization Steps"
+             class="max-w-full md:max-w-md h-auto rounded border border-gray-200 p-2">
+        <span class="text-sm text-gray-600 italic">Figure 4.1: Lloyd-Max Quantizer Concept</span>
+      </div>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+</div>
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+    <mat-card-content class="text-lg">
+      <h3 class="text-xl font-semibold font-sans mb-3 " style="color: blue;">
+        4.4 Mathematical Formulation
+      </h3>
+      
+      
+
+      <p class="mt-3">
+        The decision boundaries b_k and reconstruction values y_k can be obtained by minimizing the
+        distortion:
+      </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+D = \sum_{k=1}^{M} \int_{b_{k-1}}^{b_k} (x - y_k)^2 p(x) \, dx \tag{4.2}
+ $$"></p>
+
+      <p class="mt-3">
+        Taking the first derivative of the distortion D with respect to the decision boundaries b_k and
+        setting it to zero gives:
+      </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+\frac{\partial D}{\partial b_k} = 0 \tag{4.3}
+ $$"></p>
+
+
+      <p class="mt-3">
+        This yields:
+      </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+b_k = \frac{y_{k+1} + y_k}{2} \tag{4.4}
+ $$"></p>
+
+      <p class="mt-3">
+        This approach is also called the “nearest neighbour” rule, because any signal value is always
+        quantized to the nearest reconstruction value.
+      </p>
+
+      <p class="mt-3">
+        Similarly, for the reconstruction values y_k:
+      </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y_k = \frac{\int_{b_{k-1}}^{b_k} x \cdot p(x) \, dx}{\int_{b_{k-1}}^{b_k} p(x) \, dx} \tag{4.5}
+ $$"></p>
+
+
+      <p class="mt-3">
+        This can be interpreted as the conditional expectation of the signal value over the quantization
+        interval (given the signal is inside this interval), or simply the centroid used as the
+        reconstruction value.
+      </p>
+
+      <p class="mt-3">
+        This iterative algorithm continues until the updates become sufficiently small.
+      </p>
+
+
+      <p class="mt-3">
+        This means every additional bit roughly adds <strong>6 dB</strong> of SNR —
+        we’ll confirm this in <strong>Module 2</strong>.
+      </p>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+</div>
+
+
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+    <mat-card-content class="text-lg">
+      <h3 class="text-xl font-semibold font-sans mb-3 " style="color: blue;">
+        4.5 Numerical Integration in Python
+      </h3>
+
+      <p class="mt-3">
+        To compute the centroid or conditional expectation for the reconstruction value, numerical
+        integration may be needed. The integral of the form
+      </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+I_k = \int_{b_{k-1}}^{b_k} f(x) \, dx \tag{4.6}
+ $$"></p>
+
+      <p class="mt-3">
+        can be approximated in Python using a sum:
+      </p>
+
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        dx = (b[k] - b[k-1]) / 100
+        I_k = sum(f(arange(b[k-1], b[k], dx)) * dx)
+
+      </pre>
+      <p class="mt-3">
+        For example:
+      </p>
+
+      <p class="text-center mt-3 text-lg font-mono">
+        sum(sin(arange(0, 3.14, 0.1)) * 0.1)
+      </p>
+
+      <p class="mt-3">
+        A more precise Python function for smooth integrands is scipy.integrate.quad.
+      </p>
+
+    </mat-card-content>
+
+  </mat-card>
+
+
+</div>
+
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+
+    <mat-card-content class="text-lg">
+      <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+        4.6 Example 1: Uniform Distribution
+      </h3>
+
+
+      <p class="mt-4">
+        Assume we have a signal x uniformly distributed between 0 and 1, and we want two reconstruction
+        values y_k. The steps are:
+      </p>
+
+      <ol class="list-disc m-4 ">
+        <li>Random initialization: y1 = 0.3, y2 = 0.8</li>
+        <li>Nearest neighbor: b1 = (0.3 + 0.8) / 2 = 0.55</li>
+        <li>Conditional expectation:</li>
+      </ol>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y_1 = \frac{\int_0^{0.55} x \, dx}{0.55} = 0.275 \tag{4.7}
+ $$"></p>
+
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+y_2 = \frac{\int_{0.55}^{1} x \, dx}{0.45} = 0.775 \tag{4.8}
+ $$"></p>
+
+
+      <p class="mt-4">
+        This process continues iteratively until convergence. This should converge to y1 = 0.25, y2 = 0.75,
+        and b1 = 0.5.
+      </p>
+
+
+    </mat-card-content>
+
+  </mat-card>
+</div>
+
+<div>
+  <mat-card class="example-card text-2xl" appearance="outlined">
+
+    <mat-card-content class="text-lg">
+      <h3 class="text-2xl font-semibold font-sans " style="color: blue;">
+        4.7 Example 2: Laplacian Distribution
+      </h3>
+
+      <p class="mt-4">
+        For a non-uniform Laplacian probability density function:
+      </p>
+                <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+p(x) = e^{-0.5 \cdot |x|}
+ $$"></p>
+ 
+      
+
+      <ol class="list-disc m-4 ">
+        <li>Random initialization: y1 = 0.3, y2 = 0.8</li>
+        <li>Nearest neighbor: </li>
+                    <p class="text-lg font-mono mt-3 text-center" appMathJax="$$ 
+b_1 = \frac{0.3+0.8 2}{2} = 0.55
+ $$"></p>
+        <li>Conditional expectation: numerical integration is required. Below is an example using the Python
+        function "quad":</li>
+      </ol>
+
+
+      <pre class="bg-gray-100 text-sm p-3 rounded-lg overflow-x-auto font-mono mt-2">
+
+        from scipy.integrate import quad
+        from numpy import exp
+        Num, _ = quad(lambda x: x * exp(-0.5 * abs(x)), 0, 0.55)
+        Den, _ = quad(lambda x: exp(-0.5 * abs(x)), 0, 0.55)
+        y_1 = Num / Den
+        print(y_1)
+        #0.2624
+        Num, _ = quad(lambda x: x * exp(-0.5 * abs(x)), 0.55, 1)
+        Den, _ = quad(lambda x: exp(-0.5 * abs(x)), 0.55, 1)
+        y_2 = Num / Den
+        print(y_2)
+        #0.7665
+
+      </pre>
+      <p class="mt-4">
+        This process continues iteratively until convergence. An example using a recorded speech signal can
+        be found at the end of the Colab notebook "ADSP_04_LloydMax.ipynb" in the Github repository. It is
+        implemented using the so-called K-Means algorithm for the one-dimensional case.
+      </p>
+
+
+    </mat-card-content>
+
+  </mat-card>
+</div>
+    <app-id4></app-id4>
+
+<div class="h-6"></div>
+
+<div class="flex flex-col items-center p-3 gap-6">
+  <h2 class="text-2xl font-sans font-semibold mb-4">🧠 Test Your Knowledge</h2>
+
+  @for (q of questions; track q) {
+    <div class="w-full md:w-2/3">
+      <mat-card class="mat-elevation-z6 p-6 font-sans">
+        <mat-card-title>{{ q.text }}</mat-card-title>
+        <br>
+          <mat-card-content>
+            <mat-radio-group [(ngModel)]="q.selectedAnswer" [disabled]="q.isSubmitted">
+              @for (option of q.options; track option) {
+                <div class="mb-2">
+                  <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
+                </div>
+              }
+            </mat-radio-group>
+            <div class="mt-4 flex gap-3">
+              <button matFab extended (click)="submitAnswer(q)"
+                [disabled]="!q.selectedAnswer || q.isSubmitted">
+                Submit
+              </button>
+              @if (q.isSubmitted) {
+                <button matFab extended style="background-color:black ; color: aliceblue;"
+                  (click)="tryAgain(q)">
+                  Try Again
+                </button>
+              }
+            </div>
+            <div class="mt-4">
+              @if (q.isSubmitted && q.selectedAnswer === q.correctAnswer) {
+                <p
+                  class="text-green-600 font-semibold font-sans">
+                  ✅ Correct!
+                </p>
+              }
+              @if (q.isSubmitted && q.selectedAnswer !== q.correctAnswer) {
+                <p
+                  class="text-red-600 font-semibold font-sans">
+                  ❌ Incorrect. Correct answer: <strong>{{ q.correctAnswer }}</strong>.
+                </p>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    }
+  </div>
+
+
+
+</div>

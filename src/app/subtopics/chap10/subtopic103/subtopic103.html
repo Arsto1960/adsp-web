@@ -1,0 +1,118 @@
+<div class="m-4">
+
+     <div>
+        <mat-card class="example-card text-2xl" appearance="outlined">
+
+            <mat-card-content class="text-lg">
+
+
+
+                <div class="space-y-8">
+
+                    <h3 class="text-2xl font-bold text-gray-800">10.3 Homework Problems</h3>
+
+                    <!-- Problem 1 -->
+                    <div class="space-y-2">
+                        <h4 class="text-xl font-semibold text-gray-700">Problem 1: Identification of Minimum-Phase
+                            Filters</h4>
+                        <p class="text-gray-700">
+                            Given the following z-transform, identify if it corresponds to a minimum-phase system:
+                        </p>
+                        <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = \frac{(z - 0.5)(z - 0.8)}{(z - 0.4)(z - 0.7)} $$"></p>
+                       
+                        <ul class="list-disc ml-6 text-gray-700">
+                            <li>Check the location of zeros and poles and justify your answer.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Problem 2 -->
+                    <div class="space-y-2">
+                        <h4 class="text-xl font-semibold text-gray-700">Problem 2: Conversion to Minimum-Phase</h4>
+                        <p class="text-gray-700">A system has the transfer function:</p>
+                        <div class="bg-gray-100 font-mono px-3 py-2 rounded text-sm inline-block">
+                            H(z) = ((z + 1.2)(z - 0.6)) / (z + 0.5)
+                        </div>
+                        <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ H(z) = \frac{(z + 1.2)(z - 0.6)}{(z + 0.5)}
+
+ $$"></p>
+
+                        <ol class="list-decimal ml-6 text-gray-700 space-y-1">
+                            <li>Plot the poles and zeros in the z-plane.</li>
+                            <li>Reflect any zeros outside the unit circle to obtain a minimum-phase system.</li>
+                            <li>Provide the updated transfer function.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Problem 3 -->
+                    <div class="space-y-2">
+                        <h4 class="text-xl font-semibold text-gray-700">Problem 3: Group Delay Analysis</h4>
+                        <p class="text-gray-700">For the following minimum-phase filter:</p>
+                        <div class="bg-gray-100 font-mono px-3 py-2 rounded text-sm inline-block">
+                            H(z) = (1 - 0.5 z⁻¹) / (1 + 0.8 z⁻¹)
+                        </div>
+                        <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = \frac{1 - 0.5z^{-1}}{1 + 0.8z^{-1}}
+ $$"></p>
+                        <ul class="list-disc ml-6 text-gray-700 space-y-1">
+                            <li>Calculate the group delay using its phase response.</li>
+                            <li>Plot the group delay for the frequency range ω in [0, π].</li>
+                        </ul>
+                    </div>
+
+                    <!-- Problem 4 -->
+                    <div class="space-y-2">
+                        <h4 class="text-xl font-semibold text-gray-700">Problem 4: Design and Implementation</h4>
+                        <p class="text-gray-700">Design a minimum-phase low-pass FIR filter with the following
+                            specifications:</p>
+                        <ul class="list-disc ml-6 text-gray-700 space-y-1">
+                            <li>Sampling frequency: 8000 Hz</li>
+                            <li>Cutoff frequency: 1500 Hz</li>
+                            <li>Order: 50</li>
+                        </ul>
+                        <ol class="list-decimal ml-6 text-gray-700 space-y-1">
+                            <li>Implement the filter using Python.</li>
+                            <li>Verify the minimum-phase property by plotting the zeros.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Problem 5 -->
+                    <div class="space-y-2">
+                        <h4 class="text-xl font-semibold text-gray-700">Problem 5: Energy Concentration</h4>
+                        <ol class="list-decimal ml-6 text-gray-700 space-y-1">
+                            <li>Prove analytically that a minimum-phase system has energy concentrated at the start of
+                                its impulse response compared to a linear-phase counterpart.</li>
+                            <li>Demonstrate this using Python by generating impulse responses for both filter types with
+                                the same magnitude response.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Problem 6 -->
+                    <div class="space-y-2">
+                        <h4 class="text-xl font-semibold text-gray-700">Problem 6: All-Pass Decomposition</h4>
+                        <p class="text-gray-700">Decompose the following transfer function into a minimum-phase
+                            component and an all-pass filter:</p>
+                            <p class="text-lg font-mono mt-3 text-center"
+                    appMathJax="$$ 
+H(z) = \frac{1 - 1.5z^{-1} + 0.75z^{-2}}{1 + 0.5z^{-1}}
+ $$"></p>
+                       
+                        <ul class="list-disc ml-6 text-gray-700 space-y-1">
+                            <li>Verify that the product of the minimum-phase and all-pass components yields the original
+                                H(z).</li>
+                        </ul>
+                    </div>
+
+                </div>
+
+
+            </mat-card-content>
+
+        </mat-card>
+    </div>
+
+
+</div>
